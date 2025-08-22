@@ -9,12 +9,14 @@ export const DashboardHeader = () => {
       <div className="flex items-center justify-between px-6 py-4">
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
-            <HardHat className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img 
+            src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
+            alt="FireBuild.ai" 
+            className="w-10 h-10 object-contain"
+          />
           <div>
             <h1 className="text-xl font-bold text-foreground">FireBuild.ai</h1>
-            <p className="text-xs text-muted-foreground">Contractor Management</p>
+            <p className="text-xs text-muted-foreground">Build Better Business</p>
           </div>
         </div>
 

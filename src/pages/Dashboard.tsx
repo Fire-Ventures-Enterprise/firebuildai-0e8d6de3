@@ -7,6 +7,7 @@ import { RecentActivityCard } from "@/components/RecentActivityCard";
 import { TeamPerformanceCard } from "@/components/TeamPerformanceCard";
 import { FleetStatusCard } from "@/components/FleetStatusCard";
 import { ReviewsCard } from "@/components/ReviewsCard";
+import { EstimatesPage } from "@/components/EstimatesPage";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -94,6 +95,9 @@ export const Dashboard = () => {
             </div>
           </div>
         );
+      
+      case "estimates":
+        return <EstimatesPage />;
       
       default:
         return (
