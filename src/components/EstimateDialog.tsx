@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,19 +21,55 @@ interface EstimateDialogProps {
 
 export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: EstimateDialogProps) => {
   const [formData, setFormData] = useState({
-    clientName: estimate?.clientName || '',
-    address: estimate?.address || '',
-    city: estimate?.city || '',
-    phone: estimate?.phone || '',
-    amount: estimate?.amount || '',
-    date: estimate?.date ? new Date(estimate.date) : new Date(),
-    status: estimate?.status || 'PENDING',
-    description: estimate?.description || '',
-    workScope: estimate?.workScope || '',
-    materials: estimate?.materials || '',
-    labor: estimate?.labor || '',
-    notes: estimate?.notes || ''
+    clientName: '',
+    address: '',
+    city: '',
+    phone: '',
+    amount: '',
+    date: new Date(),
+    status: 'PENDING',
+    description: '',
+    workScope: '',
+    materials: '',
+    labor: '',
+    notes: ''
   });
+
+  // Update form data when estimate changes (for edit mode)
+  useEffect(() => {
+    if (estimate && mode === 'edit') {
+      setFormData({
+        clientName: estimate.clientName || '',
+        address: estimate.address || '',
+        city: estimate.city || '',
+        phone: estimate.phone || '',
+        amount: estimate.amount?.toString() || '',
+        date: estimate.date ? new Date(estimate.date) : new Date(),
+        status: estimate.status || 'PENDING',
+        description: estimate.description || '',
+        workScope: estimate.workScope || '',
+        materials: estimate.materials || '',
+        labor: estimate.labor || '',
+        notes: estimate.notes || ''
+      });
+    } else if (mode === 'create') {
+      // Reset form for create mode
+      setFormData({
+        clientName: '',
+        address: '',
+        city: '',
+        phone: '',
+        amount: '',
+        date: new Date(),
+        status: 'PENDING',
+        description: '',
+        workScope: '',
+        materials: '',
+        labor: '',
+        notes: ''
+      });
+    }
+  }, [estimate, mode, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
