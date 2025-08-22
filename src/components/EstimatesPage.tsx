@@ -5,6 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EstimateDialog } from "./EstimateDialog";
+import { EstimateViewDialog } from "./EstimateViewDialog";
+import { TemplateDialog } from "./TemplateDialog";
+import { toast } from "sonner";
 
 interface Estimate {
   id: string;
@@ -100,8 +104,14 @@ const SyncIndicator = ({ status }: { status: string }) => {
 export const EstimatesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("PENDING");
+  const [estimates, setEstimates] = useState(mockEstimates);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showViewDialog, setShowViewDialog] = useState(false);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null);
 
-  const filteredEstimates = mockEstimates.filter(estimate => {
+  const filteredEstimates = estimates.filter(estimate => {
     const matchesSearch = 
       estimate.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.estimateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -113,9 +123,99 @@ export const EstimatesPage = () => {
   });
 
   const getMonthlyTotal = (month: string) => {
-    return mockEstimates
+    return estimates
       .filter(estimate => estimate.date.includes(month))
       .reduce((sum, estimate) => sum + estimate.amount, 0);
+  };
+
+  const handleCreateEstimate = (data: any) => {
+    const newEstimate: Estimate = {
+      id: String(estimates.length + 1),
+      clientName: data.clientName,
+      estimateNumber: `#${20000 + estimates.length + 1}`,
+      address: data.address,
+      city: data.city,
+      phone: data.phone,
+      amount: parseFloat(data.amount),
+      date: data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      status: data.status,
+      emailStatus: 'none',
+      syncStatus: 'synced'
+    };
+    setEstimates(prev => [newEstimate, ...prev]);
+    toast.success("Estimate created successfully!");
+  };
+
+  const handleEditEstimate = (data: any) => {
+    if (!selectedEstimate) return;
+    
+    const updatedEstimate: Estimate = {
+      ...selectedEstimate,
+      clientName: data.clientName,
+      address: data.address,
+      city: data.city,
+      phone: data.phone,
+      amount: parseFloat(data.amount),
+      date: data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      status: data.status
+    };
+    
+    setEstimates(prev => prev.map(est => est.id === selectedEstimate.id ? updatedEstimate : est));
+    toast.success("Estimate updated successfully!");
+  };
+
+  const handleOpenEstimate = (estimate: Estimate) => {
+    setSelectedEstimate(estimate);
+    setShowViewDialog(true);
+  };
+
+  const handleEditClick = (estimate: Estimate) => {
+    setSelectedEstimate(estimate);
+    setShowEditDialog(true);
+  };
+
+  const handleUseTemplate = (template: any) => {
+    const templateData = {
+      clientName: '',
+      address: '',
+      city: '',
+      phone: '',
+      amount: template.amount,
+      date: new Date(),
+      status: 'PENDING',
+      workScope: `${template.name} - ${template.description}`,
+      materials: template.items.join(', '),
+      labor: 'Standard labor rates apply',
+      notes: `Template used: ${template.name}`
+    };
+    
+    // Create estimate from template
+    handleCreateEstimate(templateData);
+  };
+
+  const handleExport = () => {
+    const csvContent = [
+      ['Client Name', 'Estimate #', 'Address', 'City', 'Phone', 'Amount', 'Date', 'Status'],
+      ...estimates.map(est => [
+        est.clientName,
+        est.estimateNumber,
+        est.address,
+        est.city,
+        est.phone,
+        est.amount,
+        est.date,
+        est.status
+      ])
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'estimates.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    toast.success("Estimates exported successfully!");
   };
 
   const groupedEstimates = filteredEstimates.reduce((groups, estimate) => {
@@ -136,16 +236,16 @@ export const EstimatesPage = () => {
           <p className="text-muted-foreground mt-1">Manage your project estimates</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => setShowTemplateDialog(true)}>
             <FileText className="w-4 h-4 mr-2" />
             Use Template
             <Badge className="ml-1 bg-primary text-primary-foreground text-xs">PRO</Badge>
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowCreateDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New Estimate
           </Button>
@@ -231,8 +331,12 @@ export const EstimatesPage = () => {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm">Open</Button>
-                          <Button variant="outline" size="sm">Edit</Button>
+                          <Button variant="outline" size="sm" onClick={() => handleOpenEstimate(estimate)}>
+                            Open
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => handleEditClick(estimate)}>
+                            Edit
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -243,6 +347,38 @@ export const EstimatesPage = () => {
           ))}
         </TabsContent>
       </Tabs>
+
+      {/* Dialogs */}
+      <EstimateDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        mode="create"
+        onSave={handleCreateEstimate}
+      />
+
+      <EstimateDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        estimate={selectedEstimate}
+        mode="edit"
+        onSave={handleEditEstimate}
+      />
+
+      <EstimateViewDialog
+        open={showViewDialog}
+        onOpenChange={setShowViewDialog}
+        estimate={selectedEstimate}
+        onEdit={() => {
+          setShowViewDialog(false);
+          setShowEditDialog(true);
+        }}
+      />
+
+      <TemplateDialog
+        open={showTemplateDialog}
+        onOpenChange={setShowTemplateDialog}
+        onSelectTemplate={handleUseTemplate}
+      />
     </div>
   );
 };
