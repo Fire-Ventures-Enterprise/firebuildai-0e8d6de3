@@ -38,13 +38,28 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
   // Update form data when estimate changes (for edit mode)
   useEffect(() => {
     if (estimate && mode === 'edit') {
+      // Helper function to safely parse date
+      const parseDate = (dateString: string) => {
+        if (!dateString) return new Date();
+        
+        // Try parsing the date string - handle various formats
+        const parsed = new Date(dateString);
+        
+        // If invalid, return current date
+        if (isNaN(parsed.getTime())) {
+          return new Date();
+        }
+        
+        return parsed;
+      };
+
       setFormData({
         clientName: estimate.clientName || '',
         address: estimate.address || '',
         city: estimate.city || '',
         phone: estimate.phone || '',
         amount: estimate.amount?.toString() || '',
-        date: estimate.date ? new Date(estimate.date) : new Date(),
+        date: parseDate(estimate.date),
         status: estimate.status || 'PENDING',
         description: estimate.description || '',
         workScope: estimate.workScope || '',
@@ -176,15 +191,19 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.date ? format(formData.date, "MMMM do, yyyy") : "Pick a date"}
+                    {formData.date && !isNaN(formData.date.getTime()) 
+                      ? format(formData.date, "MMMM do, yyyy") 
+                      : "Pick a date"
+                    }
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
-                    selected={formData.date}
+                    selected={formData.date && !isNaN(formData.date.getTime()) ? formData.date : undefined}
                     onSelect={(date) => setFormData(prev => ({ ...prev, date: date || new Date() }))}
                     initialFocus
+                    className="p-3 pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
