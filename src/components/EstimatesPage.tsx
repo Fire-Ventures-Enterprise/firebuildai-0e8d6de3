@@ -264,89 +264,143 @@ export const EstimatesPage = () => {
       </div>
 
       {/* Status Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full max-w-md grid-cols-4">
-          <TabsTrigger value="PENDING" className="text-sm">PENDING</TabsTrigger>
-          <TabsTrigger value="APPROVED" className="text-sm">APPROVED</TabsTrigger>
-          <TabsTrigger value="DECLINED" className="text-sm">DECLINED</TabsTrigger>
-          <TabsTrigger value="ALL" className="text-sm">ALL</TabsTrigger>
-        </TabsList>
+      <div className="bg-white rounded-lg border shadow-sm">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full max-w-lg grid-cols-4 bg-muted/30 p-1 h-12">
+            <TabsTrigger value="PENDING" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              PENDING ({mockEstimates.filter(e => e.status === 'PENDING').length})
+            </TabsTrigger>
+            <TabsTrigger value="APPROVED" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              APPROVED ({mockEstimates.filter(e => e.status === 'APPROVED').length})
+            </TabsTrigger>
+            <TabsTrigger value="DECLINED" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              DECLINED ({mockEstimates.filter(e => e.status === 'DECLINED').length})
+            </TabsTrigger>
+            <TabsTrigger value="ALL" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              ALL ({mockEstimates.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value={activeTab} className="space-y-6">
-          {Object.entries(groupedEstimates).map(([month, estimates]) => (
-            <div key={month} className="space-y-4">
-              {/* Month Header */}
-              <div className="flex items-center justify-between border-b border-border pb-2">
-                <h3 className="text-lg font-semibold text-foreground">{month}</h3>
-                <p className="text-sm text-muted-foreground">
-                  Total: ${getMonthlyTotal(month.split(' ')[0]).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          <TabsContent value={activeTab} className="space-y-6 mt-6">
+            {Object.keys(groupedEstimates).length === 0 ? (
+              <div className="text-center py-12">
+                <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No estimates found</h3>
+                <p className="text-muted-foreground mb-4">
+                  {activeTab === 'ALL' ? 'No estimates created yet.' : `No ${activeTab.toLowerCase()} estimates found.`}
                 </p>
+                <Button onClick={() => setShowCreateDialog(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Your First Estimate
+                </Button>
               </div>
-
-              {/* Estimates List */}
-              {estimates.map((estimate) => (
-                <Card key={estimate.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <h4 className="font-semibold text-foreground">
-                              {estimate.clientName} - {estimate.estimateNumber}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">{estimate.date}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <StatusBadge status="ISSUED" />
-                            <SyncIndicator status={estimate.syncStatus} />
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">{estimate.address}</p>
-                            <p className="text-muted-foreground">{estimate.city}</p>
-                            <p className="text-muted-foreground">{estimate.phone}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {estimate.emailStatus === 'sent' ? (
-                              <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                                <Mail className="w-3 h-3" />
-                                Email sent
-                              </div>
-                            ) : estimate.emailStatus === 'opened' ? (
-                              <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                                <MailOpen className="w-3 h-3" />
-                                Email opened
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-
+            ) : (
+              <>
+                {Object.entries(groupedEstimates).map(([month, estimates]) => (
+                  <div key={month} className="space-y-4">
+                    {/* Month Header */}
+                    <div className="flex items-center justify-between bg-muted/30 px-4 py-3 rounded-lg border">
+                      <h3 className="text-lg font-semibold text-foreground">{month}</h3>
                       <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-xl font-bold text-foreground">
-                            ${estimate.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" onClick={() => handleOpenEstimate(estimate)}>
-                            Open
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleEditClick(estimate)}>
-                            Edit
-                          </Button>
-                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {estimates.length} estimate{estimates.length !== 1 ? 's' : ''}
+                        </p>
+                        <p className="text-sm font-medium text-foreground">
+                          Total: ${getMonthlyTotal(month.split(' ')[0]).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ))}
-        </TabsContent>
-      </Tabs>
+
+                    {/* Estimates List */}
+                    <div className="space-y-3">
+                      {estimates.map((estimate) => (
+                        <Card key={estimate.id} className="border-2 hover:shadow-lg transition-all duration-200 bg-white">
+                          <CardContent className="p-0">
+                            <div className="flex items-center">
+                              {/* Left side - Estimate info */}
+                              <div className="flex-1 p-6">
+                                <div className="flex items-start justify-between mb-4">
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-3">
+                                      <h4 className="text-lg font-bold text-foreground">
+                                        {estimate.estimateNumber}
+                                      </h4>
+                                      <div className="flex items-center gap-2">
+                                        <StatusBadge status={estimate.status} />
+                                        <SyncIndicator status={estimate.syncStatus} />
+                                      </div>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground font-medium">{estimate.date}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-2xl font-bold text-primary">
+                                      ${estimate.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-6">
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-foreground">{estimate.clientName}</p>
+                                    <p className="text-sm text-muted-foreground">{estimate.address}</p>
+                                    <p className="text-sm text-muted-foreground">{estimate.city}</p>
+                                    <p className="text-sm text-muted-foreground">{estimate.phone}</p>
+                                  </div>
+                                  <div className="flex items-start gap-3">
+                                    {estimate.emailStatus === 'sent' && (
+                                      <div className="flex items-center gap-1 text-blue-600 text-xs bg-blue-50 px-2 py-1 rounded">
+                                        <Mail className="w-3 h-3" />
+                                        Email sent
+                                      </div>
+                                    )}
+                                    {estimate.emailStatus === 'opened' && (
+                                      <div className="flex items-center gap-1 text-green-600 text-xs bg-green-50 px-2 py-1 rounded">
+                                        <MailOpen className="w-3 h-3" />
+                                        Email opened
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Right side - Actions */}
+                              <div className="border-l bg-muted/20 p-6 flex flex-col gap-2 min-w-[140px]">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  onClick={() => handleOpenEstimate(estimate)}
+                                  className="w-full justify-center font-medium"
+                                >
+                                  View
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  onClick={() => handleEditClick(estimate)}
+                                  className="w-full justify-center font-medium"
+                                >
+                                  Edit
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="w-full justify-center font-medium text-blue-600 border-blue-200 hover:bg-blue-50"
+                                >
+                                  Send
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
 
       {/* Dialogs */}
       <EstimateDialog
