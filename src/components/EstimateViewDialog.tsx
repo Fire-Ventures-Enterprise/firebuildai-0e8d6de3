@@ -34,7 +34,7 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between pb-4">
             <div>
@@ -77,11 +77,11 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
               </div>
             </div>
 
-            {/* Line Items Section */}
+            {/* Line Items Table */}
             <div className="space-y-4">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/50">
+                  <TableRow className="bg-muted/30">
                     <TableHead className="text-sm font-medium">Description</TableHead>
                     <TableHead className="text-sm font-medium w-20">Rate</TableHead>
                     <TableHead className="text-sm font-medium w-20">Markup</TableHead>
@@ -93,21 +93,22 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
                 <TableBody>
                   <TableRow>
                     <TableCell className="align-top">
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">Bathroom</span>
-                          <Button variant="outline" size="sm" className="h-6 text-xs">
+                          <Button variant="outline" size="sm" className="h-6 text-xs px-2">
                             📋 Item List
                           </Button>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          <p className="font-medium mb-2">Bathroom Renovation Scope of Work</p>
+                        
+                        <div className="text-sm text-muted-foreground space-y-3">
+                          <p className="font-medium text-foreground">Bathroom Renovation Scope of Work</p>
                           
-                          <div className="space-y-2">
-                            <p className="font-medium">Demolition:</p>
-                            <p>Remove and dispose of the following items from the property...</p>
+                          <div>
+                            <p className="font-medium text-foreground mb-1">Demolition:</p>
+                            <p className="mb-2">Remove and dispose of the following items from the property...</p>
                             
-                            <div className="ml-4 space-y-1">
+                            <div className="ml-2 space-y-0.5 text-xs">
                               <p>• Wal Tiles..</p>
                               <p>• Floor Tiles..</p>
                               <p>• Bathtub..</p>
@@ -116,9 +117,11 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
                               <p>• Vanity..</p>
                               <p>• Faucet and Vanity Sink..</p>
                             </div>
-                            
-                            <p className="font-medium mt-4">Supply and Installation:</p>
-                            <div className="ml-2 space-y-1 text-xs">
+                          </div>
+                          
+                          <div>
+                            <p className="font-medium text-foreground mb-1">Supply and Installation:</p>
+                            <div className="ml-2 text-xs">
                               <p>1. Install a 59" acrylic shower base with a frameless glass enclosure, featuring black frame.</p>
                             </div>
                           </div>
@@ -146,13 +149,13 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
             </div>
           </div>
 
-          {/* Right Column - Client Info and Details */}
+          {/* Right Column - Client Info and Estimate Details */}
           <div className="col-span-7 space-y-6">
-            {/* Client Information */}
-            <Card className="border-2 border-green-500">
+            {/* Client Information - Green Border Box */}
+            <Card className="border-2 border-green-500 bg-green-50/30">
               <CardContent className="p-4">
-                <div className="space-y-2">
-                  <p className="font-bold text-lg">{estimate.clientName}</p>
+                <div className="space-y-1">
+                  <p className="font-bold text-lg text-foreground">{estimate.clientName}</p>
                   <p className="text-sm text-muted-foreground">Michael.manulak@gmail.com</p>
                   <p className="text-sm text-muted-foreground">{estimate.phone}</p>
                   <p className="text-sm text-muted-foreground">{estimate.address}</p>
@@ -161,25 +164,25 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
               </CardContent>
             </Card>
 
-            {/* Estimate Details Form */}
+            {/* Estimate Details */}
             <div className="space-y-4">
               <div>
-                <Label htmlFor="estimateNumber" className="text-sm text-blue-600">Estimate #</Label>
+                <Label htmlFor="estimateNumber" className="text-sm text-blue-600 font-medium">Estimate #</Label>
                 <Input 
                   id="estimateNumber"
                   value={estimate.estimateNumber.replace('#', '')}
-                  className="mt-1 border-2"
+                  className="mt-1 border-2 h-10"
                   readOnly
                 />
               </div>
 
               <div>
-                <Label htmlFor="date" className="text-sm text-blue-600">Date</Label>
+                <Label htmlFor="date" className="text-sm text-blue-600 font-medium">Date</Label>
                 <div className="relative">
                   <Input 
                     id="date"
                     value="21-08-2025"
-                    className="mt-1 border-2 pr-10"
+                    className="mt-1 border-2 h-10 pr-10"
                     readOnly
                   />
                   <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -187,27 +190,27 @@ export const EstimateViewDialog = ({ open, onOpenChange, estimate, onEdit }: Est
               </div>
 
               <div>
-                <Label htmlFor="expirationDate" className="text-sm text-blue-600">Expiration Date</Label>
+                <Label htmlFor="expirationDate" className="text-sm text-blue-600 font-medium">Expiration Date</Label>
                 <div className="relative">
                   <Input 
                     id="expirationDate"
                     value="26-08-2025"
-                    className="mt-1 border-2 pr-10"
+                    className="mt-1 border-2 h-10 pr-10"
                     readOnly
                   />
                   <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
 
-              <p className="text-xs text-blue-600">
+              <p className="text-xs text-blue-600 font-medium">
                 Clients will have 5 day(s) to approve this estimate if sent today
               </p>
 
               <div>
-                <Label htmlFor="poNumber" className="text-sm text-blue-600">PO Number</Label>
+                <Label htmlFor="poNumber" className="text-sm text-blue-600 font-medium">PO Number</Label>
                 <Input 
                   id="poNumber"
-                  className="mt-1 border-2"
+                  className="mt-1 border-2 h-10"
                   placeholder="Enter PO number"
                 />
               </div>
