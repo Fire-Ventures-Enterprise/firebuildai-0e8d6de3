@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -79,12 +79,12 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-xl font-semibold">
             {mode === 'create' ? 'Create New Estimate' : 'Edit Estimate'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-muted-foreground">
             {mode === 'create' 
               ? 'Fill in the details to create a new estimate for your client.'
               : 'Update the estimate details below.'
@@ -93,72 +93,90 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+          {/* Client Name and Phone */}
+          <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="clientName">Client Name *</Label>
+              <Label htmlFor="clientName" className="text-sm font-medium">
+                Client Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="clientName"
                 value={formData.clientName}
                 onChange={(e) => setFormData(prev => ({ ...prev, clientName: e.target.value }))}
+                className="h-12 border-2 rounded-md"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone" className="text-sm font-medium">Phone</Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                className="h-12 border-2 rounded-md"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Address and City */}
+          <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="address">Address *</Label>
+              <Label htmlFor="address" className="text-sm font-medium">
+                Address <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="address"
                 value={formData.address}
                 onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                className="h-12 border-2 rounded-md"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="city">City *</Label>
+              <Label htmlFor="city" className="text-sm font-medium">
+                City <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="city"
                 value={formData.city}
                 onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                className="h-12 border-2 rounded-md"
                 required
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          {/* Amount, Date, and Status */}
+          <div className="grid grid-cols-3 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount ($) *</Label>
+              <Label htmlFor="amount" className="text-sm font-medium">
+                Amount ($) <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="amount"
                 type="number"
                 step="0.01"
                 value={formData.amount}
                 onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                className="h-12 border-2 rounded-md"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label>Date *</Label>
+              <Label className="text-sm font-medium">
+                Date <span className="text-red-500">*</span>
+              </Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full h-12 justify-start text-left font-normal border-2 rounded-md",
                       !formData.date && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.date ? format(formData.date, "PPP") : "Pick a date"}
+                    {formData.date ? format(formData.date, "MMMM do, yyyy") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -172,9 +190,9 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
               </Popover>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="text-sm font-medium">Status</Label>
               <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
-                <SelectTrigger>
+                <SelectTrigger className="h-12 border-2 rounded-md">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -186,59 +204,67 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
             </div>
           </div>
 
+          {/* Work Scope */}
           <div className="space-y-2">
-            <Label htmlFor="workScope">Work Scope</Label>
+            <Label htmlFor="workScope" className="text-sm font-medium">Work Scope</Label>
             <Textarea
               id="workScope"
               placeholder="Describe the scope of work..."
               value={formData.workScope}
               onChange={(e) => setFormData(prev => ({ ...prev, workScope: e.target.value }))}
-              rows={3}
+              rows={4}
+              className="border-2 rounded-md resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Materials and Labor Details */}
+          <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="materials">Materials</Label>
+              <Label htmlFor="materials" className="text-sm font-medium">Materials</Label>
               <Textarea
                 id="materials"
                 placeholder="List materials needed..."
                 value={formData.materials}
                 onChange={(e) => setFormData(prev => ({ ...prev, materials: e.target.value }))}
-                rows={3}
+                rows={4}
+                className="border-2 rounded-md resize-none"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="labor">Labor Details</Label>
+              <Label htmlFor="labor" className="text-sm font-medium">Labor Details</Label>
               <Textarea
                 id="labor"
                 placeholder="Describe labor requirements..."
                 value={formData.labor}
                 onChange={(e) => setFormData(prev => ({ ...prev, labor: e.target.value }))}
-                rows={3}
+                rows={4}
+                className="border-2 rounded-md resize-none"
               />
             </div>
           </div>
 
+          {/* Notes */}
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes" className="text-sm font-medium">Notes</Label>
             <Textarea
               id="notes"
               placeholder="Additional notes..."
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              rows={2}
+              rows={3}
+              className="border-2 rounded-md resize-none"
             />
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 pt-6 border-t">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="px-6">
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" className="px-6 bg-blue-600 hover:bg-blue-700">
               {mode === 'create' ? 'Create Estimate' : 'Save Changes'}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
