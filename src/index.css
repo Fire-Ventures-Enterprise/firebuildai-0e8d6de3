@@ -17,9 +17,9 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222 15% 12%;
 
-    --primary: 22 96% 50%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 22 96% 65%;
+    --primary-glow: 217 91% 75%;
 
     --secondary: 210 25% 85%;
     --secondary-foreground: 222 15% 12%;
@@ -41,7 +41,7 @@ All colors MUST be HSL.
 
     --border: 214 25% 88%;
     --input: 214 25% 88%;
-    --ring: 22 96% 50%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
@@ -77,9 +77,9 @@ All colors MUST be HSL.
     --popover: 222 15% 10%;
     --popover-foreground: 210 25% 95%;
 
-    --primary: 22 96% 55%;
-    --primary-foreground: 0 0% 0%;
-    --primary-glow: 22 96% 70%;
+    --primary: 217 91% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 217 91% 80%;
 
     --secondary: 217 25% 20%;
     --secondary-foreground: 210 25% 95%;
@@ -101,7 +101,7 @@ All colors MUST be HSL.
 
     --border: 217 25% 18%;
     --input: 217 25% 18%;
-    --ring: 22 96% 55%;
+    --ring: 217 91% 65%;
 
     /* Dark mode gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
