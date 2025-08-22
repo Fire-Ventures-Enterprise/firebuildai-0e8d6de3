@@ -22,13 +22,19 @@ interface SidebarProps {
 
 const navigationItems = [
   { id: "dashboard", label: "Dashboard", icon: Home },
-  { id: "estimates", label: "Estimates", icon: FileText },
-  { id: "clients", label: "Clients", icon: Users },
   { id: "jobs", label: "Jobs", icon: Briefcase },
-  { id: "payments", label: "Payments", icon: DollarSign },
+  { id: "purchase-orders", label: "Purchase Orders", icon: FileText },
+  { id: "quotes", label: "Quotes", icon: DollarSign },
+  { id: "client-portal", label: "Client Portal", icon: Users },
+  { id: "invoices", label: "Invoices", icon: FileText },
+  { id: "estimates", label: "Estimates", icon: FileText },
+  { id: "documents", label: "Documents", icon: FileText },
+  { id: "gps-tracking", label: "GPS Tracking", icon: MapPin },
+  { id: "contractors", label: "Contractors", icon: Users },
+  { id: "expenses", label: "Expenses", icon: DollarSign },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "schedule", label: "Schedule", icon: Calendar },
-  { id: "locations", label: "Locations", icon: MapPin },
+  { id: "messages", label: "Messages", icon: Calendar },
+  { id: "fleet", label: "Fleet", icon: MapPin },
 ];
 
 export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
