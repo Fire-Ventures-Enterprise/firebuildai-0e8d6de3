@@ -1,5 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 interface EstimateLineItemsProps {
   description: string;
@@ -32,7 +34,7 @@ export const EstimateLineItems = ({
         <tbody>
           <tr className="border-b border-gray-200">
             <td className="p-3 align-top">
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Input
                   placeholder="Item description (e.g., Bathroom)"
                   value={description}
@@ -40,39 +42,34 @@ export const EstimateLineItems = ({
                   className="border-0 p-0 font-medium text-base bg-transparent"
                 />
                 
-                <div className="text-sm">
-                  <div className="flex items-center gap-2 mb-3">
+                {/* Item List Header */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-600 rounded"></div>
                     <span className="font-medium text-green-600">Item List</span>
                   </div>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                {/* Description Area */}
+                <div className="space-y-2">
+                  <Textarea
+                    placeholder="Enter work scope and description..."
+                    value={workScope}
+                    onChange={(e) => onUpdate('workScope', e.target.value)}
+                    rows={3}
+                    className="border border-gray-200 p-2 resize-none text-sm rounded-md"
+                  />
                   
-                  <div className="mb-4">
-                    <div className="font-medium mb-2">{description} Renovation Scope of Work</div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <div className="font-medium mb-2">Demolition:</div>
-                      <Textarea
-                        placeholder="Remove and dispose of the following items from the property..."
-                        value={workScope}
-                        onChange={(e) => onUpdate('workScope', e.target.value)}
-                        rows={6}
-                        className="border-0 p-0 resize-none text-sm bg-transparent"
-                      />
-                    </div>
-                    
-                    <div>
-                      <div className="font-medium mb-2">Supply and Installation:</div>
-                      <Textarea
-                        placeholder="List all materials and installation work..."
-                        value={materials}
-                        onChange={(e) => onUpdate('materials', e.target.value)}
-                        rows={6}
-                        className="border-0 p-0 resize-none text-sm bg-transparent"
-                      />
-                    </div>
-                  </div>
+                  <Textarea
+                    placeholder="Enter materials and installation details..."
+                    value={materials}
+                    onChange={(e) => onUpdate('materials', e.target.value)}
+                    rows={3}
+                    className="border border-gray-200 p-2 resize-none text-sm rounded-md"
+                  />
                 </div>
               </div>
             </td>
