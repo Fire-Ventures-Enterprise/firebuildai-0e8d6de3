@@ -103,7 +103,7 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Header Section with Company & Client */}
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start mb-6">
             {/* Company Info */}
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg">
@@ -121,38 +121,64 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
               </div>
             </div>
 
-            {/* Client Info Card - Compact like Joist */}
-            <div className="border-2 border-green-500 rounded-lg p-4 max-w-xs bg-green-50/30">
-              <div className="space-y-1">
+            {/* Business Tax Number */}
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">Business / Tax #</p>
+              <p className="text-sm font-medium">789571296RT0001</p>
+            </div>
+          </div>
+
+          {/* Client Info Fields - Compact like estimate details */}
+          <div className="border-t pt-4">
+            <h4 className="text-sm font-medium text-muted-foreground mb-3">Prepared For</h4>
+            <div className="flex flex-wrap gap-4">
+              <div className="w-48">
+                <label className="text-sm font-medium text-primary">Client Name</label>
                 <Input
-                  placeholder="Client Name"
+                  placeholder="Enter client name"
                   value={formData.clientName}
                   onChange={(e) => updateField('clientName', e.target.value)}
-                  className="border-0 p-0 bg-transparent font-semibold text-base"
+                  className="mt-1 h-9"
                 />
+              </div>
+              
+              <div className="w-48">
+                <label className="text-sm font-medium text-primary">Email</label>
                 <Input
-                  placeholder="Email"
+                  placeholder="Enter email"
                   value={formData.clientEmail}
                   onChange={(e) => updateField('clientEmail', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                  className="mt-1 h-9"
                 />
+              </div>
+              
+              <div className="w-36">
+                <label className="text-sm font-medium text-primary">Phone</label>
                 <Input
-                  placeholder="Phone"
+                  placeholder="Enter phone"
                   value={formData.phone}
                   onChange={(e) => updateField('phone', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                  className="mt-1 h-9"
                 />
+              </div>
+              
+              <div className="w-48">
+                <label className="text-sm font-medium text-primary">Address</label>
                 <Input
-                  placeholder="Address"
+                  placeholder="Enter address"
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                  className="mt-1 h-9"
                 />
+              </div>
+              
+              <div className="w-48">
+                <label className="text-sm font-medium text-primary">City, Province</label>
                 <Input
-                  placeholder="City, Province"
+                  placeholder="Enter city, province"
                   value={formData.city}
                   onChange={(e) => updateField('city', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                  className="mt-1 h-9"
                 />
               </div>
             </div>
