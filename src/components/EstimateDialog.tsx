@@ -287,18 +287,82 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
                     </td>
                   </tr>
                 </tbody>
-                <tfoot className="bg-gray-50">
-                  <tr>
-                    <td colSpan={3} className="p-3 text-right font-medium">Total:</td>
-                    <td className="p-3 text-right font-bold text-lg">
-                      ${Number(formData.amount || 0).toLocaleString('en-US', { 
+              </table>
+            </div>
+            
+            {/* Financial Summary */}
+            <div className="mt-6 space-y-4">
+              {/* Additional Notes */}
+              <div className="border-t pt-4">
+                <Textarea
+                  placeholder="Additional notes (e.g., terms, conditions, project timeline, permits, etc.)"
+                  rows={4}
+                  className="resize-none text-sm"
+                />
+              </div>
+              
+              {/* Financial Breakdown */}
+              <div className="border-t pt-4">
+                <div className="flex justify-end">
+                  <div className="w-80 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Subtotal</span>
+                      <span>${Number(formData.amount || 0).toLocaleString('en-US', { 
                         minimumFractionDigits: 2, 
                         maximumFractionDigits: 2 
-                      })}
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
+                      })}</span>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span>Discount</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        className="w-24 h-6 text-right text-sm"
+                      />
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span>Tax</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        className="w-24 h-6 text-right text-sm"
+                      />
+                    </div>
+                    
+                    <div className="border-t pt-2">
+                      <div className="flex justify-between font-semibold">
+                        <span>Total</span>
+                        <span>${Number(formData.amount || 0).toLocaleString('en-US', { 
+                          minimumFractionDigits: 2, 
+                          maximumFractionDigits: 2 
+                        })}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span>Deposit Due</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        className="w-24 h-6 text-right text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Footer Message */}
+              <div className="border-t pt-4">
+                <p className="text-center font-medium text-primary">THANK YOU FOR YOUR BUSINESS!</p>
+                <p className="text-center text-sm text-muted-foreground mt-2">
+                  By signing this document, the customer agrees to the services and conditions outlined in this document.
+                </p>
+              </div>
             </div>
           </div>
         </form>
