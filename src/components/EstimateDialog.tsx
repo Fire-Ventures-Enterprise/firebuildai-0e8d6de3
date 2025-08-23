@@ -102,122 +102,120 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Company & Client Section */}
-          <div className="grid grid-cols-3 gap-8">
+          {/* Header Section with Company & Client */}
+          <div className="flex justify-between items-start">
             {/* Company Info */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
-                  FB
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">FIREBUILD.AI</h3>
-                  <p className="text-sm text-muted-foreground">CONSTRUCTION</p>
-                </div>
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                FB
               </div>
-              <div className="text-sm text-muted-foreground space-y-1">
-                <p>29 Birchbank Crescent</p>
-                <p>Kanata, Ontario K2M 2J9</p>
-                <p>Canada</p>
-                <p>firebuildai@gmail.com</p>
+              <div>
+                <h3 className="font-bold text-xl">FIREBUILD.AI</h3>
+                <p className="text-sm text-muted-foreground mb-2">CONSTRUCTION</p>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>29 Birchbank Crescent</p>
+                  <p>Kanata, Ontario K2M 2J9</p>
+                  <p>Canada</p>
+                  <p>firebuildai@gmail.com</p>
+                </div>
               </div>
             </div>
 
-            {/* Client Info */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="space-y-3">
-                <Input
-                  placeholder="Client Name"
-                  value={formData.clientName}
-                  onChange={(e) => updateField('clientName', e.target.value)}
-                  className="border-0 p-0 bg-transparent font-medium text-base"
-                />
-                <Input
-                  placeholder="Email"
-                  value={formData.clientEmail}
-                  onChange={(e) => updateField('clientEmail', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm"
-                />
-                <Input
-                  placeholder="Phone"
-                  value={formData.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm"
-                />
-                <Input
-                  placeholder="Address"
-                  value={formData.address}
-                  onChange={(e) => updateField('address', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm"
-                />
-                <Input
-                  placeholder="City, Province"
-                  value={formData.city}
-                  onChange={(e) => updateField('city', e.target.value)}
-                  className="border-0 p-0 bg-transparent text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Estimate Details */}
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs text-muted-foreground">Estimate #</label>
-                <Input
-                  value={formData.estimateNumber}
-                  onChange={(e) => updateField('estimateNumber', e.target.value)}
-                  className="mt-1 h-8"
-                />
+            {/* Client Info - Compact */}
+            <div className="text-right max-w-xs">
+              <div className="mb-4">
+                <h4 className="text-sm font-medium text-muted-foreground mb-2">Prepared For</h4>
+                <div className="space-y-1">
+                  <Input
+                    placeholder="Client Name"
+                    value={formData.clientName}
+                    onChange={(e) => updateField('clientName', e.target.value)}
+                    className="text-right border-0 p-0 bg-transparent font-medium text-base"
+                  />
+                  <Input
+                    placeholder="Address"
+                    value={formData.address}
+                    onChange={(e) => updateField('address', e.target.value)}
+                    className="text-right border-0 p-0 bg-transparent text-sm"
+                  />
+                  <Input
+                    placeholder="City, Province"
+                    value={formData.city}
+                    onChange={(e) => updateField('city', e.target.value)}
+                    className="text-right border-0 p-0 bg-transparent text-sm"
+                  />
+                  <Input
+                    placeholder="Phone"
+                    value={formData.phone}
+                    onChange={(e) => updateField('phone', e.target.value)}
+                    className="text-right border-0 p-0 bg-transparent text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="text-xs text-muted-foreground">Date</label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full h-8 justify-start text-left font-normal mt-1">
-                      <CalendarIcon className="mr-2 h-3 w-3" />
-                      {format(formData.date, "dd-MM-yyyy")}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={formData.date}
-                      onSelect={(date) => updateField('date', date || new Date())}
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div>
-                <label className="text-xs text-muted-foreground">Expiration Date</label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full h-8 justify-start text-left font-normal mt-1">
-                      <CalendarIcon className="mr-2 h-3 w-3" />
-                      {format(formData.expirationDate, "dd-MM-yyyy")}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={formData.expirationDate}
-                      onSelect={(date) => updateField('expirationDate', date || new Date())}
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div>
-                <label className="text-xs text-muted-foreground">PO Number</label>
-                <Input
-                  placeholder="Enter PO number"
-                  value={formData.poNumber}
-                  onChange={(e) => updateField('poNumber', e.target.value)}
-                  className="mt-1 h-8"
-                />
+              {/* Estimate Details - Compact */}
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">Estimate #</span>
+                  <Input
+                    value={formData.estimateNumber}
+                    onChange={(e) => updateField('estimateNumber', e.target.value)}
+                    className="text-right border-0 p-0 bg-transparent h-auto w-24"
+                  />
+                </div>
+                
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">Date</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" className="h-auto p-0 text-sm">
+                        {format(formData.date, "dd/MM/yyyy")}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.date}
+                        onSelect={(date) => updateField('date', date || new Date())}
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">Expiration Date</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" className="h-auto p-0 text-sm">
+                        {format(formData.expirationDate, "dd/MM/yyyy")}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.expirationDate}
+                        onSelect={(date) => updateField('expirationDate', date || new Date())}
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">PO #</span>
+                  <Input
+                    placeholder="PO Number"
+                    value={formData.poNumber}
+                    onChange={(e) => updateField('poNumber', e.target.value)}
+                    className="text-right border-0 p-0 bg-transparent h-auto w-24"
+                  />
+                </div>
+                
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">Business / Tax #</span>
+                  <span className="text-sm">789571296RT0001</span>
+                </div>
               </div>
             </div>
           </div>
