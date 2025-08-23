@@ -7,6 +7,7 @@ import { TeamPerformanceCard } from "@/components/TeamPerformanceCard";
 import { FleetStatusCard } from "@/components/FleetStatusCard";
 import { ReviewsCard } from "@/components/ReviewsCard";
 import { Button } from "@/components/ui/button";
+import { TrialBanner } from "@/components/app/TrialBanner";
 
 // Mock data matching the reference dashboard
 const metrics = [
@@ -43,6 +44,8 @@ const metrics = [
 export const DashboardPage = () => {
   return (
     <div className="space-y-6">
+      <TrialBanner />
+      
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
