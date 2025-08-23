@@ -1,7 +1,8 @@
-import { Bell, Search, User, Settings, HardHat } from "lucide-react";
+import { Bell, Search, User, Settings, HardHat, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 export const DashboardHeader = () => {
   return (
@@ -33,6 +34,13 @@ export const DashboardHeader = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ExternalLink className="w-4 h-4" />
+              <span className="hidden sm:inline">View Site</span>
+            </Button>
+          </Link>
+          
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="w-5 h-5" />
             <Badge 
