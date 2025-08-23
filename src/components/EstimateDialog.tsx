@@ -158,24 +158,24 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
             </div>
           </div>
 
-          {/* Estimate Details Row - Below customer card like Joist */}
+          {/* Estimate Details Row - Compact fields below customer card */}
           <div className="border-t pt-4">
-            <div className="grid grid-cols-4 gap-6">
-              <div>
+            <div className="flex flex-wrap gap-4">
+              <div className="w-36">
                 <label className="text-sm font-medium text-primary">Estimate #</label>
                 <Input
                   value={formData.estimateNumber}
                   onChange={(e) => updateField('estimateNumber', e.target.value)}
-                  className="mt-1"
+                  className="mt-1 h-9"
                 />
               </div>
               
-              <div>
+              <div className="w-36">
                 <label className="text-sm font-medium text-primary">Date</label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full mt-1 justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
+                    <Button variant="outline" className="w-full mt-1 h-9 justify-start text-left font-normal px-3">
+                      <CalendarIcon className="mr-2 h-3 w-3" />
                       {format(formData.date, "dd-MM-yyyy")}
                     </Button>
                   </PopoverTrigger>
@@ -184,17 +184,18 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
                       mode="single"
                       selected={formData.date}
                       onSelect={(date) => updateField('date', date || new Date())}
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
               </div>
               
-              <div>
+              <div className="w-36">
                 <label className="text-sm font-medium text-primary">Expiration Date</label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full mt-1 justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
+                    <Button variant="outline" className="w-full mt-1 h-9 justify-start text-left font-normal px-3">
+                      <CalendarIcon className="mr-2 h-3 w-3" />
                       {format(formData.expirationDate, "dd-MM-yyyy")}
                     </Button>
                   </PopoverTrigger>
@@ -203,23 +204,24 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
                       mode="single"
                       selected={formData.expirationDate}
                       onSelect={(date) => updateField('expirationDate', date || new Date())}
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
               </div>
               
-              <div>
+              <div className="w-36">
                 <label className="text-sm font-medium text-primary">PO Number</label>
                 <Input
                   placeholder="Enter PO number"
                   value={formData.poNumber}
                   onChange={(e) => updateField('poNumber', e.target.value)}
-                  className="mt-1"
+                  className="mt-1 h-9"
                 />
               </div>
             </div>
             
-            <div className="mt-3 text-sm text-muted-foreground">
+            <div className="mt-3 text-sm text-primary">
               Clients will have 5 day(s) to approve this estimate if sent today
             </div>
           </div>
