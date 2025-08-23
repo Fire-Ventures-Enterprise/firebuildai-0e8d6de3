@@ -54,16 +54,16 @@ interface NavigationItem {
 }
 
 const defaultNavigationItems: NavigationItem[] = [
-  { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
-  { id: "estimates", label: "Estimates", icon: FileText, path: "/estimates" },
-  { id: "invoices", label: "Invoices", icon: Receipt, path: "/invoices" },
-  { id: "scheduling", label: "Scheduling", icon: Calendar, path: "/scheduling" },
-  { id: "fleet", label: "Fleet", icon: Truck, path: "/fleet" },
-  { id: "teams", label: "Teams", icon: Users, path: "/teams" },
-  { id: "inventory", label: "Inventory", icon: Package, path: "/inventory" },
-  { id: "tools", label: "Tools", icon: Wrench, path: "/tools" },
-  { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics" },
-  { id: "help", label: "Help", icon: HelpCircle, path: "/help" },
+  { id: "dashboard", label: "Dashboard", icon: Home, path: "/app/dashboard" },
+  { id: "estimates", label: "Estimates", icon: FileText, path: "/app/estimates" },
+  { id: "invoices", label: "Invoices", icon: Receipt, path: "/app/invoices" },
+  { id: "scheduling", label: "Scheduling", icon: Calendar, path: "/app/scheduling" },
+  { id: "fleet", label: "Fleet", icon: Truck, path: "/app/fleet" },
+  { id: "teams", label: "Teams", icon: Users, path: "/app/teams" },
+  { id: "inventory", label: "Inventory", icon: Package, path: "/app/inventory" },
+  { id: "tools", label: "Tools", icon: Wrench, path: "/app/tools" },
+  { id: "analytics", label: "Analytics", icon: BarChart3, path: "/app/analytics" },
+  { id: "help", label: "Help", icon: HelpCircle, path: "/app/help" },
 ];
 
 interface SortableItemProps {
