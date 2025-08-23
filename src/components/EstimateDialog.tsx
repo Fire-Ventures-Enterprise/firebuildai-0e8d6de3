@@ -121,102 +121,106 @@ export const EstimateDialog = ({ open, onOpenChange, estimate, mode, onSave }: E
               </div>
             </div>
 
-            {/* Client Info - Compact */}
-            <div className="text-right max-w-xs">
-              <div className="mb-4">
-                <h4 className="text-sm font-medium text-muted-foreground mb-2">Prepared For</h4>
-                <div className="space-y-1">
-                  <Input
-                    placeholder="Client Name"
-                    value={formData.clientName}
-                    onChange={(e) => updateField('clientName', e.target.value)}
-                    className="text-right border-0 p-0 bg-transparent font-medium text-base"
-                  />
-                  <Input
-                    placeholder="Address"
-                    value={formData.address}
-                    onChange={(e) => updateField('address', e.target.value)}
-                    className="text-right border-0 p-0 bg-transparent text-sm"
-                  />
-                  <Input
-                    placeholder="City, Province"
-                    value={formData.city}
-                    onChange={(e) => updateField('city', e.target.value)}
-                    className="text-right border-0 p-0 bg-transparent text-sm"
-                  />
-                  <Input
-                    placeholder="Phone"
-                    value={formData.phone}
-                    onChange={(e) => updateField('phone', e.target.value)}
-                    className="text-right border-0 p-0 bg-transparent text-sm"
-                  />
-                </div>
+            {/* Client Info Card - Compact like Joist */}
+            <div className="border-2 border-green-500 rounded-lg p-4 max-w-xs bg-green-50/30">
+              <div className="space-y-1">
+                <Input
+                  placeholder="Client Name"
+                  value={formData.clientName}
+                  onChange={(e) => updateField('clientName', e.target.value)}
+                  className="border-0 p-0 bg-transparent font-semibold text-base"
+                />
+                <Input
+                  placeholder="Email"
+                  value={formData.clientEmail}
+                  onChange={(e) => updateField('clientEmail', e.target.value)}
+                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                />
+                <Input
+                  placeholder="Phone"
+                  value={formData.phone}
+                  onChange={(e) => updateField('phone', e.target.value)}
+                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                />
+                <Input
+                  placeholder="Address"
+                  value={formData.address}
+                  onChange={(e) => updateField('address', e.target.value)}
+                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                />
+                <Input
+                  placeholder="City, Province"
+                  value={formData.city}
+                  onChange={(e) => updateField('city', e.target.value)}
+                  className="border-0 p-0 bg-transparent text-sm text-muted-foreground"
+                />
               </div>
+            </div>
+          </div>
 
-              {/* Estimate Details - Compact */}
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">Estimate #</span>
-                  <Input
-                    value={formData.estimateNumber}
-                    onChange={(e) => updateField('estimateNumber', e.target.value)}
-                    className="text-right border-0 p-0 bg-transparent h-auto w-24"
-                  />
-                </div>
-                
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">Date</span>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost" className="h-auto p-0 text-sm">
-                        {format(formData.date, "dd/MM/yyyy")}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={formData.date}
-                        onSelect={(date) => updateField('date', date || new Date())}
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">Expiration Date</span>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost" className="h-auto p-0 text-sm">
-                        {format(formData.expirationDate, "dd/MM/yyyy")}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={formData.expirationDate}
-                        onSelect={(date) => updateField('expirationDate', date || new Date())}
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">PO #</span>
-                  <Input
-                    placeholder="PO Number"
-                    value={formData.poNumber}
-                    onChange={(e) => updateField('poNumber', e.target.value)}
-                    className="text-right border-0 p-0 bg-transparent h-auto w-24"
-                  />
-                </div>
-                
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">Business / Tax #</span>
-                  <span className="text-sm">789571296RT0001</span>
-                </div>
+          {/* Estimate Details Row - Below customer card like Joist */}
+          <div className="border-t pt-4">
+            <div className="grid grid-cols-4 gap-6">
+              <div>
+                <label className="text-sm font-medium text-primary">Estimate #</label>
+                <Input
+                  value={formData.estimateNumber}
+                  onChange={(e) => updateField('estimateNumber', e.target.value)}
+                  className="mt-1"
+                />
               </div>
+              
+              <div>
+                <label className="text-sm font-medium text-primary">Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full mt-1 justify-start text-left font-normal">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {format(formData.date, "dd-MM-yyyy")}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.date}
+                      onSelect={(date) => updateField('date', date || new Date())}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-primary">Expiration Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full mt-1 justify-start text-left font-normal">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {format(formData.expirationDate, "dd-MM-yyyy")}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.expirationDate}
+                      onSelect={(date) => updateField('expirationDate', date || new Date())}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-primary">PO Number</label>
+                <Input
+                  placeholder="Enter PO number"
+                  value={formData.poNumber}
+                  onChange={(e) => updateField('poNumber', e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+            
+            <div className="mt-3 text-sm text-muted-foreground">
+              Clients will have 5 day(s) to approve this estimate if sent today
             </div>
           </div>
 
