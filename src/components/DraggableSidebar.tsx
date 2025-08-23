@@ -10,11 +10,17 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  GripVertical
+  GripVertical,
+  Truck,
+  Package,
+  Wrench,
+  HelpCircle,
+  Receipt
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   DndContext,
   closestCenter,
@@ -44,33 +50,30 @@ interface NavigationItem {
   id: string;
   label: string;
   icon: any;
+  path: string;
 }
 
 const defaultNavigationItems: NavigationItem[] = [
-  { id: "dashboard", label: "Dashboard", icon: Home },
-  { id: "jobs", label: "Jobs", icon: Briefcase },
-  { id: "purchase-orders", label: "Purchase Orders", icon: FileText },
-  { id: "quotes", label: "Quotes", icon: DollarSign },
-  { id: "client-portal", label: "Client Portal", icon: Users },
-  { id: "invoices", label: "Invoices", icon: FileText },
-  { id: "estimates", label: "Estimates", icon: FileText },
-  { id: "documents", label: "Documents", icon: FileText },
-  { id: "gps-tracking", label: "GPS Tracking", icon: MapPin },
-  { id: "contractors", label: "Contractors", icon: Users },
-  { id: "expenses", label: "Expenses", icon: DollarSign },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "messages", label: "Messages", icon: Calendar },
-  { id: "fleet", label: "Fleet", icon: MapPin },
+  { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
+  { id: "estimates", label: "Estimates", icon: FileText, path: "/estimates" },
+  { id: "invoices", label: "Invoices", icon: Receipt, path: "/invoices" },
+  { id: "scheduling", label: "Scheduling", icon: Calendar, path: "/scheduling" },
+  { id: "fleet", label: "Fleet", icon: Truck, path: "/fleet" },
+  { id: "teams", label: "Teams", icon: Users, path: "/teams" },
+  { id: "inventory", label: "Inventory", icon: Package, path: "/inventory" },
+  { id: "tools", label: "Tools", icon: Wrench, path: "/tools" },
+  { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics" },
+  { id: "help", label: "Help", icon: HelpCircle, path: "/help" },
 ];
 
 interface SortableItemProps {
   item: NavigationItem;
   activeTab: string;
-  onTabChange: (tab: string) => void;
+  onClick: () => void;
   collapsed: boolean;
 }
 
-function SortableItem({ item, activeTab, onTabChange, collapsed }: SortableItemProps) {
+function SortableItem({ item, activeTab, onClick, collapsed }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -97,7 +100,7 @@ function SortableItem({ item, activeTab, onTabChange, collapsed }: SortableItemP
           collapsed ? "px-2" : "px-3",
           isActive && "bg-gradient-primary shadow-elegant"
         )}
-        onClick={() => onTabChange(item.id)}
+        onClick={onClick}
       >
         <div
           {...attributes}
@@ -121,6 +124,7 @@ function SortableItem({ item, activeTab, onTabChange, collapsed }: SortableItemP
 export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [navigationItems, setNavigationItems] = useState(defaultNavigationItems);
+  const navigate = useNavigate();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -141,6 +145,11 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
       });
     }
   }
+
+  const handleNavigation = (item: NavigationItem) => {
+    onTabChange(item.id);
+    navigate(item.path);
+  };
 
   return (
     <div className={cn(
@@ -182,7 +191,7 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
                   key={item.id}
                   item={item}
                   activeTab={activeTab}
-                  onTabChange={onTabChange}
+                  onClick={() => handleNavigation(item)}
                   collapsed={collapsed}
                 />
               ))}
