@@ -7,9 +7,10 @@ import { RecentActivityCard } from "@/components/RecentActivityCard";
 import { TeamPerformanceCard } from "@/components/TeamPerformanceCard";
 import { FleetStatusCard } from "@/components/FleetStatusCard";
 import { ReviewsCard } from "@/components/ReviewsCard";
-import { EstimatesPage } from "@/components/EstimatesPage";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { EstimateBuilder } from "@/components/estimates/EstimateBuilder";
+import { InvoiceForm } from "@/components/invoicing/InvoiceForm";
 
 // Mock data matching the reference dashboard
 const metrics = [
@@ -97,7 +98,20 @@ export const Dashboard = () => {
         );
       
       case "estimates":
-        return <EstimatesPage />;
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Estimates</h2>
+            <EstimateBuilder 
+              open={true} 
+              onOpenChange={() => setActiveTab("dashboard")}
+              mode="create"
+              onSave={(data) => {
+                console.log("Estimate created:", data);
+                setActiveTab("dashboard");
+              }}
+            />
+          </div>
+        );
       
       default:
         return (
