@@ -83,12 +83,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const initAuth = async () => {
       try {
+        // Clear any stale session first
         const { data: { session } } = await supabase.auth.getSession();
         
         if (mounted) {
           if (session?.user) {
-            setUser(session.user);
-            await fetchProfile(session.user.id);
+            // Verify session is still valid
+            const { data: { user: validUser } } = await supabase.auth.getUser();
+            if (validUser) {
+              setUser(session.user);
+              await fetchProfile(session.user.id);
+            } else {
+              // Session is invalid, clear it
+              await supabase.auth.signOut();
+              setUser(null);
+              setProfile(null);
+            }
           } else {
             setUser(null);
             setProfile(null);
@@ -99,6 +109,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (error) {
         console.error('Error initializing auth:', error);
         if (mounted) {
+          setUser(null);
+          setProfile(null);
           setLoading(false);
         }
       }
