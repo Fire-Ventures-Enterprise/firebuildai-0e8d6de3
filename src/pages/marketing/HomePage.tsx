@@ -39,7 +39,7 @@ export const HomePage = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link to="/app/dashboard">
+              <Link to="/login">
                 <Button variant="ghost" className="hidden sm:inline-flex">
                   Login
                 </Button>
