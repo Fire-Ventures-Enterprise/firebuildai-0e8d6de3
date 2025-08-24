@@ -35,13 +35,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch user profile from database
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('Fetching profile for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Profile fetch error:', error);
+        throw error;
+      }
+
+      console.log('Profile data:', data);
 
       // Check trial status and update if needed
       if (data) {
@@ -57,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // If trial expired and not subscribed, redirect to upgrade
         if (status === 'expired' && !data.is_subscribed) {
+          console.log('Trial expired, redirecting to upgrade');
           toast.error('Your free trial has expired. Please upgrade to continue.');
           navigate('/upgrade');
         }
@@ -65,6 +72,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setProfile(data as UserProfile);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      // Don't block login if profile fetch fails
+      setProfile(null);
     }
   };
 
@@ -183,7 +192,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (data.user) {
       toast.success('Welcome back!');
-      // The auth state listener will handle the rest
+      navigate('/app/dashboard');
     }
   };
 

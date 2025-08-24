@@ -31,10 +31,10 @@ export const LoginPage = () => {
     
     try {
       await signIn(formData.email, formData.password);
-      // Don't set loading to false here - let the redirect happen first
+      // Success - navigation will happen via useEffect when user state updates
     } catch (error) {
       console.error('Login error:', error);
-      setLoading(false); // Only set to false on error
+      setLoading(false);
     }
   };
 
