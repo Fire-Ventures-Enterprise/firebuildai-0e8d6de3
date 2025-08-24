@@ -173,7 +173,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sign in
   const signIn = async (email: string, password: string) => {
-    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -216,7 +215,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         await fetchProfile(data.user.id);
         toast.success('Welcome back!');
-        navigate('/app/dashboard');
+        // Use setTimeout to ensure the state updates and loading is cleared before navigation
+        setTimeout(() => {
+          navigate('/app/dashboard');
+        }, 100);
       }
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in');
