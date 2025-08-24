@@ -173,61 +173,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sign in
   const signIn = async (email: string, password: string) => {
-    console.log('Starting sign in...');
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) {
-        console.error('Sign in error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       if (data.user) {
-        console.log('Sign in successful, user:', data.user.id);
-        setUser(data.user);
-        
-        // Check if profile exists, create if not
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
-          .maybeSingle();
-
-        if (!existingProfile) {
-          console.log('Creating new profile...');
-          // Create profile if it doesn't exist
-          const trialStartDate = new Date();
-          const trialEndDate = new Date();
-          trialEndDate.setDate(trialEndDate.getDate() + 30);
-          
-          const dataRetentionDate = new Date();
-          dataRetentionDate.setDate(dataRetentionDate.getDate() + 120);
-
-          await supabase
-            .from('profiles')
-            .insert({
-              id: data.user.id,
-              email: data.user.email || email,
-              full_name: data.user.user_metadata?.full_name,
-              company_name: data.user.user_metadata?.company_name,
-              trial_starts_at: trialStartDate.toISOString(),
-              trial_ends_at: trialEndDate.toISOString(),
-              trial_status: 'active',
-              is_subscribed: false,
-              data_retention_until: dataRetentionDate.toISOString(),
-            });
-        }
-
-        await fetchProfile(data.user.id);
+        // Don't navigate here - let the LoginPage useEffect handle it
         toast.success('Welcome back!');
-        console.log('Navigating to dashboard...');
-        navigate('/app/dashboard');
+        // The auth state change listener will handle profile fetching
       }
     } catch (error: any) {
-      console.error('Sign in error caught:', error);
       toast.error(error.message || 'Failed to sign in');
       throw error;
     }
