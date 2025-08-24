@@ -44,7 +44,7 @@ export const HomePage = () => {
                   Login
                 </Button>
               </Link>
-              <Link to="/app/dashboard">
+              <Link to="/signup">
                 <Button>
                   Get Started Free
                 </Button>
