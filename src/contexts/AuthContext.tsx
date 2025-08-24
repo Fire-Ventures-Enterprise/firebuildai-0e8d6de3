@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, UserProfile, checkTrialStatus } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
+import { checkTrialStatus, UserProfile } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
@@ -63,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      setProfile(data);
+      setProfile(data as UserProfile);
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
