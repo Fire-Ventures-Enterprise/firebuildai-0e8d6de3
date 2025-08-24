@@ -1,15 +1,56 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, AlertCircle, Clock, Shield, Zap } from 'lucide-react';
+import { Check, AlertCircle, Clock, Shield, Zap, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export const UpgradePage = () => {
   const { profile, signOut } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleUpgrade = async (planName: string, tier?: string) => {
+    setLoadingPlan(planName);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          subscriptionType: 'standalone',
+          subscriptionTier: tier
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab for testing
+        window.open(data.url, '_blank');
+        toast({
+          title: "Checkout opened",
+          description: "Complete your payment in the new tab",
+        });
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to start checkout",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   const plans = [
     {
       name: 'Basic',
+      tier: 'tier1',
       price: '$49',
       description: 'Perfect for small contractors',
       features: [
@@ -22,6 +63,7 @@ export const UpgradePage = () => {
     },
     {
       name: 'Professional',
+      tier: 'tier2',
       price: '$99',
       description: 'For growing businesses',
       features: [
@@ -37,6 +79,7 @@ export const UpgradePage = () => {
     },
     {
       name: 'Enterprise',
+      tier: 'tier3',
       price: '$249',
       description: 'For large organizations',
       features: [
@@ -130,8 +173,14 @@ export const UpgradePage = () => {
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? 'default' : 'outline'}
+                  onClick={() => handleUpgrade(plan.name, plan.tier)}
+                  disabled={loadingPlan === plan.name}
                 >
-                  <Zap className="w-4 h-4 mr-2" />
+                  {loadingPlan === plan.name ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Zap className="w-4 h-4 mr-2" />
+                  )}
                   Upgrade to {plan.name}
                 </Button>
               </CardFooter>

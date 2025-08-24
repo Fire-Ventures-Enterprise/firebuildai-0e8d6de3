@@ -86,19 +86,19 @@ serve(async (req) => {
 
       switch(subscriptionTier) {
         case 'tier1':
-          tierName = "Standalone Portal - Tier 1";
-          tierAmount = 3900; // $39
-          tierDescription = "Basic contractor portal features";
+          tierName = "Basic Plan";
+          tierAmount = 4900; // $49
+          tierDescription = "Perfect for small contractors";
           break;
         case 'tier2':
-          tierName = "Standalone Portal - Tier 2";
-          tierAmount = 6900; // $69
-          tierDescription = "Professional contractor portal features";
+          tierName = "Professional Plan";
+          tierAmount = 9900; // $99
+          tierDescription = "For growing businesses";
           break;
         case 'tier3':
-          tierName = "Standalone Portal - Tier 3";
-          tierAmount = 9900; // $99
-          tierDescription = "Enterprise contractor portal features";
+          tierName = "Enterprise Plan";
+          tierAmount = 24900; // $249
+          tierDescription = "For large organizations";
           break;
         default:
           throw new Error("Invalid subscription tier");
