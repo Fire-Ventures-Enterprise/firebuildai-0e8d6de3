@@ -173,15 +173,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sign in
   const signIn = async (email: string, password: string) => {
+    console.log('Starting sign in...');
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Sign in error:', error);
+        throw error;
+      }
 
       if (data.user) {
+        console.log('Sign in successful, user:', data.user.id);
+        setUser(data.user);
+        
         // Check if profile exists, create if not
         const { data: existingProfile } = await supabase
           .from('profiles')
@@ -190,6 +197,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .maybeSingle();
 
         if (!existingProfile) {
+          console.log('Creating new profile...');
           // Create profile if it doesn't exist
           const trialStartDate = new Date();
           const trialEndDate = new Date();
@@ -215,12 +223,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         await fetchProfile(data.user.id);
         toast.success('Welcome back!');
-        // Use setTimeout to ensure the state updates and loading is cleared before navigation
-        setTimeout(() => {
-          navigate('/app/dashboard');
-        }, 100);
+        console.log('Navigating to dashboard...');
+        navigate('/app/dashboard');
       }
     } catch (error: any) {
+      console.error('Sign in error caught:', error);
       toast.error(error.message || 'Failed to sign in');
       throw error;
     }
