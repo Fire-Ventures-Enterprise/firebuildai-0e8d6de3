@@ -13,7 +13,7 @@ export const DashboardHeader = () => {
           <img 
             src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
             alt="FireBuild.ai" 
-            className="w-10 h-10 object-contain"
+            className="w-14 h-14 object-contain"
           />
           <div>
             <h1 className="text-xl font-bold text-foreground">FireBuild.ai</h1>

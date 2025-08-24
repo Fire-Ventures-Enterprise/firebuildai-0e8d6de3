@@ -18,7 +18,7 @@ export const HomePage = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-8">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg" />
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-lg" />
                 <span className="text-xl font-bold">FireBuild</span>
               </Link>
               
@@ -92,7 +92,7 @@ export const HomePage = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg" />
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-lg" />
                 <span className="text-xl font-bold">FireBuild</span>
               </div>
               <p className="text-sm text-muted-foreground">
