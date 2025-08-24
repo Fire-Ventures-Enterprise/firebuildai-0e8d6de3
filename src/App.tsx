@@ -7,6 +7,7 @@ import { AppLayout } from "./layouts/AppLayout";
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
+import ClientPortalPage from "./pages/app/ClientPortalPage";
 import { HomePage } from "./pages/marketing/HomePage";
 import { SignUpPage } from "./pages/auth/SignUpPage";
 import { LoginPage } from "./pages/auth/LoginPage";
@@ -52,6 +53,11 @@ const App = () => (
             <Route path="/app/invoices" element={
               <ProtectedRoute>
                 <AppLayout><InvoicesPage /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/client-portal" element={
+              <ProtectedRoute>
+                <AppLayout><ClientPortalPage /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/app/scheduling" element={
