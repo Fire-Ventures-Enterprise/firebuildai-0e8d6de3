@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_companies: {
+        Row: {
+          active: boolean | null
+          company_name: string
+          contact_email: string | null
+          created_at: string
+          id: string
+          subscriber_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          company_name: string
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          subscriber_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          company_name?: string
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          subscriber_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_companies_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -53,6 +91,48 @@ export type Database = {
           trial_starts_at?: string
           trial_status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          company_count: number | null
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          subscription_type: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_count?: number | null
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          subscription_type?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_count?: number | null
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          subscription_type?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
