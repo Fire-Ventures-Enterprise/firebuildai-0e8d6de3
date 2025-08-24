@@ -168,6 +168,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
 
       if (data.user) {
+        // Check if profile exists, create if not
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (!existingProfile) {
+          // Create profile if it doesn't exist
+          const trialStartDate = new Date();
+          const trialEndDate = new Date();
+          trialEndDate.setDate(trialEndDate.getDate() + 30);
+          
+          const dataRetentionDate = new Date();
+          dataRetentionDate.setDate(dataRetentionDate.getDate() + 120);
+
+          await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              email: data.user.email || email,
+              full_name: data.user.user_metadata?.full_name,
+              company_name: data.user.user_metadata?.company_name,
+              trial_starts_at: trialStartDate.toISOString(),
+              trial_ends_at: trialEndDate.toISOString(),
+              trial_status: 'active',
+              is_subscribed: false,
+              data_retention_until: dataRetentionDate.toISOString(),
+            });
+        }
+
         await fetchProfile(data.user.id);
         toast.success('Welcome back!');
         navigate('/app/dashboard');
