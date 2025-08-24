@@ -19,7 +19,7 @@ export const LoginPage = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user && !authLoading) {
+    if (!authLoading && user) {
       const from = location.state?.from?.pathname || '/app/dashboard';
       navigate(from, { replace: true });
     }

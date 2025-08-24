@@ -95,17 +95,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
       
       if (session?.user) {
         setUser(session.user);
-        // Defer profile fetching to avoid issues
-        setTimeout(() => {
-          if (mounted) {
-            fetchProfile(session.user.id);
-          }
-        }, 0);
+        await fetchProfile(session.user.id);
       } else {
         setUser(null);
         setProfile(null);
@@ -182,9 +177,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
 
       if (data.user) {
-        // Don't navigate here - let the LoginPage useEffect handle it
         toast.success('Welcome back!');
-        // The auth state change listener will handle profile fetching
+        // Set user immediately to prevent loading state issues
+        setUser(data.user);
+        // Fetch profile and navigate
+        await fetchProfile(data.user.id);
+        navigate('/app/dashboard');
       }
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in');
