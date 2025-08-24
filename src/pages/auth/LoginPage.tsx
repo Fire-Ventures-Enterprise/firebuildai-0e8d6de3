@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { HardHat, Loader2 } from 'lucide-react';
 
 export const LoginPage = () => {
-  const { signIn, user, loading: authLoading } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -19,11 +19,11 @@ export const LoginPage = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (!authLoading && user) {
+    if (user) {
       const from = location.state?.from?.pathname || '/app/dashboard';
       navigate(from, { replace: true });
     }
-  }, [user, authLoading, navigate, location]);
+  }, [user, navigate, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,12 +31,10 @@ export const LoginPage = () => {
     
     try {
       await signIn(formData.email, formData.password);
-      // Navigation happens in signIn function
+      // Don't set loading to false here - let the redirect happen first
     } catch (error) {
       console.error('Login error:', error);
-      // Error is handled in context
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set to false on error
     }
   };
 

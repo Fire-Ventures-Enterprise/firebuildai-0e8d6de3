@@ -167,29 +167,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Sign in
-  const signIn = async (email: string, password: string) => {
-    try {
-      console.log('Starting sign in...');
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+  const signIn = async (email: string, password: string): Promise<void> => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (error) {
-        console.error('Sign in error:', error);
-        throw error;
-      }
-
-      if (data.user) {
-        console.log('Sign in successful, navigating to dashboard...');
-        toast.success('Welcome back!');
-        // Navigate immediately after successful sign in
-        navigate('/app/dashboard');
-      }
-    } catch (error: any) {
-      console.error('Sign in failed:', error);
+    if (error) {
       toast.error(error.message || 'Failed to sign in');
       throw error;
+    }
+
+    if (data.user) {
+      toast.success('Welcome back!');
+      // The auth state listener will handle the rest
     }
   };
 
