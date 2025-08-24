@@ -1,9 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These will be automatically populated when you connect your Supabase project
-// For now, using empty strings to prevent runtime errors
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
