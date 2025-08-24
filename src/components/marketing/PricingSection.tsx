@@ -151,7 +151,7 @@ export const PricingSection = () => {
         {/* Bottom Note */}
         <div className="text-center mt-12 space-y-4">
           <p className="text-muted-foreground">
-            All plans include a 14-day free trial. No credit card required.
+            All plans include a 30-day free trial. No credit card required.
           </p>
           <p className="text-sm text-muted-foreground">
             Need more than 10 users? Contact us for volume discounts.
