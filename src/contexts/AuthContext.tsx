@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Fetch user profile from database
   const fetchProfile = async (userId: string) => {
-    if (!supabase) return; // Skip if Supabase not initialized
     
     try {
       const { data, error } = await supabase
@@ -73,11 +72,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
-      if (!supabase) {
-        setLoading(false);
-        return; // Skip if Supabase not initialized
-      }
-      
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
@@ -95,27 +89,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
 
     // Listen for auth changes
-    if (supabase) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
-          setUser(session.user);
-          await fetchProfile(session.user.id);
-        } else {
-          setUser(null);
-          setProfile(null);
-        }
-      });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        await fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
+    });
 
-      return () => subscription.unsubscribe();
-    }
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   // Sign up with 30-day free trial
   const signUp = async (email: string, password: string, fullName?: string, companyName?: string) => {
-    if (!supabase) {
-      toast.error('Supabase connection not initialized. Please refresh the page.');
-      return;
-    }
     
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -167,10 +155,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sign in
   const signIn = async (email: string, password: string) => {
-    if (!supabase) {
-      toast.error('Supabase connection not initialized. Please refresh the page.');
-      return;
-    }
     
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -193,10 +177,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sign out
   const signOut = async () => {
-    if (!supabase) {
-      toast.error('Supabase connection not initialized. Please refresh the page.');
-      return;
-    }
     
     try {
       const { error } = await supabase.auth.signOut();
