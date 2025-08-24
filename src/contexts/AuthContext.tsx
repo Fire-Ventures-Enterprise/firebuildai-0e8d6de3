@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Fetch user profile from database
   const fetchProfile = async (userId: string) => {
-    
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -89,16 +88,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'INITIAL_SESSION') {
+        // Already handled in initAuth
+        return;
+      }
+      
       if (session?.user) {
         setUser(session.user);
-        // Defer profile fetching to avoid deadlock
-        setTimeout(() => {
-          fetchProfile(session.user.id);
-        }, 0);
+        await fetchProfile(session.user.id);
+        setLoading(false);
       } else {
         setUser(null);
         setProfile(null);
+        setLoading(false);
       }
     });
 
