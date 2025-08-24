@@ -70,42 +70,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initialize auth state
   useEffect(() => {
+    let mounted = true;
+
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
-        if (session?.user) {
-          setUser(session.user);
-          await fetchProfile(session.user.id);
+        if (mounted) {
+          if (session?.user) {
+            setUser(session.user);
+            await fetchProfile(session.user.id);
+          } else {
+            setUser(null);
+            setProfile(null);
+          }
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
-    initAuth();
-
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'INITIAL_SESSION') {
-        // Already handled in initAuth
-        return;
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
       
       if (session?.user) {
         setUser(session.user);
-        await fetchProfile(session.user.id);
-        setLoading(false);
+        // Defer profile fetching to avoid issues
+        setTimeout(() => {
+          if (mounted) {
+            fetchProfile(session.user.id);
+          }
+        }, 0);
       } else {
         setUser(null);
         setProfile(null);
-        setLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    initAuth();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   // Sign up with 30-day free trial
