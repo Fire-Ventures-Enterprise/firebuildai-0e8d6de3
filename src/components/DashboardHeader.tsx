@@ -1,10 +1,26 @@
-import { Bell, Search, User, Settings, HardHat, ExternalLink } from "lucide-react";
+import { Bell, Search, User, Settings, HardHat, ExternalLink, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const DashboardHeader = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, []);
+
+  const checkAdminStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase.rpc('is_admin', { check_user_id: user.id });
+      setIsAdmin(data === true);
+    }
+  };
+
   return (
     <header className="bg-card border-b border-border shadow-card">
       <div className="flex items-center justify-between px-6 py-4">
@@ -34,6 +50,15 @@ export const DashboardHeader = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          {isAdmin && (
+            <Link to="/admin">
+              <Button variant="ghost" size="sm" className="gap-2 text-destructive">
+                <Shield className="w-4 h-4" />
+                <span className="hidden sm:inline">Admin</span>
+              </Button>
+            </Link>
+          )}
+          
           <Link to="/">
             <Button variant="ghost" size="sm" className="gap-2">
               <ExternalLink className="w-4 h-4" />
