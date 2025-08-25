@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          permissions: Json | null
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_companies: {
         Row: {
           active: boolean | null
@@ -218,6 +248,14 @@ export type Database = {
       check_trial_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_admin_role: {
+        Args: { check_user_id?: string }
+        Returns: string
+      }
+      is_admin: {
+        Args: { check_user_id?: string }
+        Returns: boolean
       }
       update_trial_and_subscription_status: {
         Args: Record<PropertyKey, never>
