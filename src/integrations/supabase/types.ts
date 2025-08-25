@@ -82,6 +82,39 @@ export type Database = {
           },
         ]
       }
+      email_leads: {
+        Row: {
+          accepted_terms: boolean
+          created_at: string
+          email: string
+          id: string
+          ip_address: string | null
+          marketing_consent: boolean | null
+          source_page: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          accepted_terms?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: string | null
+          marketing_consent?: boolean | null
+          source_page?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          accepted_terms?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: string | null
+          marketing_consent?: boolean | null
+          source_page?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       payment_history: {
         Row: {
           amount: number
