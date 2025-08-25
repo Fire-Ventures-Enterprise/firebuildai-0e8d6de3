@@ -52,6 +52,53 @@ export type Database = {
           },
         ]
       }
+      payment_history: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          description: string | null
+          id: string
+          payment_date: string
+          status: string
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          subscriber_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          payment_date?: string
+          status: string
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subscriber_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          payment_date?: string
+          status?: string
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subscriber_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_history_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -61,6 +108,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_subscribed: boolean
+          subscription_status: string | null
           trial_ends_at: string
           trial_starts_at: string
           trial_status: string
@@ -74,6 +122,7 @@ export type Database = {
           full_name?: string | null
           id: string
           is_subscribed?: boolean
+          subscription_status?: string | null
           trial_ends_at?: string
           trial_starts_at?: string
           trial_status?: string
@@ -87,6 +136,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_subscribed?: boolean
+          subscription_status?: string | null
           trial_ends_at?: string
           trial_starts_at?: string
           trial_status?: string
@@ -96,41 +146,65 @@ export type Database = {
       }
       subscribers: {
         Row: {
+          cancel_at_period_end: boolean | null
+          canceled_at: string | null
           company_count: number | null
           created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
           email: string
           id: string
+          status: string | null
           stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           subscribed: boolean
           subscription_end: string | null
           subscription_tier: string | null
           subscription_type: string | null
+          trial_end: string | null
+          trial_start: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          cancel_at_period_end?: boolean | null
+          canceled_at?: string | null
           company_count?: number | null
           created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
           email: string
           id?: string
+          status?: string | null
           stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
           subscription_type?: string | null
+          trial_end?: string | null
+          trial_start?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          cancel_at_period_end?: boolean | null
+          canceled_at?: string | null
           company_count?: number | null
           created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
           email?: string
           id?: string
+          status?: string | null
           stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
           subscription_type?: string | null
+          trial_end?: string | null
+          trial_start?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -142,6 +216,10 @@ export type Database = {
     }
     Functions: {
       check_trial_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      update_trial_and_subscription_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

@@ -32,7 +32,7 @@ serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
-    
+
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
@@ -45,18 +45,34 @@ serve(async (req) => {
     
     if (customers.data.length === 0) {
       logStep("No customer found, updating unsubscribed state");
-      await supabaseClient.from("subscribers").upsert({
+      
+      // Get or create subscriber record
+      const { data: existingSubscriber } = await supabaseClient
+        .from("subscribers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const subscriberData = {
         email: user.email,
         user_id: user.id,
         stripe_customer_id: null,
         subscribed: false,
-        subscription_type: null,
         subscription_tier: null,
+        subscription_type: null,
         subscription_end: null,
+        status: 'inactive',
         company_count: 0,
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'email' });
-      return new Response(JSON.stringify({ subscribed: false }), {
+      };
+
+      if (existingSubscriber) {
+        await supabaseClient.from("subscribers").update(subscriberData).eq("id", existingSubscriber.id);
+      } else {
+        await supabaseClient.from("subscribers").insert(subscriberData);
+      }
+
+      return new Response(JSON.stringify({ subscribed: false, status: 'inactive' }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
@@ -65,104 +81,178 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
+    // Get all subscriptions (including canceled ones)
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: "active",
-      limit: 1,
+      limit: 10,
     });
 
-    const hasActiveSub = subscriptions.data.length > 0;
-    let subscriptionType = null;
-    let subscriptionTier = null;
-    let subscriptionEnd = null;
-    let companyCount = 0;
+    // Find the most recent active or trialing subscription
+    const activeSubscription = subscriptions.data.find(
+      sub => sub.status === 'active' || sub.status === 'trialing'
+    );
 
-    if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
-      
-      // Analyze subscription items to determine type and tier
-      const items = subscription.items.data;
-      let totalAmount = 0;
-      let hasWhiteLabelBase = false;
-      let additionalCompanies = 0;
-
-      for (const item of items) {
-        const price = item.price;
-        const amount = price.unit_amount || 0;
-        const quantity = item.quantity || 1;
-        
-        logStep("Analyzing item", { 
-          amount, 
-          quantity, 
-          productId: price.product,
-          nickname: price.nickname 
-        });
-
-        // Check if this is white label base ($499)
-        if (amount === 49900) {
-          hasWhiteLabelBase = true;
-          subscriptionType = 'whitelabel';
-        }
-        // Check if this is additional companies ($59 each)
-        else if (amount === 5900) {
-          additionalCompanies = quantity;
-        }
-        // Otherwise, it's a standalone tier
-        else {
-          subscriptionType = 'standalone';
-          if (amount === 3900) {
-            subscriptionTier = 'tier1';
-          } else if (amount === 6900) {
-            subscriptionTier = 'tier2';
-          } else if (amount === 9900) {
-            subscriptionTier = 'tier3';
-          }
-        }
-        
-        totalAmount += amount * quantity;
-      }
-
-      if (hasWhiteLabelBase) {
-        companyCount = additionalCompanies;
-      }
-
-      logStep("Determined subscription details", { 
-        subscriptionType, 
-        subscriptionTier, 
-        companyCount,
-        totalAmount 
-      });
-    } else {
-      logStep("No active subscription found");
-    }
-
-    await supabaseClient.from("subscribers").upsert({
+    let subscriptionData = {
       email: user.email,
       user_id: user.id,
       stripe_customer_id: customerId,
-      subscribed: hasActiveSub,
-      subscription_type: subscriptionType,
-      subscription_tier: subscriptionTier,
-      subscription_end: subscriptionEnd,
-      company_count: companyCount,
+      subscribed: false,
+      subscription_tier: null,
+      subscription_type: null,
+      subscription_end: null,
+      stripe_subscription_id: null,
+      current_period_start: null,
+      current_period_end: null,
+      cancel_at_period_end: false,
+      canceled_at: null,
+      trial_start: null,
+      trial_end: null,
+      status: 'inactive',
+      company_count: 0,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'email' });
+    };
+
+    if (activeSubscription) {
+      // Determine subscription type and tier from the subscription items
+      let subscriptionType = 'standalone';
+      let subscriptionTier = null;
+      let companyCount = 0;
+
+      for (const item of activeSubscription.items.data) {
+        const price = item.price;
+        const amount = price.unit_amount || 0;
+        
+        // Check if it's white label (base price $499)
+        if (amount === 49900) {
+          subscriptionType = 'whitelabel';
+        } 
+        // Check for additional companies in white label
+        else if (amount === 5900) {
+          companyCount = item.quantity || 0;
+        }
+        // Standalone tiers with correct pricing
+        else if (amount === 4900) {
+          subscriptionTier = 'tier1';
+        } else if (amount === 9900) {
+          subscriptionTier = 'tier2';
+        } else if (amount === 24900) {
+          subscriptionTier = 'tier3';
+        }
+      }
+
+      subscriptionData = {
+        ...subscriptionData,
+        subscribed: true,
+        subscription_tier: subscriptionTier,
+        subscription_type: subscriptionType,
+        subscription_end: new Date(activeSubscription.current_period_end * 1000).toISOString(),
+        stripe_subscription_id: activeSubscription.id,
+        current_period_start: new Date(activeSubscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(activeSubscription.current_period_end * 1000).toISOString(),
+        cancel_at_period_end: activeSubscription.cancel_at_period_end || false,
+        canceled_at: activeSubscription.canceled_at ? new Date(activeSubscription.canceled_at * 1000).toISOString() : null,
+        trial_start: activeSubscription.trial_start ? new Date(activeSubscription.trial_start * 1000).toISOString() : null,
+        trial_end: activeSubscription.trial_end ? new Date(activeSubscription.trial_end * 1000).toISOString() : null,
+        status: activeSubscription.status,
+        company_count: companyCount,
+      };
+
+      logStep("Active subscription found", { 
+        subscriptionId: activeSubscription.id, 
+        status: activeSubscription.status,
+        type: subscriptionType,
+        tier: subscriptionTier 
+      });
+
+      // Fetch recent payments/invoices
+      const invoices = await stripe.invoices.list({
+        customer: customerId,
+        limit: 10,
+      });
+
+      // Get or create subscriber record first
+      const { data: existingSubscriber } = await supabaseClient
+        .from("subscribers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const { data: subscriber } = existingSubscriber
+        ? await supabaseClient.from("subscribers").update(subscriptionData).eq("id", existingSubscriber.id).select().single()
+        : await supabaseClient.from("subscribers").insert(subscriptionData).select().single();
+
+      if (subscriber && invoices.data.length > 0) {
+        // Store payment history for paid invoices
+        const paymentRecords = invoices.data
+          .filter(inv => inv.status === 'paid' && inv.amount_paid > 0)
+          .map(inv => ({
+            subscriber_id: subscriber.id,
+            stripe_invoice_id: inv.id,
+            stripe_payment_intent_id: inv.payment_intent as string,
+            amount: inv.amount_paid,
+            currency: inv.currency,
+            status: 'succeeded',
+            payment_date: new Date(inv.status_transitions?.paid_at ? inv.status_transitions.paid_at * 1000 : Date.now()).toISOString(),
+            description: inv.description || `Payment for ${subscriptionType === 'whitelabel' ? 'White Label' : `Tier ${subscriptionTier?.replace('tier', '')}`} subscription`,
+          }));
+
+        if (paymentRecords.length > 0) {
+          // Check which payments already exist
+          const { data: existingPayments } = await supabaseClient
+            .from("payment_history")
+            .select("stripe_invoice_id")
+            .in("stripe_invoice_id", paymentRecords.map(p => p.stripe_invoice_id));
+
+          const existingInvoiceIds = new Set(existingPayments?.map(p => p.stripe_invoice_id) || []);
+          const newPayments = paymentRecords.filter(p => p.stripe_invoice_id && !existingInvoiceIds.has(p.stripe_invoice_id));
+
+          if (newPayments.length > 0) {
+            await supabaseClient.from("payment_history").insert(newPayments);
+            logStep("Payment history updated", { newPayments: newPayments.length });
+          }
+        }
+      }
+    } else {
+      // No active subscription but customer exists
+      logStep("No active subscription found for customer");
+      
+      const { data: existingSubscriber } = await supabaseClient
+        .from("subscribers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (existingSubscriber) {
+        await supabaseClient.from("subscribers").update(subscriptionData).eq("id", existingSubscriber.id);
+      } else {
+        await supabaseClient.from("subscribers").insert(subscriptionData);
+      }
+    }
+
+    // Update profile subscription status
+    await supabaseClient
+      .from("profiles")
+      .update({
+        is_subscribed: subscriptionData.subscribed,
+        subscription_status: subscriptionData.status === 'active' ? 'active' : 
+                           subscriptionData.status === 'trialing' ? 'trial' : 
+                           'expired',
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
 
     logStep("Updated database with subscription info", { 
-      subscribed: hasActiveSub, 
-      subscriptionType,
-      subscriptionTier,
-      companyCount 
+      subscribed: subscriptionData.subscribed, 
+      status: subscriptionData.status 
     });
 
     return new Response(JSON.stringify({
-      subscribed: hasActiveSub,
-      subscription_type: subscriptionType,
-      subscription_tier: subscriptionTier,
-      subscription_end: subscriptionEnd,
-      company_count: companyCount
+      subscribed: subscriptionData.subscribed,
+      subscription_tier: subscriptionData.subscription_tier,
+      subscription_type: subscriptionData.subscription_type,
+      subscription_end: subscriptionData.subscription_end,
+      status: subscriptionData.status,
+      company_count: subscriptionData.company_count,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
