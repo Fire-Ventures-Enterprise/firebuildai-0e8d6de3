@@ -15,6 +15,7 @@ import { UpgradePage } from "./pages/UpgradePage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -82,7 +83,8 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Admin Dashboard - Protected */}
+            {/* Admin Portal - Separate from main app */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin" element={
               <ProtectedRoute requireActive={false}>
                 <AdminDashboard />

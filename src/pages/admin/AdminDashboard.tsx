@@ -80,9 +80,20 @@ export const AdminDashboard = () => {
               <h1 className="text-2xl font-bold">Admin Dashboard</h1>
               <Badge variant="secondary">{adminRole}</Badge>
             </div>
-            <Button variant="outline" onClick={() => navigate('/')}>
-              Back to App
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => navigate('/')}>
+                Back to Main Site
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  navigate('/admin/login');
+                }}
+              >
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </div>
