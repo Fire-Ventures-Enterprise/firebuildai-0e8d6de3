@@ -45,7 +45,7 @@ export const AdminLoginPage = () => {
         description: `Logged in as ${adminData.role}`,
       });
 
-      navigate('/admin');
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Login Failed",

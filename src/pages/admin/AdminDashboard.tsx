@@ -88,7 +88,7 @@ export const AdminDashboard = () => {
                 variant="ghost" 
                 onClick={async () => {
                   await supabase.auth.signOut();
-                  navigate('/admin/login');
+                  navigate('/login');
                 }}
               >
                 Sign Out
