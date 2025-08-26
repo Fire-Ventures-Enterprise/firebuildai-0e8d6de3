@@ -129,11 +129,11 @@ export const EstimatesPage = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
+    const variants: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
       draft: "secondary",
       sent: "default",
-      viewed: "warning",
-      accepted: "success",
+      viewed: "outline",
+      accepted: "default",
       declined: "destructive",
       expired: "destructive"
     };
@@ -163,86 +163,208 @@ export const EstimatesPage = () => {
           <h1 className="text-2xl font-bold text-foreground">Estimates</h1>
           <p className="text-muted-foreground mt-1">Create and manage project estimates</p>
         </div>
-        <Button onClick={() => setShowBuilder(true)}>
-          <Plus className="w-4 h-4 mr-2" />
+        <Button onClick={() => setShowForm(true)}>
+          <Plus className="h-4 w-4 mr-2" />
           New Estimate
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <FileText className="w-8 h-8 text-primary" />
-            <div>
-              <p className="text-sm text-muted-foreground">Total Estimates</p>
-              <p className="text-2xl font-semibold">{estimates.length}</p>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Estimates</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <Clock className="w-8 h-8 text-warning" />
-            <div>
-              <p className="text-sm text-muted-foreground">Pending</p>
-              <p className="text-2xl font-semibold">0</p>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pending}</div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <DollarSign className="w-8 h-8 text-success" />
-            <div>
-              <p className="text-sm text-muted-foreground">Total Value</p>
-              <p className="text-2xl font-semibold">$0</p>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Accepted</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.accepted}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(stats.totalValue)}</div>
+          </CardContent>
         </Card>
       </div>
 
+      {/* Search */}
+      <div className="flex items-center space-x-4">
+        <div className="flex-1">
+          <Label htmlFor="search" className="sr-only">Search</Label>
+          <Input
+            id="search"
+            placeholder="Search estimates..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* Estimates List */}
-      {estimates.length > 0 ? (
-        <Card className="p-6">
-          <div className="space-y-4">
-            {estimates.map((estimate) => (
-              <div key={estimate.id} className="border-b pb-4 last:border-0">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold">{estimate.customerName}</h3>
-                    <p className="text-sm text-muted-foreground">{estimate.projectDescription}</p>
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Estimates</CardTitle>
+          <CardDescription>Manage your estimates and quotes</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading estimates...</div>
+          ) : filteredEstimates.length === 0 ? (
+            <div className="text-center py-8">
+              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No estimates found</p>
+              <Button 
+                variant="outline" 
+                className="mt-4"
+                onClick={() => setShowForm(true)}
+              >
+                Create Your First Estimate
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredEstimates.map((estimate) => (
+                <div
+                  key={estimate.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="font-semibold">#{estimate.estimate_number}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {estimate.customer?.company_name || `${estimate.customer?.first_name} ${estimate.customer?.last_name}`}
+                        </p>
+                      </div>
+                      {getStatusBadge(estimate.status)}
+                      {estimate.signed_at && (
+                        <Badge variant="secondary">Signed</Badge>
+                      )}
+                      {estimate.converted_to_invoice && (
+                        <Badge variant="outline">Converted to Invoice</Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                      <span>Issued: {new Date(estimate.issue_date).toLocaleDateString()}</span>
+                      {estimate.expiration_date && (
+                        <span>Expires: {new Date(estimate.expiration_date).toLocaleDateString()}</span>
+                      )}
+                      <span className="font-semibold text-foreground">{formatCurrency(estimate.total)}</span>
+                      {estimate.deposit_amount && (
+                        <span>Deposit: {formatCurrency(estimate.deposit_amount)}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-semibold">${estimate.total}</p>
-                    <p className="text-sm text-muted-foreground">{estimate.status}</p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedEstimate(estimate);
+                        setShowPreview(true);
+                      }}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSendEstimate(estimate)}
+                      disabled={estimate.status !== 'draft'}
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedEstimate(estimate);
+                        setShowForm(true);
+                      }}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteEstimate(estimate.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      ) : (
-        <Card className="p-12">
-          <div className="text-center">
-            <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No estimates yet</h3>
-            <p className="text-muted-foreground mb-4">Create your first estimate to get started</p>
-            <Button onClick={() => setShowBuilder(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Estimate
-            </Button>
-          </div>
-        </Card>
-      )}
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Estimate Builder Modal */}
-      {showBuilder && (
-        <EstimateBuilder
-          open={showBuilder}
-          onOpenChange={setShowBuilder}
-          mode="create"
-          onSave={handleSaveEstimate}
-        />
-      )}
+      {/* Estimate Form Dialog */}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedEstimate ? 'Edit Estimate' : 'New Estimate'}
+            </DialogTitle>
+          </DialogHeader>
+          <EstimateForm
+            estimate={selectedEstimate}
+            onSave={(data) => {
+              fetchEstimates();
+              setShowForm(false);
+              setSelectedEstimate(null);
+              toast({
+                title: "Success",
+                description: selectedEstimate ? "Estimate updated" : "Estimate created",
+              });
+            }}
+            onCancel={() => {
+              setShowForm(false);
+              setSelectedEstimate(null);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Estimate Preview Dialog */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Estimate Preview</DialogTitle>
+          </DialogHeader>
+          {selectedEstimate && (
+            <EstimatePreview
+              estimate={selectedEstimate}
+              onClose={() => {
+                setShowPreview(false);
+                setSelectedEstimate(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

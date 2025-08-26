@@ -109,11 +109,11 @@ export default function EstimatePreview({ estimate, onClose }: EstimatePreviewPr
         <div>
           <h2 className="text-2xl font-bold">Estimate #{estimate.estimate_number}</h2>
           <div className="flex items-center gap-2 mt-2">
-            <Badge variant={estimate.status === 'accepted' ? 'success' : 'default'}>
+            <Badge variant={estimate.status === 'accepted' ? 'default' : 'secondary'}>
               {estimate.status}
             </Badge>
             {estimate.signed_at && (
-              <Badge variant="success">Signed</Badge>
+              <Badge variant="default">Signed</Badge>
             )}
           </div>
         </div>
@@ -333,10 +333,10 @@ export default function EstimatePreview({ estimate, onClose }: EstimatePreviewPr
 
       {/* Already Signed */}
       {estimate.signed_at && (
-        <Card className="border-success">
+        <Card className="border-green-500">
           <CardContent className="pt-6">
             <div className="text-center">
-              <Badge variant="success" className="mb-2">Signed & Accepted</Badge>
+              <Badge variant="default" className="mb-2">Signed & Accepted</Badge>
               <p className="text-sm text-muted-foreground">
                 Signed by {estimate.signed_by_name} on {format(new Date(estimate.signed_at), 'PPP')}
               </p>
