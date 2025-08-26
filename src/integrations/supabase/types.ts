@@ -47,12 +47,15 @@ export type Database = {
       change_orders: {
         Row: {
           amount: number
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           customer_id: string | null
           description: string
           id: string
           invoice_id: string | null
           order_number: string
+          original_invoice_amount: number | null
           reason: string | null
           signature_data: string | null
           signature_required: boolean | null
@@ -65,12 +68,15 @@ export type Database = {
         }
         Insert: {
           amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           customer_id?: string | null
           description: string
           id?: string
           invoice_id?: string | null
           order_number: string
+          original_invoice_amount?: number | null
           reason?: string | null
           signature_data?: string | null
           signature_required?: boolean | null
@@ -83,12 +89,15 @@ export type Database = {
         }
         Update: {
           amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           customer_id?: string | null
           description?: string
           id?: string
           invoice_id?: string | null
           order_number?: string
+          original_invoice_amount?: number | null
           reason?: string | null
           signature_data?: string | null
           signature_required?: boolean | null
@@ -372,6 +381,60 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_change_log: {
+        Row: {
+          change_order_id: string | null
+          change_type: string
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          new_value: Json | null
+          old_value: Json | null
+          override_used: boolean | null
+          user_id: string
+        }
+        Insert: {
+          change_order_id?: string | null
+          change_type: string
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          new_value?: Json | null
+          old_value?: Json | null
+          override_used?: boolean | null
+          user_id: string
+        }
+        Update: {
+          change_order_id?: string | null
+          change_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          override_used?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_change_log_change_order_id_fkey"
+            columns: ["change_order_id"]
+            isOneToOne: false
+            referencedRelation: "change_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_change_log_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           amount: number
@@ -425,8 +488,13 @@ export type Database = {
           estimate_id: string | null
           id: string
           invoice_number: string
+          is_locked: boolean | null
           issue_date: string
+          last_override_at: string | null
+          last_override_by: string | null
+          lock_reason: string | null
           notes: string | null
+          override_password: string | null
           paid_amount: number | null
           status: string
           subtotal: number
@@ -448,8 +516,13 @@ export type Database = {
           estimate_id?: string | null
           id?: string
           invoice_number: string
+          is_locked?: boolean | null
           issue_date?: string
+          last_override_at?: string | null
+          last_override_by?: string | null
+          lock_reason?: string | null
           notes?: string | null
+          override_password?: string | null
           paid_amount?: number | null
           status?: string
           subtotal?: number
@@ -471,8 +544,13 @@ export type Database = {
           estimate_id?: string | null
           id?: string
           invoice_number?: string
+          is_locked?: boolean | null
           issue_date?: string
+          last_override_at?: string | null
+          last_override_by?: string | null
+          lock_reason?: string | null
           notes?: string | null
+          override_password?: string | null
           paid_amount?: number | null
           status?: string
           subtotal?: number
@@ -605,6 +683,8 @@ export type Database = {
           full_name: string | null
           id: string
           is_subscribed: boolean
+          notify_on_change_order: boolean | null
+          notify_on_invoice_override: boolean | null
           subscription_status: string | null
           trial_ends_at: string
           trial_starts_at: string
@@ -619,6 +699,8 @@ export type Database = {
           full_name?: string | null
           id: string
           is_subscribed?: boolean
+          notify_on_change_order?: boolean | null
+          notify_on_invoice_override?: boolean | null
           subscription_status?: string | null
           trial_ends_at?: string
           trial_starts_at?: string
@@ -633,6 +715,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_subscribed?: boolean
+          notify_on_change_order?: boolean | null
+          notify_on_invoice_override?: boolean | null
           subscription_status?: string | null
           trial_ends_at?: string
           trial_starts_at?: string
@@ -850,6 +934,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_edit_invoice: {
+        Args: { invoice_id_param: string; override_phrase?: string }
+        Returns: boolean
+      }
       check_trial_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
