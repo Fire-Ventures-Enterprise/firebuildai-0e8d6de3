@@ -1,19 +1,159 @@
-// Estimates Page - Manage estimates and quotes
-import { useState } from "react";
-import { EstimateBuilder } from "@/components/estimates/EstimateBuilder";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Plus, FileText, Clock, DollarSign } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Plus, FileText, DollarSign, Clock, Send, CheckCircle, Eye, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import EstimateForm from '@/components/estimates/EstimateForm';
+import EstimatePreview from '@/components/estimates/EstimatePreview';
+import { formatCurrency } from '@/lib/utils';
+
+interface Estimate {
+  id: string;
+  estimate_number: string;
+  customer_id: string;
+  customer?: any;
+  status: string;
+  issue_date: string;
+  expiration_date: string;
+  subtotal: number;
+  tax_rate: number;
+  tax_amount: number;
+  total: number;
+  deposit_amount?: number;
+  deposit_percentage?: number;
+  signed_at?: string;
+  converted_to_invoice: boolean;
+  invoice_id?: string;
+  items?: any[];
+  payment_stages?: any[];
+}
 
 export const EstimatesPage = () => {
-  const [showBuilder, setShowBuilder] = useState(false);
-  const [estimates, setEstimates] = useState<any[]>([]);
+  const [estimates, setEstimates] = useState<Estimate[]>([]);
+  const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  const handleSaveEstimate = (data: any) => {
-    console.log("Estimate saved:", data);
-    setEstimates([...estimates, { ...data, id: Date.now() }]);
-    setShowBuilder(false);
+  useEffect(() => {
+    if (user) {
+      fetchEstimates();
+    }
+  }, [user]);
+
+  const fetchEstimates = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('estimates')
+        .select(`
+          *,
+          customer:customers(*),
+          items:estimate_items(*),
+          payment_stages(*)
+        `)
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setEstimates(data || []);
+    } catch (error) {
+      console.error('Error fetching estimates:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load estimates",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleSendEstimate = async (estimate: Estimate) => {
+    try {
+      // Here we would integrate with email service
+      toast({
+        title: "Estimate Sent",
+        description: `Estimate #${estimate.estimate_number} has been sent to the customer`,
+      });
+      
+      // Update status
+      await supabase
+        .from('estimates')
+        .update({ status: 'sent' })
+        .eq('id', estimate.id);
+      
+      fetchEstimates();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send estimate",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteEstimate = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this estimate?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('estimates')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Estimate deleted successfully",
+      });
+      
+      fetchEstimates();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete estimate",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
+      draft: "secondary",
+      sent: "default",
+      viewed: "warning",
+      accepted: "success",
+      declined: "destructive",
+      expired: "destructive"
+    };
+    
+    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
+  };
+
+  const stats = {
+    total: estimates.length,
+    pending: estimates.filter(e => ['draft', 'sent', 'viewed'].includes(e.status)).length,
+    accepted: estimates.filter(e => e.status === 'accepted').length,
+    totalValue: estimates.reduce((sum, e) => sum + e.total, 0)
+  };
+
+  const filteredEstimates = estimates.filter(estimate => 
+    estimate.estimate_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    estimate.customer?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    estimate.customer?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    estimate.customer?.last_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
