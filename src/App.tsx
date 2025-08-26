@@ -89,13 +89,17 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin" element={
+            {/* Admin Routes - Secret URL */}
+            <Route path="/secure-admin-2024-fb-portal/login" element={<AdminLoginPage />} />
+            <Route path="/secure-admin-2024-fb-portal" element={
               <ProtectedRoute>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
+            
+            {/* Legacy admin routes - redirect to home to hide them */}
+            <Route path="/admin/*" element={<Navigate to="/" replace />} />
+            <Route path="/admin/login" element={<Navigate to="/" replace />} />
             
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

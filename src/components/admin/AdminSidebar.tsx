@@ -37,13 +37,13 @@ const menuItems = [
     items: [
       { 
         title: 'Dashboard', 
-        url: '/admin', 
+        url: '/secure-admin-2024-fb-portal', 
         icon: BarChart3,
         description: 'Key metrics and real-time analytics'
       },
       { 
         title: 'Analytics', 
-        url: '/admin/analytics', 
+        url: '/secure-admin-2024-fb-portal/analytics',
         icon: TrendingUp,
         description: 'Usage patterns, conversion funnels, user behavior'
       },
@@ -54,19 +54,19 @@ const menuItems = [
     items: [
       { 
         title: 'Subscribers', 
-        url: '/admin/subscribers', 
+        url: '/secure-admin-2024-fb-portal/subscribers', 
         icon: Users,
         description: 'Active users, trials, subscription management'
       },
       { 
         title: 'Companies', 
-        url: '/admin/companies', 
+        url: '/secure-admin-2024-fb-portal/companies', 
         icon: Building2,
         description: 'Client organizations and team usage'
       },
       { 
         title: 'Payments', 
-        url: '/admin/payments', 
+        url: '/secure-admin-2024-fb-portal/payments', 
         icon: CreditCard,
         description: 'Billing history, failed payments, refunds'
       },
@@ -77,19 +77,19 @@ const menuItems = [
     items: [
       { 
         title: 'Support Tickets', 
-        url: '/admin/support', 
+        url: '/secure-admin-2024-fb-portal/support', 
         icon: MessageSquare,
         description: 'Customer issues, feature requests, feedback'
       },
       { 
         title: 'Email Campaigns', 
-        url: '/admin/emails', 
+        url: '/secure-admin-2024-fb-portal/emails', 
         icon: Mail,
         description: 'Marketing emails, system notifications'
       },
       { 
         title: 'Announcements', 
-        url: '/admin/announcements', 
+        url: '/secure-admin-2024-fb-portal/announcements', 
         icon: Globe,
         description: 'In-app messages, product updates'
       },
@@ -100,25 +100,25 @@ const menuItems = [
     items: [
       { 
         title: 'Monitoring', 
-        url: '/admin/monitoring', 
+        url: '/secure-admin-2024-fb-portal/monitoring', 
         icon: Activity,
         description: 'Server health, uptime, performance metrics'
       },
       { 
         title: 'Error Logs', 
-        url: '/admin/errors', 
+        url: '/secure-admin-2024-fb-portal/errors', 
         icon: AlertCircle,
         description: 'System errors, crash reports, debugging'
       },
       { 
         title: 'Database', 
-        url: '/admin/database', 
+        url: '/secure-admin-2024-fb-portal/database', 
         icon: Database,
         description: 'Storage usage, query performance, backups'
       },
       { 
         title: 'API Usage', 
-        url: '/admin/api', 
+        url: '/secure-admin-2024-fb-portal/api', 
         icon: Zap,
         description: 'API calls, rate limits, endpoint performance'
       },
@@ -129,25 +129,25 @@ const menuItems = [
     items: [
       { 
         title: 'Feature Flags', 
-        url: '/admin/features', 
+        url: '/secure-admin-2024-fb-portal/features', 
         icon: Package,
         description: 'Enable/disable features, A/B testing'
       },
       { 
         title: 'Pricing Plans', 
-        url: '/admin/pricing', 
+        url: '/secure-admin-2024-fb-portal/pricing', 
         icon: FileText,
         description: 'Subscription tiers, pricing configuration'
       },
       { 
         title: 'Security', 
-        url: '/admin/security', 
+        url: '/secure-admin-2024-fb-portal/security', 
         icon: Shield,
         description: 'Access controls, audit logs, compliance'
       },
       { 
         title: 'Settings', 
-        url: '/admin/settings', 
+        url: '/secure-admin-2024-fb-portal/settings', 
         icon: Settings,
         description: 'Platform configuration, integrations'
       },
@@ -161,8 +161,9 @@ export const AdminSidebar = () => {
   const isCollapsed = state === 'collapsed';
 
   const isActive = (path: string) => {
-    if (path === '/admin' && location.pathname === '/admin') return true;
-    if (path !== '/admin' && location.pathname.startsWith(path)) return true;
+    const currentPath = location.pathname;
+    if (path === '/secure-admin-2024-fb-portal' && currentPath === '/secure-admin-2024-fb-portal') return true;
+    if (path !== '/secure-admin-2024-fb-portal' && currentPath.startsWith(path)) return true;
     return false;
   };
 

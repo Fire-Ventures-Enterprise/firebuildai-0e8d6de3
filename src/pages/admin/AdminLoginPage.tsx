@@ -45,7 +45,7 @@ export const AdminLoginPage = () => {
         description: `Logged in as ${adminData.role}`,
       });
 
-      navigate('/dashboard');
+      navigate('/secure-admin-2024-fb-portal');
     } catch (error) {
       toast({
         title: "Login Failed",
