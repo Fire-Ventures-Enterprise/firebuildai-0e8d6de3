@@ -44,6 +44,78 @@ export type Database = {
         }
         Relationships: []
       }
+      change_orders: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_id: string | null
+          description: string
+          id: string
+          invoice_id: string | null
+          order_number: string
+          reason: string | null
+          signature_data: string | null
+          signature_required: boolean | null
+          signed_at: string | null
+          status: string
+          tax_amount: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          customer_id?: string | null
+          description: string
+          id?: string
+          invoice_id?: string | null
+          order_number: string
+          reason?: string | null
+          signature_data?: string | null
+          signature_required?: boolean | null
+          signed_at?: string | null
+          status?: string
+          tax_amount?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_id?: string | null
+          description?: string
+          id?: string
+          invoice_id?: string | null
+          order_number?: string
+          reason?: string | null
+          signature_data?: string | null
+          signature_required?: boolean | null
+          signed_at?: string | null
+          status?: string
+          tax_amount?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "change_orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "change_orders_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_companies: {
         Row: {
           active: boolean | null
@@ -82,6 +154,60 @@ export type Database = {
           },
         ]
       }
+      customers: {
+        Row: {
+          address: string | null
+          city: string | null
+          company_name: string | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          notes: string | null
+          phone: string | null
+          postal_code: string | null
+          province: string | null
+          stripe_customer_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          province?: string | null
+          stripe_customer_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          province?: string | null
+          stripe_customer_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_leads: {
         Row: {
           accepted_terms: boolean
@@ -114,6 +240,258 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      estimate_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          estimate_id: string
+          id: string
+          quantity: number
+          rate: number
+          sort_order: number | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          estimate_id: string
+          id?: string
+          quantity?: number
+          rate: number
+          sort_order?: number | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          estimate_id?: string
+          id?: string
+          quantity?: number
+          rate?: number
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimate_items_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estimates: {
+        Row: {
+          contract_attached: boolean | null
+          converted_to_invoice: boolean | null
+          created_at: string
+          customer_id: string
+          deposit_amount: number | null
+          deposit_percentage: number | null
+          estimate_number: string
+          expiration_date: string | null
+          id: string
+          invoice_id: string | null
+          issue_date: string
+          notes: string | null
+          scope_of_work: string | null
+          signature_data: string | null
+          signature_ip: string | null
+          signature_required: boolean | null
+          signed_at: string | null
+          signed_by_email: string | null
+          signed_by_name: string | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number | null
+          terms_conditions: string | null
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contract_attached?: boolean | null
+          converted_to_invoice?: boolean | null
+          created_at?: string
+          customer_id: string
+          deposit_amount?: number | null
+          deposit_percentage?: number | null
+          estimate_number: string
+          expiration_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          issue_date?: string
+          notes?: string | null
+          scope_of_work?: string | null
+          signature_data?: string | null
+          signature_ip?: string | null
+          signature_required?: boolean | null
+          signed_at?: string | null
+          signed_by_email?: string | null
+          signed_by_name?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number | null
+          terms_conditions?: string | null
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contract_attached?: boolean | null
+          converted_to_invoice?: boolean | null
+          created_at?: string
+          customer_id?: string
+          deposit_amount?: number | null
+          deposit_percentage?: number | null
+          estimate_number?: string
+          expiration_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          issue_date?: string
+          notes?: string | null
+          scope_of_work?: string | null
+          signature_data?: string | null
+          signature_ip?: string | null
+          signature_required?: boolean | null
+          signed_at?: string | null
+          signed_by_email?: string | null
+          signed_by_name?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number | null
+          terms_conditions?: string | null
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          rate: number
+          sort_order: number | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          rate: number
+          sort_order?: number | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          rate?: number
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          balance: number
+          contract_accepted: boolean | null
+          contract_accepted_at: string | null
+          contract_attached: boolean | null
+          created_at: string
+          customer_id: string
+          due_date: string | null
+          estimate_id: string | null
+          id: string
+          invoice_number: string
+          issue_date: string
+          notes: string | null
+          paid_amount: number | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number | null
+          terms_conditions: string | null
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          contract_accepted?: boolean | null
+          contract_accepted_at?: string | null
+          contract_attached?: boolean | null
+          created_at?: string
+          customer_id: string
+          due_date?: string | null
+          estimate_id?: string | null
+          id?: string
+          invoice_number: string
+          issue_date?: string
+          notes?: string | null
+          paid_amount?: number | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number | null
+          terms_conditions?: string | null
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          contract_accepted?: boolean | null
+          contract_accepted_at?: string | null
+          contract_attached?: boolean | null
+          created_at?: string
+          customer_id?: string
+          due_date?: string | null
+          estimate_id?: string | null
+          id?: string
+          invoice_number?: string
+          issue_date?: string
+          notes?: string | null
+          paid_amount?: number | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number | null
+          terms_conditions?: string | null
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "estimates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payment_history: {
         Row: {
@@ -162,6 +540,62 @@ export type Database = {
           },
         ]
       }
+      payment_stages: {
+        Row: {
+          amount: number | null
+          created_at: string
+          description: string
+          due_date: string | null
+          estimate_id: string | null
+          id: string
+          invoice_id: string | null
+          milestone: string | null
+          paid_at: string | null
+          percentage: number | null
+          stage_number: number
+          status: string | null
+          stripe_payment_intent_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          description: string
+          due_date?: string | null
+          estimate_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          milestone?: string | null
+          paid_at?: string | null
+          percentage?: number | null
+          stage_number: number
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          estimate_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          milestone?: string | null
+          paid_at?: string | null
+          percentage?: number | null
+          stage_number?: number
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_stages_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -204,6 +638,144 @@ export type Database = {
           trial_starts_at?: string
           trial_status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      proposals: {
+        Row: {
+          content: string | null
+          converted_to_invoice: boolean | null
+          created_at: string
+          customer_id: string | null
+          deposit_amount: number | null
+          expiration_date: string | null
+          id: string
+          invoice_id: string | null
+          issue_date: string
+          notes: string | null
+          proposal_number: string
+          signature_data: string | null
+          signature_required: boolean | null
+          signed_at: string | null
+          signed_by_name: string | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number | null
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          converted_to_invoice?: boolean | null
+          created_at?: string
+          customer_id?: string | null
+          deposit_amount?: number | null
+          expiration_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          issue_date?: string
+          notes?: string | null
+          proposal_number: string
+          signature_data?: string | null
+          signature_required?: boolean | null
+          signed_at?: string | null
+          signed_by_name?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number | null
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          converted_to_invoice?: boolean | null
+          created_at?: string
+          customer_id?: string | null
+          deposit_amount?: number | null
+          expiration_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          issue_date?: string
+          notes?: string | null
+          proposal_number?: string
+          signature_data?: string | null
+          signature_required?: boolean | null
+          signed_at?: string | null
+          signed_by_name?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number | null
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposals_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_orders: {
+        Row: {
+          created_at: string
+          expected_delivery: string | null
+          id: string
+          notes: string | null
+          po_number: string
+          status: string
+          subtotal: number
+          tax_amount: number
+          total: number
+          updated_at: string
+          user_id: string
+          vendor_email: string | null
+          vendor_name: string
+        }
+        Insert: {
+          created_at?: string
+          expected_delivery?: string | null
+          id?: string
+          notes?: string | null
+          po_number: string
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+          vendor_email?: string | null
+          vendor_name: string
+        }
+        Update: {
+          created_at?: string
+          expected_delivery?: string | null
+          id?: string
+          notes?: string | null
+          po_number?: string
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+          vendor_email?: string | null
+          vendor_name?: string
         }
         Relationships: []
       }
