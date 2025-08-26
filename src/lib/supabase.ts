@@ -22,6 +22,8 @@ export interface UserProfile {
   trial_status: TrialStatus;
   is_subscribed: boolean;
   data_retention_until?: string;
+  notify_on_invoice_override?: boolean;
+  notify_on_change_order?: boolean;
   created_at: string;
   updated_at: string;
 }

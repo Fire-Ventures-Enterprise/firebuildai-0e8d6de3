@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lock, Unlock, AlertTriangle, FileEdit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatCurrency } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface InvoiceLockControlProps {
   invoice: any;
@@ -21,13 +22,55 @@ export default function InvoiceLockControl({ invoice, onUnlock, changeOrders = [
   const [showOverrideDialog, setShowOverrideDialog] = useState(false);
   const [overridePhrase, setOverridePhrase] = useState('');
   const [loading, setLoading] = useState(false);
+  const [customerData, setCustomerData] = useState<any>(null);
   const { toast } = useToast();
+  const { user, profile } = useAuth();
 
   const pendingChangeOrder = changeOrders.find(co => 
     co.invoice_id === invoice.id && 
     co.status === 'approved' && 
     !co.applied_at
   );
+
+  // Fetch customer data on component mount
+  useEffect(() => {
+    const fetchCustomerData = async () => {
+      if (invoice.customer_id) {
+        const { data } = await supabase
+          .from('customers')
+          .select('*')
+          .eq('id', invoice.customer_id)
+          .single();
+        
+        if (data) {
+          setCustomerData(data);
+        }
+      }
+    };
+    fetchCustomerData();
+  }, [invoice.customer_id]);
+
+  const sendNotification = async (type: 'lock_override' | 'change_order' | 'auto_lock', details: any) => {
+    try {
+      const customerName = customerData ? 
+        `${customerData.first_name || ''} ${customerData.last_name || customerData.company_name || 'Customer'}`.trim() : 
+        'Customer';
+
+      await supabase.functions.invoke('send-invoice-notification', {
+        body: {
+          type,
+          invoiceId: invoice.id,
+          invoiceNumber: invoice.invoice_number,
+          customerName,
+          userEmail: user?.email || '',
+          adminEmail: profile?.notify_on_invoice_override ? user?.email : undefined,
+          details
+        }
+      });
+    } catch (error) {
+      console.error('Failed to send notification:', error);
+    }
+  };
 
   const handleOverride = async () => {
     if (overridePhrase.toLowerCase() !== 'accept changes') {
@@ -59,10 +102,37 @@ export default function InvoiceLockControl({ invoice, onUnlock, changeOrders = [
           })
           .eq('id', invoice.id);
 
+        // Send notification about the override
+        await sendNotification('lock_override', {
+          overrideBy: user?.email,
+          timestamp: new Date().toISOString(),
+          reason: 'Emergency override used'
+        });
+
         toast({
           title: "Invoice Unlocked",
           description: "You can now edit the invoice. Remember to document changes properly.",
         });
+
+        // Set timeout to re-lock after 1 hour
+        setTimeout(async () => {
+          try {
+            await supabase
+              .from('invoices')
+              .update({ 
+                is_locked: true,
+                lock_reason: 'Auto-locked after override period'
+              })
+              .eq('id', invoice.id);
+            
+            // Send auto-lock notification
+            await sendNotification('auto_lock', {
+              timestamp: new Date().toISOString()
+            });
+          } catch (error) {
+            console.error('Failed to auto-lock invoice:', error);
+          }
+        }, 3600000); // 1 hour
 
         setShowOverrideDialog(false);
         setOverridePhrase('');
