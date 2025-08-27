@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, FileText, Clock, DollarSign, CheckCircle } from "lucide-react";
 import { Invoice, InvoiceStatus } from "@/types/invoice";
+import { EnhancedInvoice } from "@/types/enhanced-invoice";
 
 export const InvoicesPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<EnhancedInvoice | null>(null);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
 
   const handleSaveInvoice = (data: any) => {
@@ -147,7 +148,7 @@ export const InvoicesPage = () => {
 
       {/* Invoice Form Modal */}
       {showForm && (
-        <InvoiceForm
+        <EnhancedInvoiceForm
           open={showForm}
           onOpenChange={(open) => {
             setShowForm(open);
