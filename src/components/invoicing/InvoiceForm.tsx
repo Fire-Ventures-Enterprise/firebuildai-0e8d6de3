@@ -6,10 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Plus, Trash2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { CalendarIcon, Plus, Trash2, UserPlus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Invoice, InvoiceItem, InvoiceStatus, CreateInvoiceRequest } from "@/types/invoice";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { AddCustomerDialog } from "@/components/shared/AddCustomerDialog";
 
 interface InvoiceFormProps {
   open: boolean;
@@ -20,6 +24,7 @@ interface InvoiceFormProps {
 }
 
 export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: InvoiceFormProps) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState<CreateInvoiceRequest>({
     invoiceNumber: '',
     customerId: '',
@@ -31,13 +36,28 @@ export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: Invoi
     termsConditions: 'Payment is due within 30 days.\nPlease include invoice number with payment.'
   });
 
-  const [customerInfo, setCustomerInfo] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: ''
-  });
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+
+  // Fetch customers when dialog opens
+  useEffect(() => {
+    if (open && user) {
+      fetchCustomers();
+    }
+  }, [open, user]);
+
+  const fetchCustomers = async () => {
+    const { data, error } = await supabase
+      .from('customers')
+      .select('*')
+      .eq('user_id', user?.id)
+      .order('company_name', { ascending: true });
+    
+    if (!error && data) {
+      setCustomers(data);
+    }
+  };
 
   useEffect(() => {
     if (invoice && mode === 'edit') {
@@ -57,8 +77,10 @@ export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: Invoi
         termsConditions: invoice.termsConditions || ''
       });
     } else if (mode === 'create') {
-      setFormData({
-        invoiceNumber: `INV-${Date.now()}`,
+      // Generate new invoice number
+      generateInvoiceNumber();
+      setFormData(prev => ({
+        ...prev,
         customerId: '',
         issueDate: new Date(),
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -66,9 +88,27 @@ export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: Invoi
         taxRate: 13,
         notes: '',
         termsConditions: 'Payment is due within 30 days.\nPlease include invoice number with payment.'
-      });
+      }));
     }
   }, [invoice, mode, open]);
+
+  const generateInvoiceNumber = async () => {
+    const { count } = await supabase
+      .from('invoices')
+      .select('*', { count: 'exact' })
+      .eq('user_id', user?.id);
+    
+    const nextNumber = (count || 0) + 1;
+    setFormData(prev => ({ ...prev, invoiceNumber: `INV-${String(nextNumber).padStart(5, '0')}` }));
+  };
+
+  // Update selected customer details when selection changes
+  useEffect(() => {
+    if (formData.customerId && customers.length > 0) {
+      const customer = customers.find(c => c.id === formData.customerId);
+      setSelectedCustomer(customer);
+    }
+  }, [formData.customerId, customers]);
 
   const addLineItem = () => {
     setFormData(prev => ({
@@ -148,38 +188,46 @@ export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: Invoi
             <div>
               <h4 className="font-semibold mb-3">Bill To</h4>
               <div className="space-y-2">
-                <Input
-                  placeholder="Customer Name"
-                  value={customerInfo.name}
-                  onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-60"
-                  required
-                />
-                <Input
-                  placeholder="Email"
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-60"
-                />
-                <Input
-                  placeholder="Phone"
-                  value={customerInfo.phone}
-                  onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
-                  className="w-60"
-                />
-                <Input
-                  placeholder="Address"
-                  value={customerInfo.address}
-                  onChange={(e) => setCustomerInfo(prev => ({ ...prev, address: e.target.value }))}
-                  className="w-60"
-                />
-                <Input
-                  placeholder="City, Province"
-                  value={customerInfo.city}
-                  onChange={(e) => setCustomerInfo(prev => ({ ...prev, city: e.target.value }))}
-                  className="w-60"
-                />
+                <div className="flex gap-2">
+                  <Select 
+                    value={formData.customerId}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, customerId: value }))}
+                  >
+                    <SelectTrigger className="w-60">
+                      <SelectValue placeholder="Select customer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customers.map((customer) => (
+                        <SelectItem key={customer.id} value={customer.id}>
+                          {customer.company_name || `${customer.first_name} ${customer.last_name}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowAddCustomer(true)}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Display selected customer info */}
+                {selectedCustomer && (
+                  <div className="text-sm text-muted-foreground mt-2 space-y-1 p-3 bg-muted/50 rounded">
+                    <p className="font-medium text-foreground">
+                      {selectedCustomer.company_name || `${selectedCustomer.first_name} ${selectedCustomer.last_name}`}
+                    </p>
+                    {selectedCustomer.email && <p>{selectedCustomer.email}</p>}
+                    {selectedCustomer.phone && <p>{selectedCustomer.phone}</p>}
+                    {selectedCustomer.address && <p>{selectedCustomer.address}</p>}
+                    {selectedCustomer.city && (
+                      <p>{selectedCustomer.city}, {selectedCustomer.province} {selectedCustomer.postal_code}</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -359,6 +407,16 @@ export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: Invoi
             </Button>
           </div>
         </form>
+
+        <AddCustomerDialog
+          open={showAddCustomer}
+          onOpenChange={setShowAddCustomer}
+          onCustomerCreated={(customer) => {
+            setCustomers([...customers, customer]);
+            setFormData(prev => ({ ...prev, customerId: customer.id }));
+            fetchCustomers(); // Refresh the list
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

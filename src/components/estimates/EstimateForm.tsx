@@ -9,12 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, Plus, Trash2, UserPlus } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import PaymentStagesForm from './PaymentStagesForm';
+import { AddCustomerDialog } from '@/components/shared/AddCustomerDialog';
 
 interface EstimateFormProps {
   estimate?: any;
@@ -31,6 +32,7 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
   const [issueDate, setIssueDate] = useState<Date>(new Date());
   const [expirationDate, setExpirationDate] = useState<Date>();
   const [depositType, setDepositType] = useState<'percentage' | 'fixed'>('percentage');
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
 
   useEffect(() => {
     fetchCustomers();
@@ -209,18 +211,32 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
             </div>
             <div>
               <Label htmlFor="customer_id">Customer</Label>
-              <Select onValueChange={(value) => setValue('customer_id', value)} defaultValue={estimate?.customer_id}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select customer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {customers.map((customer) => (
-                    <SelectItem key={customer.id} value={customer.id}>
-                      {customer.company_name || `${customer.first_name} ${customer.last_name}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select 
+                  onValueChange={(value) => setValue('customer_id', value)} 
+                  value={watch('customer_id')}
+                  defaultValue={estimate?.customer_id}
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Select customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.company_name || `${customer.first_name} ${customer.last_name}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowAddCustomer(true)}
+                >
+                  <UserPlus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -450,6 +466,16 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
           {estimate ? 'Update Estimate' : 'Create Estimate'}
         </Button>
       </div>
+
+      <AddCustomerDialog
+        open={showAddCustomer}
+        onOpenChange={setShowAddCustomer}
+        onCustomerCreated={(customer) => {
+          setCustomers([...customers, customer]);
+          setValue('customer_id', customer.id);
+          fetchCustomers(); // Refresh the list
+        }}
+      />
     </form>
   );
 }
