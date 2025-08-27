@@ -1,6 +1,6 @@
 // Invoices Page - Manage invoices and billing
 import { useState } from "react";
-import { InvoiceForm } from "@/components/invoicing/InvoiceForm";
+import { EnhancedInvoiceForm } from "@/components/invoicing/EnhancedInvoiceForm";
 import { InvoiceList } from "@/components/invoicing/InvoiceList";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
