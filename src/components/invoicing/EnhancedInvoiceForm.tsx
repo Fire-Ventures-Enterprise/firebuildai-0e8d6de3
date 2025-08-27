@@ -432,112 +432,119 @@ export const EnhancedInvoiceForm = ({
                   <CardTitle>Line Items</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    {/* Header */}
-                    <div className="grid grid-cols-12 gap-2 font-semibold text-sm">
-                      <div className="col-span-2">Item</div>
-                      <div className="col-span-3">Description</div>
-                      <div className="col-span-1">Qty</div>
-                      <div className="col-span-2">Rate</div>
-                      <div className="col-span-1">Markup</div>
-                      <div className="col-span-1">Tax</div>
-                      <div className="col-span-1">Total</div>
-                      <div className="col-span-1"></div>
-                    </div>
+              <div className="space-y-4">
+                {/* Header */}
+                <div className="grid grid-cols-8 gap-2 font-semibold text-sm pb-2 border-b">
+                  <div className="col-span-2">Item</div>
+                  <div className="col-span-1">Qty</div>
+                  <div className="col-span-1">Rate</div>
+                  <div className="col-span-1">Markup</div>
+                  <div className="col-span-1">Tax</div>
+                  <div className="col-span-1">Total</div>
+                  <div className="col-span-1"></div>
+                </div>
 
-                    {/* Items */}
-                    {formData.items.map((item, index) => (
-                      <div key={index} className="grid grid-cols-12 gap-2 items-start">
-                        <div className="col-span-2">
-                          <Input
-                            placeholder="Item name"
-                            value={item.itemName}
-                            onChange={(e) => updateLineItem(index, 'itemName', e.target.value)}
-                          />
-                        </div>
-                        <div className="col-span-3">
-                          <Textarea
-                            placeholder="Description"
-                            value={item.description}
-                            onChange={(e) => updateLineItem(index, 'description', e.target.value)}
-                            rows={2}
-                          />
-                        </div>
-                        <div className="col-span-1">
+                {/* Items */}
+                {formData.items.map((item, index) => (
+                  <div key={index} className="space-y-2 pb-4 border-b">
+                    {/* First row - Item details */}
+                    <div className="grid grid-cols-8 gap-2 items-center">
+                      <div className="col-span-2">
+                        <Input
+                          placeholder="Item name"
+                          value={item.itemName}
+                          onChange={(e) => updateLineItem(index, 'itemName', e.target.value)}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <Input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => updateLineItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                          min="0"
+                          step="0.01"
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <Input
+                          type="number"
+                          value={item.rate}
+                          onChange={(e) => updateLineItem(index, 'rate', parseFloat(e.target.value) || 0)}
+                          min="0"
+                          step="0.01"
+                          placeholder="$0.00"
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <div className="flex gap-1">
                           <Input
                             type="number"
-                            value={item.quantity}
-                            onChange={(e) => updateLineItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                            value={item.markup}
+                            onChange={(e) => updateLineItem(index, 'markup', parseFloat(e.target.value) || 0)}
                             min="0"
                             step="0.01"
+                            className="w-16"
                           />
-                        </div>
-                        <div className="col-span-2">
-                          <Input
-                            type="number"
-                            value={item.rate}
-                            onChange={(e) => updateLineItem(index, 'rate', parseFloat(e.target.value) || 0)}
-                            min="0"
-                            step="0.01"
-                            placeholder="$0.00"
-                          />
-                        </div>
-                        <div className="col-span-1">
-                          <div className="flex gap-1">
-                            <Input
-                              type="number"
-                              value={item.markup}
-                              onChange={(e) => updateLineItem(index, 'markup', parseFloat(e.target.value) || 0)}
-                              min="0"
-                              step="0.01"
-                              className="w-16"
-                            />
-                            <Select
-                              value={item.markupType}
-                              onValueChange={(value: 'percentage' | 'fixed') => updateLineItem(index, 'markupType', value)}
-                            >
-                              <SelectTrigger className="w-12">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="percentage">%</SelectItem>
-                                <SelectItem value="fixed">$</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <div className="col-span-1 flex items-center justify-center">
-                          <Checkbox
-                            checked={item.tax}
-                            onCheckedChange={(checked) => updateLineItem(index, 'tax', checked)}
-                          />
-                        </div>
-                        <div className="col-span-1 flex items-center">
-                          <span className="font-medium">${item.amount.toFixed(2)}</span>
-                        </div>
-                        <div className="col-span-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeLineItem(index)}
+                          <Select
+                            value={item.markupType}
+                            onValueChange={(value: 'percentage' | 'fixed') => updateLineItem(index, 'markupType', value)}
                           >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                            <SelectTrigger className="w-12">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="percentage">%</SelectItem>
+                              <SelectItem value="fixed">$</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
-                    ))}
-
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={addLineItem}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Line Item
-                    </Button>
+                      <div className="col-span-1 flex items-center justify-center">
+                        <Checkbox
+                          checked={item.tax}
+                          onCheckedChange={(checked) => updateLineItem(index, 'tax', checked)}
+                        />
+                      </div>
+                      <div className="col-span-1 flex items-center">
+                        <span className="font-medium">${item.amount.toFixed(2)}</span>
+                      </div>
+                      <div className="col-span-1">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeLineItem(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Second row - Description (full width) */}
+                    <div className="grid grid-cols-8 gap-2">
+                      <div className="col-span-7">
+                        <Textarea
+                          placeholder="Description"
+                          value={item.description}
+                          onChange={(e) => updateLineItem(index, 'description', e.target.value)}
+                          rows={2}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
                   </div>
+                ))}
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addLineItem}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Line Item
+                </Button>
+              </div>
                 </CardContent>
               </Card>
 
@@ -740,6 +747,7 @@ export const EnhancedInvoiceForm = ({
             </TabsContent>
 
             <TabsContent value="contract" className="space-y-6">
+              {/* Contract Settings */}
               <Card>
                 <CardHeader>
                   <CardTitle>Contract</CardTitle>
@@ -763,6 +771,64 @@ export const EnhancedInvoiceForm = ({
                           placeholder="Enter contract terms and conditions..."
                           rows={10}
                         />
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Electronic Signatures */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Electronic Signatures</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label>Require Client Signature</Label>
+                      <Switch
+                        checked={formData.signatures?.some(s => s.type === 'client')}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFormData(prev => ({
+                              ...prev,
+                              signatures: [...(prev.signatures || []), { type: 'client', name: '' }]
+                            }));
+                          } else {
+                            setFormData(prev => ({
+                              ...prev,
+                              signatures: prev.signatures?.filter(s => s.type !== 'client')
+                            }));
+                          }
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <Label>Require Company Signature</Label>
+                      <Switch
+                        checked={formData.signatures?.some(s => s.type === 'company')}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFormData(prev => ({
+                              ...prev,
+                              signatures: [...(prev.signatures || []), { type: 'company', name: '' }]
+                            }));
+                          } else {
+                            setFormData(prev => ({
+                              ...prev,
+                              signatures: prev.signatures?.filter(s => s.type !== 'company')
+                            }));
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {formData.signatures && formData.signatures.length > 0 && (
+                      <div className="p-4 bg-muted/50 rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          Signatures will be collected when the invoice is sent to the customer.
+                        </p>
                       </div>
                     )}
                   </div>
