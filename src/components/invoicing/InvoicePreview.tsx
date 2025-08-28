@@ -281,13 +281,15 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
                   <div className="flex justify-between items-center py-2">
                     <span className="text-sm font-semibold">Remaining Amount</span>
                     <div className="flex items-center space-x-2">
-                      <span className={`text-sm font-bold ${invoice.balance > 0 ? "text-red-600" : "text-green-600"}`}>
-                        ${invoice.balance?.toFixed(2) || invoice.total.toFixed(2)}
+                      <span className={`text-sm font-bold ${invoice.balance > 0 ? "text-red-600" : invoice.balance < 0 ? "text-blue-600" : "text-green-600"}`}>
+                        ${Math.abs(invoice.balance || invoice.total).toFixed(2)}
                       </span>
-                      {invoice.balance > 0 && (
-                        <Badge variant="destructive" className="text-xs">
-                          Outstanding
-                        </Badge>
+                      {invoice.balance === 0 ? (
+                        <Badge className="bg-green-100 text-green-800 border-green-200">Paid in Full</Badge>
+                      ) : invoice.balance > 0 ? (
+                        <Badge variant="destructive">Outstanding Balance</Badge>
+                      ) : (
+                        <Badge className="bg-blue-100 text-blue-800 border-blue-200">Overpaid</Badge>
                       )}
                     </div>
                   </div>
