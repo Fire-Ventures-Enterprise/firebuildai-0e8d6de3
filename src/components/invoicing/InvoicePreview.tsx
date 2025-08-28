@@ -229,73 +229,53 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
             </div>
           </div>
 
-          {/* Payment Summary Section */}
+          {/* Payment Summary Section - Always visible */}
           <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">Payment Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* List of payments */}
-                  {payments.filter(p => p.status === 'completed').length > 0 ? (
-                    <>
-                      {payments
-                        .filter(payment => payment.status === 'completed')
-                        .map((payment, index) => (
-                          <div key={payment.id} className="flex justify-between items-center py-2">
-                            <div className="flex items-center space-x-3">
-                              <span className="text-sm text-muted-foreground">
-                                {format(new Date(payment.payment_date || payment.created_at), "dd/MM/yyyy")} - {' '}
-                                {payment.payment_method === 'stripe' ? 'Credit Card' : 
-                                 payment.payment_method === 'paypal' ? 'PayPal' : 
-                                 payment.payment_method === 'check' ? 'Check' :
-                                 payment.payment_method === 'cash' ? 'Cash' :
-                                 payment.payment_method === 'bank_transfer' ? 'Bank Transfer' :
-                                 payment.payment_method}
-                              </span>
-                            </div>
-                            <span className="text-sm font-semibold text-green-600">
-                              ${payment.amount.toFixed(2)}
-                            </span>
-                          </div>
-                        ))}
-                    </>
-                  ) : (
-                    <div className="text-center py-4 text-muted-foreground text-sm">
-                      No payments received yet
-                    </div>
-                  )}
-                  
-                  <Separator />
-                  
-                  {/* Paid Total */}
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-sm font-semibold">Paid Total</span>
-                    <span className="text-sm font-bold text-green-600">
-                      ${invoice.paidAmount?.toFixed(2) || '0.00'}
-                    </span>
-                  </div>
-                  
-                  {/* Remaining Amount */}
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-sm font-semibold">Remaining Amount</span>
-                    <div className="flex items-center space-x-2">
-                      <span className={`text-sm font-bold ${invoice.balance > 0 ? "text-red-600" : invoice.balance < 0 ? "text-blue-600" : "text-green-600"}`}>
-                        ${Math.abs(invoice.balance || invoice.total).toFixed(2)}
-                      </span>
-                      {invoice.balance === 0 ? (
-                        <Badge className="bg-green-100 text-green-800 border-green-200">Paid in Full</Badge>
-                      ) : invoice.balance > 0 ? (
-                        <Badge variant="destructive">Outstanding Balance</Badge>
-                      ) : (
-                        <Badge className="bg-blue-100 text-blue-800 border-blue-200">Overpaid</Badge>
-                      )}
-                    </div>
-                  </div>
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h4 className="font-bold text-center mb-4 text-base">Payment Summary</h4>
+              <div className="border-b border-gray-200 mb-4"></div>
+              
+              {/* List of payments */}
+              {payments.filter(p => p.status === 'completed').length > 0 ? (
+                <div className="space-y-2 mb-4">
+                  {payments
+                    .filter(payment => payment.status === 'completed')
+                    .map((payment) => (
+                      <div key={payment.id} className="flex justify-between items-center text-sm">
+                        <span>
+                          {format(new Date(payment.payment_date || payment.created_at), "dd/MM/yyyy")} - {' '}
+                          {payment.payment_method === 'stripe' ? 'Credit Card or PayPal' : 
+                           payment.payment_method === 'check' ? 'Check' :
+                           payment.payment_method === 'cash' ? 'Cash' :
+                           payment.payment_method === 'bank_transfer' ? 'Bank Transfer' :
+                           payment.payment_method}
+                        </span>
+                        <span className="font-medium">${payment.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
                 </div>
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="text-center py-2 text-gray-500 text-sm mb-4">
+                  No payments received yet
+                </div>
+              )}
+              
+              {/* Paid Total */}
+              <div className="flex justify-between items-center py-2 font-bold text-sm">
+                <span>Paid Total</span>
+                <span>${invoice.paidAmount?.toFixed(2) || '0.00'}</span>
+              </div>
+              
+              <div className="border-b border-gray-200 my-2"></div>
+              
+              {/* Remaining Amount */}
+              <div className="flex justify-between items-center py-2 font-bold text-base">
+                <span>Remaining Amount</span>
+                <span className={invoice.balance > 0 ? "text-black" : "text-green-600"}>
+                  ${invoice.balance?.toFixed(2) || invoice.total.toFixed(2)}
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Notes */}
