@@ -35,6 +35,7 @@ export interface Invoice {
   total: number;
   paidAmount: number;
   balance: number;
+  discount?: number;
   notes?: string;
   termsConditions?: string;
   customerId: string;

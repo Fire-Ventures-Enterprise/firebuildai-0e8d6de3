@@ -201,75 +201,80 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
           </table>
 
           {/* Totals */}
-          <div className="flex justify-end mb-6">
-            <div className="w-80">
-              <div className="flex justify-between py-2">
-                <span>Subtotal:</span>
-                <span>${invoice.subtotal.toFixed(2)}</span>
-              </div>
-              {invoice.taxAmount > 0 && (
-                <div className="flex justify-between py-2">
-                  <span>Tax ({invoice.taxRate}%):</span>
-                  <span>${invoice.taxAmount.toFixed(2)}</span>
+          <div className="flex justify-end mb-8">
+            <div className="w-96">
+              <div className="space-y-2">
+                <div className="flex justify-between py-1">
+                  <span className="text-sm">Subtotal</span>
+                  <span className="text-sm">${invoice.subtotal.toFixed(2)}</span>
                 </div>
-              )}
-              <Separator className="my-2" />
-              <div className="flex justify-between py-2 font-bold text-lg">
-                <span>Total:</span>
-                <span>${invoice.total.toFixed(2)}</span>
+                {invoice.discount && invoice.discount > 0 && (
+                  <div className="flex justify-between py-1">
+                    <span className="text-sm">Discount</span>
+                    <span className="text-sm">-${invoice.discount.toFixed(2)}</span>
+                  </div>
+                )}
+                {invoice.taxAmount > 0 && (
+                  <div className="flex justify-between py-1">
+                    <span className="text-sm">Tax</span>
+                    <span className="text-sm">${invoice.taxAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between py-2 font-bold border-t">
+                  <span>Total</span>
+                  <span>${invoice.total.toFixed(2)}</span>
+                </div>
               </div>
-              {invoice.paidAmount > 0 && (
-                <>
-                  <div className="flex justify-between py-2 text-green-600">
-                    <span>Paid:</span>
-                    <span>-${invoice.paidAmount.toFixed(2)}</span>
-                  </div>
-                  <Separator className="my-2" />
-                  <div className="flex justify-between py-2 font-bold text-lg">
-                    <span>Balance Due:</span>
-                    <span>${invoice.balance.toFixed(2)}</span>
-                  </div>
-                </>
-              )}
             </div>
           </div>
 
-          {/* Payment History */}
-          {payments.length > 0 && (
-            <div className="mb-6">
-              <h4 className="font-semibold mb-3">Payment History:</h4>
-              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                {payments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                    <div className="flex items-center gap-3">
-                      {payment.status === 'completed' ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      ) : payment.status === 'pending' ? (
-                        <DollarSign className="h-5 w-5 text-yellow-500" />
-                      ) : (
-                        <DollarSign className="h-5 w-5 text-red-500" />
-                      )}
-                      <div>
-                        <p className="text-sm font-medium">
-                          ${payment.amount.toFixed(2)} via {payment.payment_method}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {payment.status === 'completed' 
-                            ? `Paid on ${format(new Date(payment.processed_at || payment.created_at), "MMM dd, yyyy 'at' h:mm a")}`
-                            : payment.status === 'pending'
-                            ? 'Payment pending'
-                            : 'Payment failed'}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge 
-                      variant={payment.status === 'completed' ? 'default' : payment.status === 'pending' ? 'secondary' : 'destructive'}
-                      className="text-xs"
-                    >
-                      {payment.status}
-                    </Badge>
+          {/* Payment Summary - Always show if there's a balance or payments */}
+          {(payments.length > 0 || invoice.balance !== invoice.total) && (
+            <div className="mb-8">
+              <div className="bg-muted/20 rounded-lg p-6">
+                <h4 className="font-bold text-center mb-4 text-lg">Payment Summary</h4>
+                <Separator className="mb-4" />
+                
+                {/* List of payments */}
+                {payments.filter(p => p.status === 'completed').length > 0 ? (
+                  <div className="space-y-2 mb-4">
+                    {payments
+                      .filter(payment => payment.status === 'completed')
+                      .map((payment) => (
+                        <div key={payment.id} className="flex justify-between py-1">
+                          <span className="text-sm">
+                            {format(new Date(payment.processed_at || payment.created_at), "dd/MM/yyyy")} - {' '}
+                            {payment.payment_method === 'stripe' ? 'Credit Card' : 
+                             payment.payment_method === 'paypal' ? 'PayPal' : 
+                             payment.payment_method}
+                          </span>
+                          <span className="text-sm font-medium">${payment.amount.toFixed(2)}</span>
+                        </div>
+                      ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground text-sm">
+                    No payments received yet
+                  </div>
+                )}
+                
+                <Separator className="my-3" />
+                
+                {/* Paid Total */}
+                <div className="flex justify-between py-2 font-bold">
+                  <span>Paid Total</span>
+                  <span>${invoice.paidAmount?.toFixed(2) || '0.00'}</span>
+                </div>
+                
+                <Separator className="my-3" />
+                
+                {/* Remaining Amount */}
+                <div className="flex justify-between py-2 font-bold text-lg">
+                  <span>Remaining Amount</span>
+                  <span className={invoice.balance > 0 ? "text-red-600" : "text-green-600"}>
+                    ${invoice.balance?.toFixed(2) || invoice.total.toFixed(2)}
+                  </span>
+                </div>
               </div>
             </div>
           )}
