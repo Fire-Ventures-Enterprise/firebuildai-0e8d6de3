@@ -229,14 +229,14 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
             </div>
           </div>
 
-          {/* Payment Summary Section - Always visible */}
+          {/* Payment Summary Section - Always visible for all invoices */}
           <div className="mb-8">
             <div className="bg-gray-50 rounded-lg p-6">
               <h4 className="font-bold text-center mb-4 text-base">Payment Summary</h4>
               <div className="border-b border-gray-200 mb-4"></div>
               
               {/* List of payments */}
-              {payments.filter(p => p.status === 'completed').length > 0 ? (
+              {payments && payments.filter(p => p.status === 'completed').length > 0 ? (
                 <div className="space-y-2 mb-4">
                   {payments
                     .filter(payment => payment.status === 'completed')
@@ -263,7 +263,7 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
               {/* Paid Total */}
               <div className="flex justify-between items-center py-2 font-bold text-sm">
                 <span>Paid Total</span>
-                <span>${invoice.paidAmount?.toFixed(2) || '0.00'}</span>
+                <span>${(invoice.paidAmount || 0).toFixed(2)}</span>
               </div>
               
               <div className="border-b border-gray-200 my-2"></div>
@@ -271,8 +271,8 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
               {/* Remaining Amount */}
               <div className="flex justify-between items-center py-2 font-bold text-base">
                 <span>Remaining Amount</span>
-                <span className={invoice.balance > 0 ? "text-black" : "text-green-600"}>
-                  ${invoice.balance?.toFixed(2) || invoice.total.toFixed(2)}
+                <span className={invoice.balance === 0 && invoice.paidAmount > 0 ? "text-green-600" : "text-black"}>
+                  ${(invoice.balance !== undefined ? invoice.balance : invoice.total).toFixed(2)}
                 </span>
               </div>
             </div>
