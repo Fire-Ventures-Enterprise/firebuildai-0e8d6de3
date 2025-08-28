@@ -17,6 +17,7 @@ export const InvoicesPage = () => {
   const [selectedInvoice, setSelectedInvoice] = useState<EnhancedInvoice | null>(null);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'paid'>('all');
   const { toast } = useToast();
 
   // Fetch invoices from database
@@ -291,6 +292,13 @@ export const InvoicesPage = () => {
     totalValue: invoices.reduce((sum, i) => sum + i.total, 0),
   };
 
+  // Filter invoices based on status
+  const filteredInvoices = statusFilter === 'all' 
+    ? invoices 
+    : statusFilter === 'pending' 
+    ? invoices.filter(i => i.status === 'sent' || i.status === 'viewed' || i.status === 'draft')
+    : invoices.filter(i => i.status === 'paid');
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -307,7 +315,10 @@ export const InvoicesPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card 
+          className={`p-4 cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'all' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => setStatusFilter('all')}
+        >
           <div className="flex items-center gap-3">
             <FileText className="w-8 h-8 text-primary" />
             <div>
@@ -316,7 +327,10 @@ export const InvoicesPage = () => {
             </div>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card 
+          className={`p-4 cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'pending' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => setStatusFilter('pending')}
+        >
           <div className="flex items-center gap-3">
             <Clock className="w-8 h-8 text-warning" />
             <div>
@@ -325,7 +339,10 @@ export const InvoicesPage = () => {
             </div>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card 
+          className={`p-4 cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'paid' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => setStatusFilter('paid')}
+        >
           <div className="flex items-center gap-3">
             <CheckCircle className="w-8 h-8 text-success" />
             <div>
@@ -345,10 +362,26 @@ export const InvoicesPage = () => {
         </Card>
       </div>
 
+      {/* Filter Indicator */}
+      {statusFilter !== 'all' && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Showing {statusFilter === 'pending' ? 'pending' : 'paid'} invoices
+          </span>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => setStatusFilter('all')}
+          >
+            Clear filter
+          </Button>
+        </div>
+      )}
+
       {/* Invoices List */}
-      {invoices.length > 0 ? (
+      {filteredInvoices.length > 0 ? (
         <EnhancedInvoiceList 
-          invoices={invoices} 
+          invoices={filteredInvoices} 
           onEdit={handleEditInvoice}
           onDelete={handleDeleteInvoice}
           onRefresh={fetchInvoices}
