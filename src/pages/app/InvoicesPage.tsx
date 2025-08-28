@@ -1,7 +1,7 @@
 // Invoices Page - Manage invoices and billing
 import { useState, useEffect } from "react";
 import { EnhancedInvoiceForm } from "@/components/invoicing/EnhancedInvoiceForm";
-import { EnhancedInvoiceList } from "@/components/invoicing/EnhancedInvoiceList";
+import { SimpleInvoiceTable } from "@/components/invoicing/SimpleInvoiceTable";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, FileText, Clock, DollarSign, CheckCircle, Send, Mail } from "lucide-react";
@@ -346,10 +346,12 @@ export const InvoicesPage = () => {
   };
 
   const stats = {
-    total: invoices.length,
-    pending: invoices.filter(i => i.status === 'sent' || i.status === 'viewed').length,
+    totalInvoiced: invoices.reduce((sum, i) => sum + i.total, 0),
+    totalPaid: invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.total, 0),
+    outstanding: invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled').reduce((sum, i) => sum + (i.balance || i.total), 0),
+    totalInvoices: invoices.length,
+    pending: invoices.filter(i => i.status === 'sent' || i.status === 'viewed' || i.status === 'draft').length,
     paid: invoices.filter(i => i.status === 'paid').length,
-    totalValue: invoices.reduce((sum, i) => sum + i.total, 0),
   };
 
   // Filter invoices based on status
@@ -362,61 +364,67 @@ export const InvoicesPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Invoices</h1>
-          <p className="text-muted-foreground mt-1">Manage billing and payments</p>
+          <h1 className="text-3xl font-bold text-foreground">Invoices</h1>
+          <p className="text-muted-foreground mt-1">Manage client invoices and payments</p>
         </div>
-        <Button onClick={handleCreateInvoice}>
+        <Button onClick={handleCreateInvoice} size="default" className="bg-foreground text-background hover:bg-foreground/90">
           <Plus className="w-4 h-4 mr-2" />
           New Invoice
         </Button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Inspired by Replit's clean design */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card 
-          className={`p-4 cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'all' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setStatusFilter('all')}
-        >
-          <div className="flex items-center gap-3">
-            <FileText className="w-8 h-8 text-primary" />
-            <div>
-              <p className="text-sm text-muted-foreground">Total Invoices</p>
-              <p className="text-2xl font-semibold">{stats.total}</p>
+        <Card className="p-6 bg-card">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Invoiced</p>
+              <p className="text-2xl font-bold">${stats.totalInvoiced.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">All time</p>
+            </div>
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <FileText className="w-4 h-4 text-primary" />
             </div>
           </div>
         </Card>
-        <Card 
-          className={`p-4 cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'pending' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setStatusFilter('pending')}
-        >
-          <div className="flex items-center gap-3">
-            <Clock className="w-8 h-8 text-warning" />
-            <div>
-              <p className="text-sm text-muted-foreground">Pending</p>
-              <p className="text-2xl font-semibold">{stats.pending}</p>
+        
+        <Card className="p-6 bg-card">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Paid</p>
+              <p className="text-2xl font-bold text-success">${stats.totalPaid.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">Collected</p>
+            </div>
+            <div className="p-2 bg-success/10 rounded-lg">
+              <DollarSign className="w-4 h-4 text-success" />
             </div>
           </div>
         </Card>
-        <Card 
-          className={`p-4 cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'paid' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setStatusFilter('paid')}
-        >
-          <div className="flex items-center gap-3">
-            <CheckCircle className="w-8 h-8 text-success" />
-            <div>
-              <p className="text-sm text-muted-foreground">Paid</p>
-              <p className="text-2xl font-semibold">{stats.paid}</p>
+        
+        <Card className="p-6 bg-card">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Outstanding</p>
+              <p className="text-2xl font-bold text-warning">${stats.outstanding.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">To collect</p>
+            </div>
+            <div className="p-2 bg-warning/10 rounded-lg">
+              <Clock className="w-4 h-4 text-warning" />
             </div>
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <DollarSign className="w-8 h-8 text-success" />
-            <div>
-              <p className="text-sm text-muted-foreground">Total Revenue</p>
-              <p className="text-2xl font-semibold">${stats.totalValue.toFixed(2)}</p>
+        
+        <Card className="p-6 bg-card">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Invoices</p>
+              <p className="text-2xl font-bold">{stats.totalInvoices}</p>
+              <p className="text-xs text-muted-foreground">Active invoices</p>
+            </div>
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <FileText className="w-4 h-4 text-primary" />
             </div>
           </div>
         </Card>
@@ -440,7 +448,7 @@ export const InvoicesPage = () => {
 
       {/* Invoices List */}
       {filteredInvoices.length > 0 ? (
-        <EnhancedInvoiceList 
+        <SimpleInvoiceTable 
           invoices={filteredInvoices} 
           onEdit={handleEditInvoice}
           onDelete={handleDeleteInvoice}

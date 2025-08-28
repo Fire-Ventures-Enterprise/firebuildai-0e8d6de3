@@ -146,34 +146,23 @@ export const EnhancedInvoiceList = ({
 
   return (
     <div className="space-y-6">
-      {/* Search Bar */}
-      <Card className="p-4">
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1">
+      {/* Clean Invoice List Card - Inspired by Replit */}
+      <Card className="p-6 bg-card">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-semibold">Invoice List</h2>
+            <p className="text-sm text-muted-foreground">View and manage all invoices</p>
+          </div>
+          <div className="relative w-80">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search all invoices by Name, Address, Invoice # or PO #"
+              placeholder="Search invoices..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
+              className="pl-10"
             />
           </div>
-          <Button variant="outline">Export</Button>
-          <Button variant="outline">
-            Use Template <Badge className="ml-2">PRO</Badge>
-          </Button>
         </div>
-      </Card>
-
-      {/* Tabs */}
-      <div className="flex gap-4 border-b">
-        <button className="pb-2 px-1 border-b-2 border-primary font-medium">
-          ACTIVE
-        </button>
-        <button className="pb-2 px-1 text-muted-foreground">
-          PAID
-        </button>
-      </div>
 
       {/* Invoices grouped by month */}
       {monthKeys.map(month => {
@@ -298,7 +287,8 @@ export const EnhancedInvoiceList = ({
           No invoices found
         </Card>
       )}
-
+      
+      </Card>
     </div>
   );
 };
