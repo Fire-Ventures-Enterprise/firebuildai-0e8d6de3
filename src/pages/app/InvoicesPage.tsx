@@ -10,6 +10,7 @@ import { EnhancedInvoice } from "@/types/enhanced-invoice";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useSearchParams } from "react-router-dom";
 
 export const InvoicesPage = () => {
   const [showForm, setShowForm] = useState(false);
@@ -19,11 +20,70 @@ export const InvoicesPage = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'paid'>('all');
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Fetch invoices from database
   useEffect(() => {
     fetchInvoices();
-  }, []);
+    
+    // Check for payment verification
+    const payment = searchParams.get('payment');
+    const sessionId = searchParams.get('session_id');
+    const invoiceId = searchParams.get('invoice');
+    
+    if (payment === 'success' && sessionId) {
+      verifyPayment(sessionId);
+    } else if (payment === 'success' && invoiceId) {
+      toast({
+        title: "Payment Processing",
+        description: "Your payment is being processed. The invoice will be updated shortly.",
+      });
+      // Clear the params
+      setSearchParams({});
+    } else if (payment === 'cancelled') {
+      toast({
+        title: "Payment Cancelled",
+        description: "The payment was cancelled.",
+        variant: "destructive"
+      });
+      setSearchParams({});
+    }
+  }, [searchParams]);
+
+  const verifyPayment = async (sessionId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-invoice-payment', {
+        body: { sessionId }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.status === 'completed') {
+        toast({
+          title: "Payment Successful",
+          description: "The invoice has been paid successfully.",
+        });
+      } else if (data?.status === 'failed') {
+        toast({
+          title: "Payment Failed",
+          description: "The payment could not be processed.",
+          variant: "destructive"
+        });
+      }
+      
+      // Refresh invoices to show updated status
+      fetchInvoices();
+      setSearchParams({});
+    } catch (error: any) {
+      console.error('Payment verification error:', error);
+      toast({
+        title: "Verification Error",
+        description: "Could not verify payment status",
+        variant: "destructive"
+      });
+      setSearchParams({});
+    }
+  };
 
   const fetchInvoices = async () => {
     try {

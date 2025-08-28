@@ -2,9 +2,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Download, Send, Printer } from "lucide-react";
+import { Download, Send, Printer, CreditCard, DollarSign, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Invoice, InvoiceStatus } from "@/types/invoice";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface InvoicePreviewProps {
   open: boolean;
@@ -13,6 +16,56 @@ interface InvoicePreviewProps {
 }
 
 export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewProps) => {
+  const { toast } = useToast();
+  const [payments, setPayments] = useState<any[]>([]);
+  const [processingPayment, setProcessingPayment] = useState(false);
+
+  useEffect(() => {
+    if (open && invoice.id) {
+      fetchPayments();
+    }
+  }, [open, invoice.id]);
+
+  const fetchPayments = async () => {
+    const { data, error } = await supabase
+      .from('invoice_payments')
+      .select('*')
+      .eq('invoice_id', invoice.id)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setPayments(data);
+    }
+  };
+
+  const handleStripePayment = async () => {
+    setProcessingPayment(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('process-invoice-payment', {
+        body: {
+          invoiceId: invoice.id,
+          amount: invoice.balance,
+          customerEmail: invoice.customer?.email || 'customer@example.com',
+          invoiceNumber: invoice.invoiceNumber
+        }
+      });
+
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Payment Error",
+        description: error.message || "Failed to process payment",
+        variant: "destructive"
+      });
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
   const getStatusColor = (status: InvoiceStatus) => {
     const colors: Record<InvoiceStatus, string> = {
       [InvoiceStatus.DRAFT]: "text-gray-600",
@@ -47,6 +100,16 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
               <Button size="sm">
                 <Send className="h-4 w-4 mr-2" />
                 Send Invoice
+              </Button>
+            )}
+            {invoice.balance > 0 && invoice.status !== InvoiceStatus.CANCELLED && (
+              <Button 
+                size="sm" 
+                onClick={handleStripePayment}
+                disabled={processingPayment}
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                {processingPayment ? "Processing..." : "Pay with Stripe"}
               </Button>
             )}
           </div>
@@ -170,6 +233,46 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
               )}
             </div>
           </div>
+
+          {/* Payment History */}
+          {payments.length > 0 && (
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3">Payment History:</h4>
+              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                {payments.map((payment) => (
+                  <div key={payment.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                    <div className="flex items-center gap-3">
+                      {payment.status === 'completed' ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : payment.status === 'pending' ? (
+                        <DollarSign className="h-5 w-5 text-yellow-500" />
+                      ) : (
+                        <DollarSign className="h-5 w-5 text-red-500" />
+                      )}
+                      <div>
+                        <p className="text-sm font-medium">
+                          ${payment.amount.toFixed(2)} via {payment.payment_method}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {payment.status === 'completed' 
+                            ? `Paid on ${format(new Date(payment.processed_at || payment.created_at), "MMM dd, yyyy 'at' h:mm a")}`
+                            : payment.status === 'pending'
+                            ? 'Payment pending'
+                            : 'Payment failed'}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge 
+                      variant={payment.status === 'completed' ? 'default' : payment.status === 'pending' ? 'secondary' : 'destructive'}
+                      className="text-xs"
+                    >
+                      {payment.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Notes */}
           {invoice.notes && (

@@ -102,3 +102,12 @@ verify_jwt = true
 
 [functions.send-invoice-notification]
 verify_jwt = true
+
+[functions.process-deposit]
+verify_jwt = true
+
+[functions.process-invoice-payment]
+verify_jwt = true
+
+[functions.verify-invoice-payment]
+verify_jwt = false
