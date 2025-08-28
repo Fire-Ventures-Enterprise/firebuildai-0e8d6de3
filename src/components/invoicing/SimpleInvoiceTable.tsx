@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
-import { InvoicePreview } from "./InvoicePreview";
+import { EnhancedInvoicePreview } from "./EnhancedInvoicePreview";
 import { InvoiceStatus } from "@/types/invoice";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -230,49 +230,10 @@ export const SimpleInvoiceTable = ({
 
       {/* Invoice Preview Modal */}
       {selectedInvoice && (
-        <InvoicePreview 
+        <EnhancedInvoicePreview 
           open={showPreview}
           onOpenChange={setShowPreview}
-          invoice={{
-            id: selectedInvoice.id || '',
-            invoiceNumber: selectedInvoice.invoiceNumber,
-            issueDate: selectedInvoice.issueDate,
-            dueDate: selectedInvoice.dueDate || new Date(),
-            customer: {
-              id: selectedInvoice.customerId,
-              firstName: selectedInvoice.customerName?.split(' ')[0] || '',
-              lastName: selectedInvoice.customerName?.split(' ').slice(1).join(' ') || '',
-              email: selectedInvoice.customerEmail || '',
-              phone: selectedInvoice.customerPhone || '',
-              address: selectedInvoice.customerAddress || '',
-              city: selectedInvoice.customerCity || '',
-              state: selectedInvoice.customerProvince || '',
-              zipCode: selectedInvoice.customerPostalCode || '',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            customerId: selectedInvoice.customerId,
-            companyId: '',
-            items: selectedInvoice.items?.map(item => ({
-              id: item.id || '',
-              description: item.itemName || item.description,
-              quantity: item.quantity,
-              rate: item.rate,
-              amount: item.amount
-            })) || [],
-            subtotal: selectedInvoice.subtotal,
-            discount: selectedInvoice.discount || 0,
-            taxRate: selectedInvoice.taxRate,
-            taxAmount: selectedInvoice.taxAmount,
-            total: selectedInvoice.total,
-            status: InvoiceStatus.DRAFT,
-            paidAmount: selectedInvoice.paidAmount || 0,
-            balance: selectedInvoice.balance || selectedInvoice.total,
-            notes: selectedInvoice.notes || '',
-            termsConditions: selectedInvoice.contractText || '',
-            createdAt: selectedInvoice.createdAt || new Date(),
-            updatedAt: selectedInvoice.updatedAt || new Date()
-          }}
+          invoice={selectedInvoice}
         />
       )}
     </>
