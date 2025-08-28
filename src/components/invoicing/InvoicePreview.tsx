@@ -2,6 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Send, Printer, CreditCard, DollarSign, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Invoice, InvoiceStatus } from "@/types/invoice";
@@ -228,56 +229,72 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
             </div>
           </div>
 
-          {/* Payment Summary - Always show if there's a balance or payments */}
-          {(payments.length > 0 || invoice.balance !== invoice.total) && (
-            <div className="mb-8">
-              <div className="bg-muted/20 rounded-lg p-6">
-                <h4 className="font-bold text-center mb-4 text-lg">Payment Summary</h4>
-                <Separator className="mb-4" />
-                
-                {/* List of payments */}
-                {payments.filter(p => p.status === 'completed').length > 0 ? (
-                  <div className="space-y-2 mb-4">
-                    {payments
-                      .filter(payment => payment.status === 'completed')
-                      .map((payment) => (
-                        <div key={payment.id} className="flex justify-between py-1">
-                          <span className="text-sm">
-                            {format(new Date(payment.processed_at || payment.created_at), "dd/MM/yyyy")} - {' '}
-                            {payment.payment_method === 'stripe' ? 'Credit Card' : 
-                             payment.payment_method === 'paypal' ? 'PayPal' : 
-                             payment.payment_method}
-                          </span>
-                          <span className="text-sm font-medium">${payment.amount.toFixed(2)}</span>
-                        </div>
-                      ))}
+          {/* Payment Summary Section */}
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Payment Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* List of payments */}
+                  {payments.filter(p => p.status === 'completed').length > 0 ? (
+                    <>
+                      {payments
+                        .filter(payment => payment.status === 'completed')
+                        .map((payment, index) => (
+                          <div key={payment.id} className="flex justify-between items-center py-2">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-sm text-muted-foreground">
+                                {format(new Date(payment.payment_date || payment.created_at), "dd/MM/yyyy")} - {' '}
+                                {payment.payment_method === 'stripe' ? 'Credit Card' : 
+                                 payment.payment_method === 'paypal' ? 'PayPal' : 
+                                 payment.payment_method === 'check' ? 'Check' :
+                                 payment.payment_method === 'cash' ? 'Cash' :
+                                 payment.payment_method === 'bank_transfer' ? 'Bank Transfer' :
+                                 payment.payment_method}
+                              </span>
+                            </div>
+                            <span className="text-sm font-semibold text-green-600">
+                              ${payment.amount.toFixed(2)}
+                            </span>
+                          </div>
+                        ))}
+                    </>
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground text-sm">
+                      No payments received yet
+                    </div>
+                  )}
+                  
+                  <Separator />
+                  
+                  {/* Paid Total */}
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm font-semibold">Paid Total</span>
+                    <span className="text-sm font-bold text-green-600">
+                      ${invoice.paidAmount?.toFixed(2) || '0.00'}
+                    </span>
                   </div>
-                ) : (
-                  <div className="text-center py-4 text-muted-foreground text-sm">
-                    No payments received yet
+                  
+                  {/* Remaining Amount */}
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm font-semibold">Remaining Amount</span>
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-sm font-bold ${invoice.balance > 0 ? "text-red-600" : "text-green-600"}`}>
+                        ${invoice.balance?.toFixed(2) || invoice.total.toFixed(2)}
+                      </span>
+                      {invoice.balance > 0 && (
+                        <Badge variant="destructive" className="text-xs">
+                          Outstanding
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                )}
-                
-                <Separator className="my-3" />
-                
-                {/* Paid Total */}
-                <div className="flex justify-between py-2 font-bold">
-                  <span>Paid Total</span>
-                  <span>${invoice.paidAmount?.toFixed(2) || '0.00'}</span>
                 </div>
-                
-                <Separator className="my-3" />
-                
-                {/* Remaining Amount */}
-                <div className="flex justify-between py-2 font-bold text-lg">
-                  <span>Remaining Amount</span>
-                  <span className={invoice.balance > 0 ? "text-red-600" : "text-green-600"}>
-                    ${invoice.balance?.toFixed(2) || invoice.total.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Notes */}
           {invoice.notes && (
