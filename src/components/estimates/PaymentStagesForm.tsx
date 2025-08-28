@@ -5,9 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, Plus, Trash2, Percent, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 interface PaymentStage {
   description: string;
@@ -66,6 +67,27 @@ export default function PaymentStagesForm({ stages, onChange, totalAmount }: Pay
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Payment Method Toggle */}
+        {stages.length > 0 && (
+          <div className="flex items-center gap-2">
+            <Label>Payment Method:</Label>
+            <ToggleGroup 
+              type="single" 
+              value={paymentMethod} 
+              onValueChange={(value) => value && setPaymentMethod(value as 'percentage' | 'fixed')}
+            >
+              <ToggleGroupItem value="percentage" aria-label="Percentage">
+                <Percent className="h-4 w-4 mr-2" />
+                Percentage
+              </ToggleGroupItem>
+              <ToggleGroupItem value="fixed" aria-label="Fixed Amount">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Fixed Amount
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        )}
+        
         {stages.length === 0 ? (
           <p className="text-muted-foreground text-center py-4">
             No payment stages defined. Add stages to structure payment milestones.
@@ -96,25 +118,35 @@ export default function PaymentStagesForm({ stages, onChange, totalAmount }: Pay
                     />
                   </div>
                   
-                  <div>
-                    <Label>Percentage (%)</Label>
-                    <Input
-                      type="number"
-                      placeholder="e.g., 30"
-                      value={stage.percentage}
-                      onChange={(e) => updateStage(index, 'percentage', parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label>Amount ($)</Label>
-                    <Input
-                      type="number"
-                      value={stage.amount?.toFixed(2)}
-                      readOnly={paymentMethod === 'percentage'}
-                      onChange={(e) => paymentMethod === 'fixed' && updateStage(index, 'amount', parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
+                  {paymentMethod === 'percentage' ? (
+                    <div>
+                      <Label>Percentage (%)</Label>
+                      <Input
+                        type="number"
+                        placeholder="e.g., 30"
+                        value={stage.percentage}
+                        onChange={(e) => {
+                          const percentage = parseFloat(e.target.value) || 0;
+                          updateStage(index, 'percentage', percentage);
+                          updateStage(index, 'amount', totalAmount * (percentage / 100));
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <Label>Amount ($)</Label>
+                      <Input
+                        type="number"
+                        placeholder="e.g., 5000"
+                        value={stage.amount}
+                        onChange={(e) => {
+                          const amount = parseFloat(e.target.value) || 0;
+                          updateStage(index, 'amount', amount);
+                          updateStage(index, 'percentage', totalAmount > 0 ? (amount / totalAmount) * 100 : 0);
+                        }}
+                      />
+                    </div>
+                  )}
                   
                   <div>
                     <Label>Milestone</Label>
