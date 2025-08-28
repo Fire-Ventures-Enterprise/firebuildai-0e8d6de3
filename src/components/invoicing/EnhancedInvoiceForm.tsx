@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
@@ -84,6 +85,7 @@ export const EnhancedInvoiceForm = ({
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('items');
+  const [paymentScheduleMode, setPaymentScheduleMode] = useState<'percentage' | 'fixed'>('percentage');
 
   // Fetch customers
   useEffect(() => {
@@ -646,8 +648,29 @@ export const EnhancedInvoiceForm = ({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    {/* Payment Method Toggle */}
+                    {formData.paymentSchedule && formData.paymentSchedule.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Label>Payment Method:</Label>
+                        <ToggleGroup 
+                          type="single" 
+                          value={paymentScheduleMode} 
+                          onValueChange={(value) => value && setPaymentScheduleMode(value as 'percentage' | 'fixed')}
+                        >
+                          <ToggleGroupItem value="percentage" aria-label="Percentage">
+                            <Percent className="h-4 w-4 mr-2" />
+                            Percentage
+                          </ToggleGroupItem>
+                          <ToggleGroupItem value="fixed" aria-label="Fixed Amount">
+                            <DollarSign className="h-4 w-4 mr-2" />
+                            Fixed Amount
+                          </ToggleGroupItem>
+                        </ToggleGroup>
+                      </div>
+                    )}
+                    
                     {formData.paymentSchedule?.map((schedule, index) => (
-                      <div key={index} className="grid grid-cols-5 gap-2 items-end">
+                      <div key={index} className="grid grid-cols-4 gap-2 items-end">
                         <div>
                           <Label>Description</Label>
                           <Input
@@ -656,27 +679,38 @@ export const EnhancedInvoiceForm = ({
                             placeholder="Milestone"
                           />
                         </div>
-                        <div>
-                          <Label>Amount</Label>
-                          <Input
-                            type="number"
-                            value={schedule.amount}
-                            onChange={(e) => updatePaymentSchedule(index, 'amount', parseFloat(e.target.value) || 0)}
-                            min="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <Label>Percentage</Label>
-                          <Input
-                            type="number"
-                            value={schedule.percentage}
-                            onChange={(e) => updatePaymentSchedule(index, 'percentage', parseFloat(e.target.value) || 0)}
-                            min="0"
-                            max="100"
-                            step="0.01"
-                          />
-                        </div>
+                        {paymentScheduleMode === 'percentage' ? (
+                          <div>
+                            <Label>Percentage (%)</Label>
+                            <Input
+                              type="number"
+                              value={schedule.percentage}
+                              onChange={(e) => {
+                                const percentage = parseFloat(e.target.value) || 0;
+                                updatePaymentSchedule(index, 'percentage', percentage);
+                                updatePaymentSchedule(index, 'amount', formData.total * (percentage / 100));
+                              }}
+                              min="0"
+                              max="100"
+                              step="0.01"
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <Label>Amount ($)</Label>
+                            <Input
+                              type="number"
+                              value={schedule.amount}
+                              onChange={(e) => {
+                                const amount = parseFloat(e.target.value) || 0;
+                                updatePaymentSchedule(index, 'amount', amount);
+                                updatePaymentSchedule(index, 'percentage', formData.total > 0 ? (amount / formData.total) * 100 : 0);
+                              }}
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                        )}
                         <div>
                           <Label>Due Date</Label>
                           <Popover>
