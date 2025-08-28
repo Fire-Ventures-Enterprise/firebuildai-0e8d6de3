@@ -123,30 +123,17 @@ export const EnhancedInvoiceForm = ({
       generateInvoiceNumber();
     } else if (mode === 'edit' && invoice) {
       setFormData(invoice);
-    }
-  }, [mode, invoice, open]);
-
-  // Update selected customer only when manually selecting a new customer
-  useEffect(() => {
-    if (formData.customerId && customers.length > 0 && mode === 'create') {
-      const customer = customers.find(c => c.id === formData.customerId);
-      if (customer) {
-        setSelectedCustomer(customer);
-        // Only update customer fields if we're creating a new invoice
-        // For existing invoices, keep the saved customer data
-        setFormData(prev => ({
-          ...prev,
-          customerName: customer.company_name || `${customer.first_name} ${customer.last_name}`,
-          customerEmail: customer.email,
-          customerPhone: customer.phone,
-          customerAddress: customer.address,
-          customerCity: customer.city,
-          customerProvince: customer.province,
-          customerPostalCode: customer.postal_code
-        }));
+      // Also set the selected customer when editing
+      if (invoice.customerId && customers.length > 0) {
+        const customer = customers.find(c => c.id === invoice.customerId);
+        if (customer) {
+          setSelectedCustomer(customer);
+        }
       }
     }
-  }, [formData.customerId, customers, mode]);
+  }, [mode, invoice, open, customers]);
+
+  // This effect is removed to prevent overwriting customer data when editing
 
   // Line item functions
   const addLineItem = () => {
