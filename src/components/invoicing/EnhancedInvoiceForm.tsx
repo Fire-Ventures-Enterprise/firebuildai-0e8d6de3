@@ -609,36 +609,106 @@ export const EnhancedInvoiceForm = ({
               {/* Deposit Request */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Deposit Request</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4 items-center">
-                    <Label>Request a deposit:</Label>
-                    <Input
-                      type="number"
-                      value={formData.depositRequest}
-                      onChange={(e) => setFormData(prev => ({ ...prev, depositRequest: parseFloat(e.target.value) || 0 }))}
-                      className="w-32"
-                      min="0"
-                      step="0.01"
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Deposit Request</CardTitle>
+                    <Switch
+                      checked={!!formData.depositRequest}
+                      onCheckedChange={(checked) => {
+                        if (!checked) {
+                          setFormData(prev => ({
+                            ...prev,
+                            depositRequest: 0,
+                            depositType: undefined,
+                            depositAmount: 0
+                          }));
+                        } else {
+                          setFormData(prev => ({
+                            ...prev,
+                            depositRequest: 25,
+                            depositType: 'percentage',
+                            depositAmount: (prev.total * 0.25)
+                          }));
+                        }
+                      }}
                     />
-                    <Select
-                      value={formData.depositType}
-                      onValueChange={(value: 'percentage' | 'fixed') => setFormData(prev => ({ ...prev, depositType: value }))}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="percentage">Percentage</SelectItem>
-                        <SelectItem value="fixed">Fixed Amount</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {formData.depositAmount > 0 && (
-                      <span className="font-medium">${formData.depositAmount.toFixed(2)}</span>
-                    )}
                   </div>
-                </CardContent>
+                </CardHeader>
+                {!!formData.depositRequest && (
+                  <CardContent>
+                    <div className="space-y-4">
+                      <ToggleGroup
+                        type="single"
+                        value={formData.depositType || 'percentage'}
+                        onValueChange={(value) => {
+                          if (value) {
+                            const newType = value as 'percentage' | 'fixed';
+                            setFormData(prev => ({
+                              ...prev,
+                              depositType: newType,
+                              depositRequest: newType === 'percentage' ? 25 : prev.depositAmount || 0,
+                              depositAmount: newType === 'percentage' 
+                                ? (prev.total * 0.25) 
+                                : prev.depositAmount || 0
+                            }));
+                          }
+                        }}
+                        className="justify-start"
+                      >
+                        <ToggleGroupItem value="percentage" aria-label="Percentage">
+                          <Percent className="h-4 w-4 mr-2" />
+                          Percentage
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="fixed" aria-label="Fixed Amount">
+                          <DollarSign className="h-4 w-4 mr-2" />
+                          Fixed Amount
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label>
+                            {formData.depositType === 'percentage' ? 'Percentage' : 'Amount'}
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            {formData.depositType === 'percentage' && (
+                              <span className="text-muted-foreground">%</span>
+                            )}
+                            <Input
+                              type="number"
+                              value={formData.depositRequest || ''}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                setFormData(prev => ({
+                                  ...prev,
+                                  depositRequest: value,
+                                  depositAmount: prev.depositType === 'percentage'
+                                    ? (prev.total * (value / 100))
+                                    : value
+                                }));
+                              }}
+                              placeholder={formData.depositType === 'percentage' ? "25" : "0.00"}
+                              min="0"
+                              max={formData.depositType === 'percentage' ? "100" : undefined}
+                              step="0.01"
+                            />
+                            {formData.depositType === 'fixed' && (
+                              <span className="text-muted-foreground">$</span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label>Deposit Amount</Label>
+                          <div className="p-2 bg-muted rounded-md">
+                            <span className="font-semibold">
+                              ${(formData.depositAmount || 0).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                )}
               </Card>
 
               {/* Payment Schedule */}
