@@ -126,12 +126,14 @@ export const EnhancedInvoiceForm = ({
     }
   }, [mode, invoice, open]);
 
-  // Update selected customer
+  // Update selected customer only when manually selecting a new customer
   useEffect(() => {
-    if (formData.customerId && customers.length > 0) {
+    if (formData.customerId && customers.length > 0 && mode === 'create') {
       const customer = customers.find(c => c.id === formData.customerId);
       if (customer) {
         setSelectedCustomer(customer);
+        // Only update customer fields if we're creating a new invoice
+        // For existing invoices, keep the saved customer data
         setFormData(prev => ({
           ...prev,
           customerName: customer.company_name || `${customer.first_name} ${customer.last_name}`,
@@ -144,7 +146,7 @@ export const EnhancedInvoiceForm = ({
         }));
       }
     }
-  }, [formData.customerId, customers]);
+  }, [formData.customerId, customers, mode]);
 
   // Line item functions
   const addLineItem = () => {
@@ -329,7 +331,25 @@ export const EnhancedInvoiceForm = ({
                         <div className="flex gap-2">
                           <Select 
                             value={formData.customerId}
-                            onValueChange={(value) => setFormData(prev => ({ ...prev, customerId: value }))}
+                            onValueChange={(value) => {
+                              const customer = customers.find(c => c.id === value);
+                              if (customer) {
+                                setFormData(prev => ({ 
+                                  ...prev, 
+                                  customerId: value,
+                                  customerName: customer.company_name || `${customer.first_name} ${customer.last_name}`,
+                                  customerEmail: customer.email || '',
+                                  customerPhone: customer.phone || '',
+                                  customerAddress: customer.address || '',
+                                  customerCity: customer.city || '',
+                                  customerProvince: customer.province || 'Ontario',
+                                  customerPostalCode: customer.postal_code || ''
+                                }));
+                                setSelectedCustomer(customer);
+                              } else {
+                                setFormData(prev => ({ ...prev, customerId: value }));
+                              }
+                            }}
                           >
                             <SelectTrigger className="flex-1">
                               <SelectValue placeholder="Select customer" />
