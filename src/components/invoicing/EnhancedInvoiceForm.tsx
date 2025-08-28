@@ -1011,7 +1011,19 @@ export const EnhancedInvoiceForm = ({
           onOpenChange={setShowAddCustomer}
           onCustomerCreated={(customer) => {
             setCustomers([...customers, customer]);
-            setFormData(prev => ({ ...prev, customerId: customer.id }));
+            // Set all customer fields when a new customer is created
+            setFormData(prev => ({ 
+              ...prev, 
+              customerId: customer.id,
+              customerName: customer.company_name || `${customer.first_name} ${customer.last_name}`,
+              customerEmail: customer.email || '',
+              customerPhone: customer.phone || '',
+              customerAddress: customer.address || '',
+              customerCity: customer.city || '',
+              customerProvince: customer.province || 'Ontario',
+              customerPostalCode: customer.postal_code || ''
+            }));
+            setSelectedCustomer(customer);
             fetchCustomers();
           }}
         />
