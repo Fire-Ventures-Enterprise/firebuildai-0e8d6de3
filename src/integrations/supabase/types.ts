@@ -993,6 +993,39 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          browser_notifications: boolean | null
+          created_at: string
+          email: string | null
+          email_reminders: boolean | null
+          id: string
+          sms_notifications: boolean | null
+          source_page: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          browser_notifications?: boolean | null
+          created_at?: string
+          email?: string | null
+          email_reminders?: boolean | null
+          id?: string
+          sms_notifications?: boolean | null
+          source_page?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          browser_notifications?: boolean | null
+          created_at?: string
+          email?: string | null
+          email_reminders?: boolean | null
+          id?: string
+          sms_notifications?: boolean | null
+          source_page?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       payment_history: {
         Row: {
           amount: number

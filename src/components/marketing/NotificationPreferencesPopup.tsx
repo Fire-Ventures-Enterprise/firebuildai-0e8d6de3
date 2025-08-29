@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Bell, Mail, MessageSquare, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 export const NotificationPreferencesPopup = () => {

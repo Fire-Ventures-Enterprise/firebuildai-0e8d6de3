@@ -6,6 +6,7 @@ import { TestimonialsSection } from "@/components/marketing/TestimonialsSection"
 import { PricingSection } from "@/components/marketing/PricingSection";
 import { CTASection } from "@/components/marketing/CTASection";
 import { EmailCapturePopup } from "@/components/marketing/EmailCapturePopup";
+import { NotificationPreferencesPopup } from "@/components/marketing/NotificationPreferencesPopup";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
@@ -14,6 +15,7 @@ export const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <EmailCapturePopup />
+      <NotificationPreferencesPopup />
       {/* Navigation Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="container mx-auto px-4">
