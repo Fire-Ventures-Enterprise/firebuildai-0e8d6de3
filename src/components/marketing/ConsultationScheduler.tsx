@@ -73,18 +73,64 @@ export const ConsultationScheduler = ({ onClose, onSuccess }: ConsultationSchedu
     
     setLoading(true);
     try {
+      // First, check if any slots exist for this date
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const { data: existingSlots, error: checkError } = await supabase
+        .from('consultation_slots')
+        .select('*')
+        .eq('slot_date', dateStr);
+
+      if (checkError) {
+        console.error('Error checking slots:', checkError);
+        throw checkError;
+      }
+
+      // If no slots exist for this date, create default slots
+      if (!existingSlots || existingSlots.length === 0) {
+        const defaultSlots = [
+          '09:00:00', '09:30:00', '10:00:00', '10:30:00', 
+          '11:00:00', '11:30:00', '14:00:00', '14:30:00',
+          '15:00:00', '15:30:00', '16:00:00', '16:30:00'
+        ];
+
+        const slotsToInsert = defaultSlots.map(time => ({
+          slot_date: dateStr,
+          slot_time: time,
+          duration_minutes: 30,
+          max_bookings: 1,
+          current_bookings: 0,
+          is_available: true
+        }));
+
+        const { error: insertError } = await supabase
+          .from('consultation_slots')
+          .insert(slotsToInsert);
+
+        if (insertError) {
+          console.error('Error creating slots:', insertError);
+          throw insertError;
+        }
+      }
+
+      // Now fetch available slots
       const { data, error } = await supabase
         .from('consultation_slots')
         .select('*')
-        .eq('slot_date', format(selectedDate, 'yyyy-MM-dd'))
+        .eq('slot_date', dateStr)
         .eq('is_available', true)
+        .lt('current_bookings', supabase.raw('max_bookings'))
         .order('slot_time');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching available slots:', error);
+        throw error;
+      }
+      
       setAvailableSlots(data || []);
-    } catch (error) {
-      console.error('Error fetching slots:', error);
-      toast.error('Failed to load available time slots');
+    } catch (error: any) {
+      console.error('Error in fetchAvailableSlots:', error);
+      toast.error(error.message || 'Failed to load available time slots');
+      setAvailableSlots([]);
     } finally {
       setLoading(false);
     }
