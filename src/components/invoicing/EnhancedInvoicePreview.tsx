@@ -96,7 +96,7 @@ export const EnhancedInvoicePreview = ({ open, onOpenChange, invoice }: Enhanced
     return colors[status] || "default";
   };
 
-  // Calculate totals properly
+  // Use stored invoice totals - these should never be recalculated from items
   const subtotal = invoice.subtotal || 0;
   const discountAmount = invoice.discountAmount || 0;
   const taxAmount = invoice.taxAmount || 0;
