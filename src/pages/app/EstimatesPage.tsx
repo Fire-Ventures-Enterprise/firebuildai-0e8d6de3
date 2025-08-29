@@ -53,19 +53,48 @@ export const EstimatesPage = () => {
   const fetchEstimates = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // First fetch estimates
+      const { data: estimatesData, error: estimatesError } = await supabase
         .from('estimates')
-        .select(`
-          *,
-          customer:customers(*),
-          items:estimate_items(*),
-          payment_stages(*)
-        `)
+        .select('*')
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setEstimates(data || []);
+      if (estimatesError) throw estimatesError;
+
+      // Then fetch related data for each estimate
+      const estimatesWithRelations = await Promise.all(
+        (estimatesData || []).map(async (estimate) => {
+          // Fetch customer
+          const { data: customerData } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('id', estimate.customer_id)
+            .single();
+
+          // Fetch items
+          const { data: itemsData } = await supabase
+            .from('estimate_items')
+            .select('*')
+            .eq('estimate_id', estimate.id);
+
+          // Fetch payment stages
+          const { data: paymentStagesData } = await supabase
+            .from('payment_stages')
+            .select('*')
+            .eq('estimate_id', estimate.id);
+
+          return {
+            ...estimate,
+            customer: customerData,
+            items: itemsData || [],
+            payment_stages: paymentStagesData || []
+          };
+        })
+      );
+
+      setEstimates(estimatesWithRelations);
     } catch (error) {
       console.error('Error fetching estimates:', error);
       toast({
