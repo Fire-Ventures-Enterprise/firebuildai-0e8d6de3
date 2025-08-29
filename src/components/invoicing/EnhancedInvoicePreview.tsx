@@ -83,8 +83,17 @@ export const EnhancedInvoicePreview = ({ open, onOpenChange, invoice }: Enhanced
   const discountAmount = invoice.discountAmount || 0;
   const taxAmount = invoice.taxAmount || 0;
   const total = invoice.total || 0;
-  const paidAmount = invoice.paidAmount || 0;
-  const balance = invoice.balance !== undefined ? invoice.balance : total;
+  
+  // Calculate paid amount from actual payments
+  const calculatedPaidAmount = payments
+    .filter(p => p.status === 'completed')
+    .reduce((sum, payment) => sum + Number(payment.amount), 0);
+  
+  // Use calculated paid amount or invoice's paidAmount, whichever is more accurate
+  const paidAmount = calculatedPaidAmount > 0 ? calculatedPaidAmount : (invoice.paidAmount || 0);
+  
+  // Calculate balance - ensure it's never negative
+  const balance = Math.max(0, total - paidAmount);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
