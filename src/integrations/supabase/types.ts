@@ -163,6 +163,92 @@ export type Database = {
           },
         ]
       }
+      consultation_bookings: {
+        Row: {
+          company_name: string | null
+          confirmation_token: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          slot_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string | null
+          confirmation_token?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          slot_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string | null
+          confirmation_token?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          slot_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_slots: {
+        Row: {
+          created_at: string
+          current_bookings: number | null
+          duration_minutes: number | null
+          id: string
+          is_available: boolean | null
+          max_bookings: number | null
+          slot_date: string
+          slot_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_bookings?: number | null
+          duration_minutes?: number | null
+          id?: string
+          is_available?: boolean | null
+          max_bookings?: number | null
+          slot_date: string
+          slot_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_bookings?: number | null
+          duration_minutes?: number | null
+          id?: string
+          is_available?: boolean | null
+          max_bookings?: number | null
+          slot_date?: string
+          slot_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address: string | null
