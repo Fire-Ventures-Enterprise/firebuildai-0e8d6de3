@@ -24,6 +24,7 @@ import { UpgradePage } from "./pages/UpgradePage";
 // Admin pages
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { ConsultationManagement } from "./pages/admin/ConsultationManagement";
 
 // Other pages
 import NotFound from "./pages/NotFound";
@@ -94,6 +95,11 @@ const App = () => (
             <Route path="/secure-admin-2024-fb-portal" element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/secure-admin-2024-fb-portal/consultations" element={
+              <ProtectedRoute>
+                <ConsultationManagement />
               </ProtectedRoute>
             } />
             

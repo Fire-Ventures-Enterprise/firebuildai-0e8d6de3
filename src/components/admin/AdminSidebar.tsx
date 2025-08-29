@@ -29,6 +29,7 @@ import {
   Globe,
   Zap,
   Package,
+  Calendar,
 } from 'lucide-react';
 
 const menuItems = [
@@ -75,6 +76,12 @@ const menuItems = [
   {
     group: 'Support & Engagement',
     items: [
+      { 
+        title: 'Consultations', 
+        url: '/secure-admin-2024-fb-portal/consultations', 
+        icon: Calendar,
+        description: 'Manage consultation bookings and availability'
+      },
       { 
         title: 'Support Tickets', 
         url: '/secure-admin-2024-fb-portal/support', 
