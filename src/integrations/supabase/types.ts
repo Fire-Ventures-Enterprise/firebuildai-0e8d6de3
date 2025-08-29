@@ -306,6 +306,10 @@ export type Database = {
           issue_date: string
           notes: string | null
           scope_of_work: string | null
+          service_address: string | null
+          service_city: string | null
+          service_postal_code: string | null
+          service_province: string | null
           signature_data: string | null
           signature_ip: string | null
           signature_required: boolean | null
@@ -335,6 +339,10 @@ export type Database = {
           issue_date?: string
           notes?: string | null
           scope_of_work?: string | null
+          service_address?: string | null
+          service_city?: string | null
+          service_postal_code?: string | null
+          service_province?: string | null
           signature_data?: string | null
           signature_ip?: string | null
           signature_required?: boolean | null
@@ -364,6 +372,10 @@ export type Database = {
           issue_date?: string
           notes?: string | null
           scope_of_work?: string | null
+          service_address?: string | null
+          service_city?: string | null
+          service_postal_code?: string | null
+          service_province?: string | null
           signature_data?: string | null
           signature_ip?: string | null
           signature_required?: boolean | null
@@ -859,6 +871,10 @@ export type Database = {
           paid_amount: number | null
           po_number: string | null
           private_notes: string | null
+          service_address: string | null
+          service_city: string | null
+          service_postal_code: string | null
+          service_province: string | null
           status: string
           subtotal: number
           tax_amount: number
@@ -899,6 +915,10 @@ export type Database = {
           paid_amount?: number | null
           po_number?: string | null
           private_notes?: string | null
+          service_address?: string | null
+          service_city?: string | null
+          service_postal_code?: string | null
+          service_province?: string | null
           status?: string
           subtotal?: number
           tax_amount?: number
@@ -939,6 +959,10 @@ export type Database = {
           paid_amount?: number | null
           po_number?: string | null
           private_notes?: string | null
+          service_address?: string | null
+          service_city?: string | null
+          service_postal_code?: string | null
+          service_province?: string | null
           status?: string
           subtotal?: number
           tax_amount?: number

@@ -132,7 +132,7 @@ export default function EstimatePreview({ estimate, onClose }: EstimatePreviewPr
       <Separator />
 
       {/* Company & Customer Info */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-6">
         <div>
           <h3 className="font-semibold mb-2">From</h3>
           <p className="text-sm text-muted-foreground">
@@ -143,12 +143,27 @@ export default function EstimatePreview({ estimate, onClose }: EstimatePreviewPr
           </p>
         </div>
         <div>
-          <h3 className="font-semibold mb-2">To</h3>
+          <h3 className="font-semibold mb-2">Bill To</h3>
           <p className="text-sm text-muted-foreground">
             {estimate.customer?.company_name || `${estimate.customer?.first_name} ${estimate.customer?.last_name}`}<br />
             {estimate.customer?.address}<br />
             {estimate.customer?.city}, {estimate.customer?.province} {estimate.customer?.postal_code}<br />
             {estimate.customer?.phone}
+          </p>
+        </div>
+        <div>
+          <h3 className="font-semibold mb-2">Service Address</h3>
+          <p className="text-sm text-muted-foreground">
+            {estimate.service_address || estimate.service_city ? (
+              <>
+                {estimate.service_address}<br />
+                {estimate.service_city && (
+                  <>{estimate.service_city}, {estimate.service_province} {estimate.service_postal_code}</>
+                )}
+              </>
+            ) : (
+              <span className="italic">Same as billing address</span>
+            )}
           </p>
         </div>
       </div>

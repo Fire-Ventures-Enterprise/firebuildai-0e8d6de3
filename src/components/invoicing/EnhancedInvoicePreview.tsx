@@ -196,19 +196,40 @@ export const EnhancedInvoicePreview = ({ open, onOpenChange, invoice }: Enhanced
             </div>
           </div>
 
-          {/* Bill To */}
-          <div className="mb-8">
-            <h4 className="font-semibold mb-2">Bill To:</h4>
-            <div className="text-sm text-muted-foreground">
-              {invoice.customerName && <p className="font-medium text-foreground">{invoice.customerName}</p>}
-              {invoice.customerAddress && <p>{invoice.customerAddress}</p>}
-              {invoice.customerCity && (
-                <p>
-                  {invoice.customerCity}, {invoice.customerProvince} {invoice.customerPostalCode}
-                </p>
-              )}
-              {invoice.customerEmail && <p>{invoice.customerEmail}</p>}
-              {invoice.customerPhone && <p>{invoice.customerPhone}</p>}
+          {/* Bill To and Service Address */}
+          <div className="grid grid-cols-2 gap-8 mb-8">
+            <div>
+              <h4 className="font-semibold mb-2">Bill To:</h4>
+              <div className="text-sm text-muted-foreground">
+                {invoice.customerName && <p className="font-medium text-foreground">{invoice.customerName}</p>}
+                {invoice.customerAddress && <p>{invoice.customerAddress}</p>}
+                {invoice.customerCity && (
+                  <p>
+                    {invoice.customerCity}, {invoice.customerProvince} {invoice.customerPostalCode}
+                  </p>
+                )}
+                {invoice.customerEmail && <p>{invoice.customerEmail}</p>}
+                {invoice.customerPhone && <p>{invoice.customerPhone}</p>}
+              </div>
+            </div>
+
+            {/* Service Address */}
+            <div>
+              <h4 className="font-semibold mb-2">Service Address:</h4>
+              <div className="text-sm text-muted-foreground">
+                {invoice.serviceAddress || invoice.serviceCity ? (
+                  <>
+                    {invoice.serviceAddress && <p>{invoice.serviceAddress}</p>}
+                    {invoice.serviceCity && (
+                      <p>
+                        {invoice.serviceCity}, {invoice.serviceProvince} {invoice.servicePostalCode}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p className="italic">Same as billing address</p>
+                )}
+              </div>
             </div>
           </div>
 

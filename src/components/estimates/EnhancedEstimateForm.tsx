@@ -305,7 +305,12 @@ export default function EnhancedEstimateForm({
                               customerAddress: customer.address || '',
                               customerCity: customer.city || '',
                               customerProvince: customer.province || 'Ontario',
-                              customerPostalCode: customer.postal_code || ''
+                              customerPostalCode: customer.postal_code || '',
+                              // Pre-fill service address with customer address if empty
+                              serviceAddress: prev.serviceAddress || customer.address || '',
+                              serviceCity: prev.serviceCity || customer.city || '',
+                              serviceProvince: prev.serviceProvince || customer.province || 'Ontario',
+                              servicePostalCode: prev.servicePostalCode || customer.postal_code || ''
                             }));
                             setSelectedCustomer(customer);
                           } else {
@@ -346,6 +351,87 @@ export default function EnhancedEstimateForm({
                       )}
                     </div>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Service Address */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Service Address</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Street Address</Label>
+                    <Input
+                      value={formData.serviceAddress || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, serviceAddress: e.target.value }))}
+                      placeholder="Service location address"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label>City</Label>
+                      <Input
+                        value={formData.serviceCity || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, serviceCity: e.target.value }))}
+                        placeholder="City"
+                      />
+                    </div>
+                    <div>
+                      <Label>Province</Label>
+                      <Select 
+                        value={formData.serviceProvince || 'Ontario'}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, serviceProvince: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Ontario">Ontario</SelectItem>
+                          <SelectItem value="Quebec">Quebec</SelectItem>
+                          <SelectItem value="British Columbia">British Columbia</SelectItem>
+                          <SelectItem value="Alberta">Alberta</SelectItem>
+                          <SelectItem value="Manitoba">Manitoba</SelectItem>
+                          <SelectItem value="Saskatchewan">Saskatchewan</SelectItem>
+                          <SelectItem value="Nova Scotia">Nova Scotia</SelectItem>
+                          <SelectItem value="New Brunswick">New Brunswick</SelectItem>
+                          <SelectItem value="Newfoundland and Labrador">Newfoundland and Labrador</SelectItem>
+                          <SelectItem value="Prince Edward Island">Prince Edward Island</SelectItem>
+                          <SelectItem value="Northwest Territories">Northwest Territories</SelectItem>
+                          <SelectItem value="Yukon">Yukon</SelectItem>
+                          <SelectItem value="Nunavut">Nunavut</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Postal Code</Label>
+                      <Input
+                        value={formData.servicePostalCode || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, servicePostalCode: e.target.value }))}
+                        placeholder="Postal Code"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          serviceAddress: prev.customerAddress || '',
+                          serviceCity: prev.customerCity || '',
+                          serviceProvince: prev.customerProvince || 'Ontario',
+                          servicePostalCode: prev.customerPostalCode || ''
+                        }));
+                      }}
+                    >
+                      Same as Bill To
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

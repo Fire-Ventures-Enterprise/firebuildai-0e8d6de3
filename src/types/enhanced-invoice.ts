@@ -69,6 +69,12 @@ export interface EnhancedInvoice {
   customerProvince?: string;
   customerPostalCode?: string;
   
+  // Service Address
+  serviceAddress?: string;
+  serviceCity?: string;
+  serviceProvince?: string;
+  servicePostalCode?: string;
+  
   // Items
   items: EnhancedInvoiceItem[];
   
