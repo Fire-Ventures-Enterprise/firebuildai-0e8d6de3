@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   CalendarIcon, Plus, Trash2, UserPlus, Upload, Camera, 
-  FileText, DollarSign, Percent, X, GripVertical 
+  FileText, DollarSign, Percent, X, GripVertical, Copy 
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -74,7 +74,9 @@ export const EnhancedInvoiceForm = ({
     paymentSchedule: [],
     acceptOnlinePayments: true,
     coverProcessingFee: false,
-    contractRequired: true,
+    contractRequired: false,
+    contractText: '',
+    signatures: [],
     notes: '',
     privateNotes: '',
     photos: [],

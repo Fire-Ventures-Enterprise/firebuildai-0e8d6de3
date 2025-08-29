@@ -712,6 +712,7 @@ export type Database = {
           ip_address: string | null
           name: string
           signature_data: string | null
+          signature_required: boolean | null
           signed_at: string | null
           type: string
         }
@@ -721,6 +722,7 @@ export type Database = {
           ip_address?: string | null
           name: string
           signature_data?: string | null
+          signature_required?: boolean | null
           signed_at?: string | null
           type: string
         }
@@ -730,6 +732,7 @@ export type Database = {
           ip_address?: string | null
           name?: string
           signature_data?: string | null
+          signature_required?: boolean | null
           signed_at?: string | null
           type?: string
         }
@@ -841,6 +844,7 @@ export type Database = {
       invoices_enhanced: {
         Row: {
           accept_online_payments: boolean | null
+          attachments: Json | null
           balance: number | null
           contract_required: boolean | null
           contract_text: string | null
@@ -869,12 +873,14 @@ export type Database = {
           markup_total: number | null
           notes: string | null
           paid_amount: number | null
+          photos: Json | null
           po_number: string | null
           private_notes: string | null
           service_address: string | null
           service_city: string | null
           service_postal_code: string | null
           service_province: string | null
+          signatures: Json | null
           status: string
           subtotal: number
           tax_amount: number
@@ -885,6 +891,7 @@ export type Database = {
         }
         Insert: {
           accept_online_payments?: boolean | null
+          attachments?: Json | null
           balance?: number | null
           contract_required?: boolean | null
           contract_text?: string | null
@@ -913,12 +920,14 @@ export type Database = {
           markup_total?: number | null
           notes?: string | null
           paid_amount?: number | null
+          photos?: Json | null
           po_number?: string | null
           private_notes?: string | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
           service_province?: string | null
+          signatures?: Json | null
           status?: string
           subtotal?: number
           tax_amount?: number
@@ -929,6 +938,7 @@ export type Database = {
         }
         Update: {
           accept_online_payments?: boolean | null
+          attachments?: Json | null
           balance?: number | null
           contract_required?: boolean | null
           contract_text?: string | null
@@ -957,12 +967,14 @@ export type Database = {
           markup_total?: number | null
           notes?: string | null
           paid_amount?: number | null
+          photos?: Json | null
           po_number?: string | null
           private_notes?: string | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
           service_province?: string | null
+          signatures?: Json | null
           status?: string
           subtotal?: number
           tax_amount?: number

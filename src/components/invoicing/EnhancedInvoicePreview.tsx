@@ -2,7 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Download, Send, Printer, CreditCard } from "lucide-react";
+import { Download, Send, Printer, CreditCard, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
 import { useEffect, useState } from "react";
@@ -346,11 +346,95 @@ export const EnhancedInvoicePreview = ({ open, onOpenChange, invoice }: Enhanced
             </div>
           </div>
 
+          {/* Online Payments */}
+          {invoice.acceptOnlinePayments && (
+            <div className="mb-6 p-4 bg-muted/50 rounded-lg">
+              <h4 className="font-semibold mb-2">Payment Options</h4>
+              <p className="text-sm">✓ Accept Credit Cards and PayPal</p>
+              {invoice.coverProcessingFee && (
+                <p className="text-sm text-muted-foreground mt-1">Processing fees covered by service provider</p>
+              )}
+            </div>
+          )}
+
+          {/* Contract */}
+          {invoice.contractRequired && invoice.contractText && (
+            <div className="mb-6 p-4 border rounded-lg">
+              <h4 className="font-semibold mb-2">Contract Terms</h4>
+              <p className="text-sm whitespace-pre-wrap">{invoice.contractText}</p>
+            </div>
+          )}
+
+          {/* Signatures */}
+          {invoice.signatures && invoice.signatures.length > 0 && (
+            <div className="mb-6">
+              <h4 className="font-semibold mb-4">Required Signatures</h4>
+              <div className="grid grid-cols-2 gap-4">
+                {invoice.signatures.map((sig, index) => (
+                  <div key={index} className="border rounded-lg p-4">
+                    <p className="text-sm font-medium mb-2">
+                      {sig.type === 'client' ? 'Client Signature' : 'Service Provider Signature'}
+                    </p>
+                    {sig.signatureData ? (
+                      <div>
+                        <img src={sig.signatureData} alt="Signature" className="max-h-20" />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Signed by: {sig.name}
+                        </p>
+                        {sig.signedAt && (
+                          <p className="text-xs text-muted-foreground">
+                            Date: {format(new Date(sig.signedAt), 'MMM dd, yyyy HH:mm')}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="h-20 border-b-2 border-gray-300"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Notes */}
           {invoice.notes && (
             <div className="mb-6">
               <h4 className="font-semibold mb-2">Notes:</h4>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{invoice.notes}</p>
+            </div>
+          )}
+
+          {/* Photos */}
+          {invoice.photos && invoice.photos.length > 0 && (
+            <div className="mb-6">
+              <h4 className="font-semibold mb-2">Photos</h4>
+              <div className="grid grid-cols-3 gap-2">
+                {invoice.photos.map((photo, index) => (
+                  <div key={index}>
+                    <img src={photo.url} alt={photo.caption || ''} className="rounded" />
+                    {photo.caption && (
+                      <p className="text-xs text-muted-foreground mt-1">{photo.caption}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Attachments */}
+          {invoice.attachments && invoice.attachments.length > 0 && (
+            <div className="mb-6">
+              <h4 className="font-semibold mb-2">Attachments</h4>
+              <div className="space-y-2">
+                {invoice.attachments.map((attachment, index) => (
+                  <div key={index} className="flex items-center p-2 border rounded">
+                    <FileText className="h-4 w-4 mr-2" />
+                    <a href={attachment.url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                      {attachment.name}
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
