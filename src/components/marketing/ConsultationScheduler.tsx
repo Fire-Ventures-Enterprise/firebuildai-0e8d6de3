@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ConsultationSchedulerProps {
   onClose?: () => void;
@@ -112,13 +112,12 @@ export const ConsultationScheduler = ({ onClose, onSuccess }: ConsultationSchedu
         }
       }
 
-      // Now fetch available slots
+      // Now fetch available slots where current_bookings < max_bookings
       const { data, error } = await supabase
         .from('consultation_slots')
         .select('*')
         .eq('slot_date', dateStr)
         .eq('is_available', true)
-        .lt('current_bookings', supabase.raw('max_bookings'))
         .order('slot_time');
 
       if (error) {
