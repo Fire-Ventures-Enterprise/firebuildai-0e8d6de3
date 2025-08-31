@@ -7,6 +7,7 @@ import { PricingSection } from "@/components/marketing/PricingSection";
 import { CTASection } from "@/components/marketing/CTASection";
 import { EmailCapturePopup } from "@/components/marketing/EmailCapturePopup";
 import { NotificationPreferencesPopup } from "@/components/marketing/NotificationPreferencesPopup";
+import { MobileAppSection } from "@/components/marketing/MobileAppSection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
@@ -85,6 +86,11 @@ export const HomePage = () => {
       {/* Pricing */}
       <div id="pricing">
         <PricingSection />
+      </div>
+      
+      {/* Mobile App Download */}
+      <div id="mobile-app">
+        <MobileAppSection />
       </div>
       
       {/* CTA Section */}
