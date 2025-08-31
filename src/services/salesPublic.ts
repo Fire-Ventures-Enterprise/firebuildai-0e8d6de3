@@ -40,12 +40,36 @@ export const SalesPublic = {
     if (error) console.error("Failed to mark viewed:", error);
   },
 
-  async acceptEstimate(token: string, signer: { name?: string; email?: string }) {
-    const { error } = await supabase.rpc("accept_estimate", { 
-      p_token: token, 
-      p_name: signer.name ?? null, 
-      p_email: signer.email ?? null 
-    });
+  async acceptEstimate(token: string, signer: { 
+    name?: string; 
+    email?: string; 
+    signature?: string;
+    agreedToTerms?: boolean;
+  }) {
+    // First, get the estimate to update it directly
+    const { data: estimate, error: fetchError } = await supabase
+      .from("estimates")
+      .select("*")
+      .eq("public_token", token)
+      .single();
+    
+    if (fetchError) throw fetchError;
+    
+    // Update the estimate with signature and acceptance data
+    const { error } = await supabase
+      .from("estimates")
+      .update({
+        status: 'accepted',
+        accepted_at: new Date().toISOString(),
+        accepted_by_name: signer.name || null,
+        accepted_by_email: signer.email || null,
+        signature_data: signer.signature || null,
+        signed_at: signer.signature ? new Date().toISOString() : null,
+        signed_by_name: signer.signature ? (signer.name || null) : null,
+        signed_by_email: signer.signature ? (signer.email || null) : null,
+      })
+      .eq("id", estimate.id);
+    
     if (error) throw error;
   },
 
