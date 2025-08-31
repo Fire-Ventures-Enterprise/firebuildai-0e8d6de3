@@ -321,11 +321,8 @@ ${companyName} • ${siteUrl}`;
       expiring: `Estimate ${estimate.estimate_number} expires soon — Secure your booking`
     };
 
-    // Send email with proper from address
-    // For production, replace with your verified domain email
-    const fromEmail = companyEmail && companyEmail !== "info@company.com" 
-      ? `${companyName} <${companyEmail}>` 
-      : `${companyName} <estimates@resend.dev>`;
+    // Send email with verified domain
+    const fromEmail = `${companyName} <estimates@firebuildai.com>`;
     
     const { data, error } = await resend.emails.send({
       from: fromEmail,
