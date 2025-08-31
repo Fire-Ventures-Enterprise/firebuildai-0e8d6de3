@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AppLayout } from '@/layouts/AppLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,7 +59,6 @@ export default function CompanyPage() {
   };
 
   return (
-    <AppLayout>
       <div className="p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -479,6 +477,5 @@ export default function CompanyPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppLayout>
   );
 }
