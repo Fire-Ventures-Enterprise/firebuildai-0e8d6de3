@@ -52,46 +52,85 @@ export const Dashboard = () => {
       case "dashboard":
         return (
           <div className="space-y-6">
-            {/* Header Section */}
-            <div className="flex items-center justify-between">
+            {/* Header Section with Primary CTAs */}
+            <div className="flex items-center justify-between bg-gradient-to-r from-primary/5 to-primary/10 p-6 rounded-lg border border-primary/20">
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-                <p className="text-muted-foreground mt-1">Overview of your contractor management platform</p>
+                <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+                <p className="text-muted-foreground mt-1">Welcome back! Here's your business at a glance</p>
               </div>
-              <div className="flex gap-2">
-                <Button variant="default" size="sm">
-                  + New Job
+              <div className="flex gap-3">
+                <Button 
+                  variant="default" 
+                  size="default"
+                  className="bg-primary hover:bg-primary/90 shadow-lg"
+                  onClick={() => setActiveTab("jobs")}
+                >
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  New Job
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="default"
+                  className="border-primary/50 hover:bg-primary/10"
+                  onClick={() => setActiveTab("purchase-orders")}
+                >
+                  <Building className="w-4 h-4 mr-2" />
                   New PO
                 </Button>
               </div>
             </div>
 
-            {/* Metrics Grid */}
+            {/* KPI Metrics with Visual Distinction */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {metrics.map((metric, index) => (
-                <MetricsCard key={index} {...metric} />
+                <div key={index} className={`
+                  ${index === 0 ? "border-blue-200 bg-blue-50/50" : ""}
+                  ${index === 1 ? "border-green-200 bg-green-50/50" : ""}
+                  ${index === 2 ? "border-purple-200 bg-purple-50/50" : ""}
+                  ${index === 3 ? "border-yellow-200 bg-yellow-50/50" : ""}
+                  transition-all duration-200 hover:shadow-lg
+                `}>
+                  <MetricsCard {...metric} />
+                </div>
               ))}
             </div>
 
-            {/* Main Content Grid */}
+            {/* Quick Actions - Moved Up for Better Visibility */}
+            <div className="bg-accent/30 p-4 rounded-lg border border-accent">
+              <h2 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" />
+                Quick Actions
+              </h2>
+              <QuickActionsCard />
+            </div>
+
+            {/* Main Content Grid with Better Organization */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column */}
+              {/* Left Column - Operations */}
               <div className="space-y-6">
-                <QuickActionsCard />
-                <ReviewsCard />
+                <div className="bg-card p-4 rounded-lg border-l-4 border-blue-500">
+                  <h3 className="text-sm font-medium text-blue-600 mb-3">OPERATIONS</h3>
+                  <RecentActivityCard />
+                </div>
               </div>
               
-              {/* Middle Column */}
+              {/* Middle Column - Team & Fleet */}
               <div className="space-y-6">
-                <RecentActivityCard />
+                <div className="bg-card p-4 rounded-lg border-l-4 border-purple-500">
+                  <h3 className="text-sm font-medium text-purple-600 mb-3">TEAM & FLEET</h3>
+                  <TeamPerformanceCard />
+                  <div className="mt-4">
+                    <FleetStatusCard />
+                  </div>
+                </div>
               </div>
               
-              {/* Right Column */}
+              {/* Right Column - Client Feedback (Lower Priority) */}
               <div className="space-y-6">
-                <TeamPerformanceCard />
-                <FleetStatusCard />
+                <div className="bg-card p-4 rounded-lg border-l-4 border-orange-500">
+                  <h3 className="text-sm font-medium text-orange-600 mb-3">CLIENT FEEDBACK</h3>
+                  <ReviewsCard />
+                </div>
               </div>
             </div>
           </div>
