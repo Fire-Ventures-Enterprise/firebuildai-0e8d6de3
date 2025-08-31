@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { PurchaseOrderForm } from "@/components/purchasing/PurchaseOrderForm";
 import { PurchaseOrderList } from "@/components/purchasing/PurchaseOrderList";
+import { RecordPaymentDialog } from "@/components/po/RecordPaymentDialog";
+import { useConfirm } from "@/hooks/useConfirm";
+import { notify } from "@/lib/notify";
 
 interface PurchaseOrder {
   id: string;
@@ -32,6 +35,9 @@ export default function PurchaseOrdersPage() {
   const [showForm, setShowForm] = useState(false);
   const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedPoForPayment, setSelectedPoForPayment] = useState<PurchaseOrder | null>(null);
+  const { confirm, Confirm } = useConfirm();
 
   useEffect(() => {
     fetchPurchaseOrders();
@@ -76,6 +82,14 @@ export default function PurchaseOrdersPage() {
   };
 
   const handleDeletePO = async (id: string) => {
+    const shouldDelete = await confirm({
+      title: 'Delete Purchase Order?',
+      description: 'This action cannot be undone.',
+      actionText: 'Delete',
+    });
+    
+    if (!shouldDelete) return;
+    
     try {
       const { error } = await supabase
         .from('purchase_orders')
@@ -104,6 +118,11 @@ export default function PurchaseOrdersPage() {
     setShowForm(false);
   };
 
+  const handleRecordPayment = (po: PurchaseOrder) => {
+    setSelectedPoForPayment(po);
+    setPaymentDialogOpen(true);
+  };
+
   // Calculate summary statistics
   const totalPOs = purchaseOrders.length;
   const totalAmount = purchaseOrders.reduce((sum, po) => sum + Number(po.total), 0);
@@ -122,6 +141,7 @@ export default function PurchaseOrdersPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {Confirm}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Purchase Orders</h1>
         <Button onClick={handleCreatePO}>
@@ -177,7 +197,18 @@ export default function PurchaseOrdersPage() {
         purchaseOrders={purchaseOrders}
         onEdit={handleEditPO}
         onDelete={handleDeletePO}
+        onRecordPayment={handleRecordPayment}
       />
+
+      {selectedPoForPayment && (
+        <RecordPaymentDialog
+          poId={selectedPoForPayment.id}
+          open={paymentDialogOpen}
+          onOpenChange={setPaymentDialogOpen}
+          outstanding={(selectedPoForPayment.total || 0) - (selectedPoForPayment.paid_amount || 0)}
+          onDone={fetchPurchaseOrders}
+        />
+      )}
 
       {/* Form Modal */}
       {showForm && (

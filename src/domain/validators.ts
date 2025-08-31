@@ -35,3 +35,10 @@ export const poSchema = z.object({
 export const chatMessageSchema = z.object({
   body: z.string().min(1, "Type a message"),
 });
+
+export const poPaymentSchema = z.object({
+  amount: z.coerce.number().positive("Enter an amount"),
+  method: z.enum(["card","bank_transfer","check","cash","other"]),
+  paid_at: z.string().optional(),       // yyyy-mm-dd
+  reference: z.string().optional().nullable(), // e.g., cheque #, transaction id
+});

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, FileText, Filter, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Edit, Trash2, FileText, Filter, CheckCircle, XCircle, Clock, CreditCard } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,9 +48,10 @@ interface PurchaseOrderListProps {
   purchaseOrders: PurchaseOrder[];
   onEdit: (po: PurchaseOrder) => void;
   onDelete: (id: string) => void;
+  onRecordPayment?: (po: PurchaseOrder) => void;
 }
 
-export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: PurchaseOrderListProps) {
+export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPayment }: PurchaseOrderListProps) {
   const [filteredPOs, setFilteredPOs] = useState(purchaseOrders);
   const [vendorFilter, setVendorFilter] = useState('all');
   const [jobFilter, setJobFilter] = useState('all');
@@ -323,6 +324,16 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: Purchase
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
+                        
+                        {onRecordPayment && po.payment_status !== 'paid' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onRecordPayment(po)}
+                          >
+                            <CreditCard className="h-4 w-4" />
+                          </Button>
+                        )}
                         
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
