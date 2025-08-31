@@ -34,6 +34,9 @@ export const HomePage = () => {
                 <a href="#trades" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Industries
                 </a>
+                <Link to="/tutorials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                  Tutorials
+                </Link>
                 <a href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Testimonials
                 </a>
@@ -115,7 +118,8 @@ export const HomePage = () => {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Integrations</a></li>
+                <li><Link to="/tutorials" className="hover:text-foreground transition-colors">Tutorials</Link></li>
+                <li><Link to="/download" className="hover:text-foreground transition-colors">Download</Link></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">API</a></li>
               </ul>
             </div>

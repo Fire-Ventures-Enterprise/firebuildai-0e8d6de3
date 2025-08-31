@@ -9,6 +9,7 @@ import { AppLayout } from "./layouts/AppLayout";
 
 // Marketing pages
 import { HomePage } from "./pages/marketing/HomePage";
+import TutorialsPage from "./pages/marketing/TutorialsPage";
 
 // Auth pages
 import { SignUpPage } from "./pages/auth/SignUpPage";
@@ -60,6 +61,7 @@ const App = () => (
             {/* Marketing Site */}
             <Route path="/" element={<HomePage />} />
             <Route path="/download" element={<DownloadAppPage />} />
+            <Route path="/tutorials" element={<TutorialsPage />} />
             
             {/* Auth Routes */}
             <Route path="/signup" element={<SignUpPage />} />
