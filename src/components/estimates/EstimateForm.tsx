@@ -140,11 +140,45 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
         
         if (error) throw error;
         
-        // Update line items
+        // Delete old line items
         await supabase
           .from('estimate_items')
           .delete()
           .eq('estimate_id', estimate.id);
+        
+        // Insert updated line items
+        const items = lineItems.map((item, index) => ({
+          estimate_id: estimate.id,
+          description: item.description,
+          quantity: item.quantity,
+          rate: item.rate,
+          amount: item.quantity * item.rate,
+          sort_order: index
+        }));
+        
+        await supabase.from('estimate_items').insert(items);
+        
+        // Update payment stages if any
+        if (paymentStages.length > 0) {
+          // Delete old stages
+          await supabase
+            .from('payment_stages')
+            .delete()
+            .eq('estimate_id', estimate.id);
+          
+          // Insert new stages
+          const stages = paymentStages.map((stage, index) => ({
+            estimate_id: estimate.id,
+            stage_number: index + 1,
+            description: stage.description,
+            percentage: stage.percentage,
+            amount: stage.amount,
+            milestone: stage.milestone,
+            due_date: stage.due_date
+          }));
+          
+          await supabase.from('payment_stages').insert(stages);
+        }
       } else {
         // Create new estimate
         const { data: newEstimate, error } = await supabase
