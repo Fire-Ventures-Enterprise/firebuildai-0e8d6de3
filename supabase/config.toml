@@ -111,3 +111,9 @@ verify_jwt = true
 
 [functions.verify-invoice-payment]
 verify_jwt = false
+
+[functions.create-po-payment-intent]
+verify_jwt = true
+
+[functions.po-stripe-webhook]
+verify_jwt = false
