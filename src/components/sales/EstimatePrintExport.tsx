@@ -1,7 +1,6 @@
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Button } from "@/components/ui/button";
 import { EstimatePrintSheet } from "./EstimatePrintSheet";
+import { downloadPdfFromNode } from "@/lib/pdf";
 import type { Estimate, EstimateItem } from "@/types/sales";
 
 type ClientRef = {
@@ -34,17 +33,8 @@ type Props = {
 export function EstimatePrintExport(props: Props) {
   const print = () => window.print();
   
-  const exportPdf = async () => {
-    const node = document.getElementById("estimate-print-root");
-    if (!node) return;
-    const canvas = await html2canvas(node, { scale: 2, useCORS: true });
-    const img = canvas.toDataURL("image/png", 1.0);
-    const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
-    const pw = pdf.internal.pageSize.getWidth();
-    const ph = pdf.internal.pageSize.getHeight();
-    const r = Math.min(pw / canvas.width, ph / canvas.height);
-    pdf.addImage(img, "PNG", (pw - canvas.width * r)/2, 20, canvas.width * r, canvas.height * r, undefined, "FAST");
-    pdf.save(`Estimate_${props.estimate.estimate_number ?? props.estimate.id}.pdf`);
+  const exportPdf = () => {
+    downloadPdfFromNode("estimate-print-root", `Estimate_${props.estimate.estimate_number ?? props.estimate.id}.pdf`);
   };
 
   return (
