@@ -1,3 +1,4 @@
+import React from "react";
 import type { InvoicePayment } from "@/types/sales";
 import { Watermark } from "@/components/po/Watermark";
 
@@ -68,6 +69,23 @@ export function InvoicePrintSheet({
           .no-print { display: none !important; }
           .table { width: 100%; border-collapse: collapse; }
           .table th, .table td { border: 1px solid #ddd; padding: 6px; }
+          .table th { background: #f7f7f7; }
+          .joist .item-block { page-break-inside: avoid; }
+        }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { border: 1px solid #ddd; padding: 6px; }
+        .table th { background: #f7f7f7; }
+        /* Joist layout */
+        .joist .item-row td { vertical-align: top; }
+        .joist .item-title { width: 100%; }
+        .joist .num { text-align: right; white-space: nowrap; }
+        .joist .item-desc td { border-top: 0; }
+        .joist .desc {
+          font-size: 12px; opacity: .88; padding: 6px;
+          white-space: pre-wrap; /* keep line breaks */
+        }
+        .joist .section {
+          background: #fafafa; font-weight: 600;
         }
       `}</style>
 
@@ -101,18 +119,46 @@ export function InvoicePrintSheet({
       </div>
 
       <h3 className="mt-6 mb-2 font-medium">Line Items</h3>
-      <table className="table text-sm">
-        <thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Tax %</th><th>Amount</th></tr></thead>
+      <table className="table text-sm joist">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th className="num">Rate</th>
+            <th className="num">Qty</th>
+            <th className="num">Amount</th>
+          </tr>
+        </thead>
         <tbody>
-          {items.map(i => (
-            <tr key={i.id}>
-              <td>{i.description}</td>
-              <td>{i.quantity}</td>
-              <td>${i.unit_price.toFixed(2)}</td>
-              <td>{i.tax_rate ?? 0}</td>
-              <td>${i.line_total.toFixed(2)}</td>
-            </tr>
-          ))}
+          {items.map((i, idx) => {
+            // Title from optional i.title, otherwise first line of description
+            const firstLine = (i as any).title ?? ((i.description ?? "").split(/\r?\n/)[0] || `Item ${idx + 1}`);
+            // Details are "description" minus first line  
+            const rest = (i.description ?? "");
+            const details = rest.startsWith(firstLine) ? rest.slice(firstLine.length).trim() : rest;
+
+            return (
+              <React.Fragment key={i.id ?? idx}>
+                {/* Item Row */}
+                <tr className="item-row item-block">
+                  <td className="item-title">
+                    <div className="font-medium">{firstLine}</div>
+                  </td>
+                  <td className="num">${i.unit_price.toFixed(2)}</td>
+                  <td className="num">{i.quantity}</td>
+                  <td className="num">${i.line_total.toFixed(2)}</td>
+                </tr>
+
+                {/* Optional Description Row */}
+                {details && (
+                  <tr className="item-desc item-block">
+                    <td colSpan={4}>
+                      <div className="desc">{details}</div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            );
+          })}
         </tbody>
       </table>
 
