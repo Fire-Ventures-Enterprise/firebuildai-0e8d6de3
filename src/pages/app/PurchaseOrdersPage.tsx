@@ -59,17 +59,35 @@ export default function PurchaseOrdersPage() {
 
       if (error) throw error;
       
-      // Now fetch invoice numbers for each PO
+      // Now fetch invoice numbers for each PO using invoice_id
       const posWithInvoices = await Promise.all((data || []).map(async (po) => {
-        const { data: invoiceData } = await supabase
-          .from('invoices_enhanced')
-          .select('invoice_number')
-          .eq('po_number', po.po_number)
-          .maybeSingle();
+        let invoiceNumber = null;
+        
+        // If PO has an invoice_id, fetch by that
+        if (po.invoice_id) {
+          const { data: invoiceData } = await supabase
+            .from('invoices_enhanced')
+            .select('invoice_number')
+            .eq('id', po.invoice_id)
+            .maybeSingle();
+          
+          invoiceNumber = invoiceData?.invoice_number;
+        }
+        
+        // If no invoice found by id, try by po_number as fallback
+        if (!invoiceNumber && po.po_number) {
+          const { data: invoiceData } = await supabase
+            .from('invoices_enhanced')
+            .select('invoice_number')
+            .eq('po_number', po.po_number)
+            .maybeSingle();
+          
+          invoiceNumber = invoiceData?.invoice_number;
+        }
         
         return {
           ...po,
-          invoice_number: invoiceData?.invoice_number || null
+          invoice_number: invoiceNumber
         };
       }));
       
