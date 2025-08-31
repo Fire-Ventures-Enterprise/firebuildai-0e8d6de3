@@ -18,11 +18,7 @@ export default function SettingsPage() {
         </div>
 
         <Tabs defaultValue="reviews" className="space-y-4">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="company" className="flex items-center gap-2">
-              <Building className="h-4 w-4" />
-              Company
-            </TabsTrigger>
+          <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="reviews" className="flex items-center gap-2">
               <Star className="h-4 w-4" />
               Reviews
@@ -33,21 +29,6 @@ export default function SettingsPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="company">
-            <Card>
-              <CardHeader>
-                <CardTitle>Company Information</CardTitle>
-                <CardDescription>
-                  Company settings have been moved to the dedicated Company page
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Please navigate to the Company tab in the sidebar to manage your company information, documents, team, and more.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="reviews">
             <ReviewPlatformSettings />
