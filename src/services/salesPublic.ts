@@ -46,31 +46,32 @@ export const SalesPublic = {
     signature?: string;
     agreedToTerms?: boolean;
   }) {
-    // First, get the estimate to update it directly
-    const { data: estimate, error: fetchError } = await supabase
-      .from("estimates")
-      .select("*")
-      .eq("public_token", token)
-      .single();
+    // Use the RPC function that requires sent_at
+    const { error } = await supabase.rpc("accept_estimate", { 
+      p_token: token,
+      p_name: signer.name || null,
+      p_email: signer.email || null
+    });
     
-    if (fetchError) throw fetchError;
+    if (error) {
+      console.error("Accept estimate error:", error);
+      throw new Error(error.message || "Failed to accept estimate");
+    }
     
-    // Update the estimate with signature and acceptance data
-    const { error } = await supabase
-      .from("estimates")
-      .update({
-        status: 'accepted',
-        accepted_at: new Date().toISOString(),
-        accepted_by_name: signer.name || null,
-        accepted_by_email: signer.email || null,
-        signature_data: signer.signature || null,
-        signed_at: signer.signature ? new Date().toISOString() : null,
-        signed_by_name: signer.signature ? (signer.name || null) : null,
-        signed_by_email: signer.signature ? (signer.email || null) : null,
-      })
-      .eq("id", estimate.id);
-    
-    if (error) throw error;
+    // Also update signature data if provided
+    if (signer.signature) {
+      const { error: sigError } = await supabase
+        .from("estimates")
+        .update({
+          signature_data: signer.signature,
+          signed_at: new Date().toISOString(),
+          signed_by_name: signer.name || null,
+          signed_by_email: signer.email || null,
+        })
+        .eq("public_token", token);
+      
+      if (sigError) throw sigError;
+    }
   },
 
   async getInvoiceByToken(token: string) {

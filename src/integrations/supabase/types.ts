@@ -470,9 +470,13 @@ export type Database = {
           id: string
           invoice_id: string | null
           issue_date: string
+          last_sent_to: string | null
           notes: string | null
           public_token: string | null
           scope_of_work: string | null
+          sent_at: string | null
+          sent_by: string | null
+          sent_count: number | null
           service_address: string | null
           service_city: string | null
           service_postal_code: string | null
@@ -509,9 +513,13 @@ export type Database = {
           id?: string
           invoice_id?: string | null
           issue_date?: string
+          last_sent_to?: string | null
           notes?: string | null
           public_token?: string | null
           scope_of_work?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          sent_count?: number | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -548,9 +556,13 @@ export type Database = {
           id?: string
           invoice_id?: string | null
           issue_date?: string
+          last_sent_to?: string | null
           notes?: string | null
           public_token?: string | null
           scope_of_work?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          sent_count?: number | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -1099,6 +1111,7 @@ export type Database = {
           id: string
           invoice_number: string
           issue_date: string
+          last_sent_to: string | null
           markup_total: number | null
           net_profit: number | null
           notes: string | null
@@ -1109,6 +1122,9 @@ export type Database = {
           private_notes: string | null
           profit_margin: number | null
           public_token: string | null
+          sent_at: string | null
+          sent_by: string | null
+          sent_count: number | null
           service_address: string | null
           service_city: string | null
           service_postal_code: string | null
@@ -1152,6 +1168,7 @@ export type Database = {
           id?: string
           invoice_number: string
           issue_date?: string
+          last_sent_to?: string | null
           markup_total?: number | null
           net_profit?: number | null
           notes?: string | null
@@ -1162,6 +1179,9 @@ export type Database = {
           private_notes?: string | null
           profit_margin?: number | null
           public_token?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          sent_count?: number | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -1205,6 +1225,7 @@ export type Database = {
           id?: string
           invoice_number?: string
           issue_date?: string
+          last_sent_to?: string | null
           markup_total?: number | null
           net_profit?: number | null
           notes?: string | null
@@ -1215,6 +1236,9 @@ export type Database = {
           private_notes?: string | null
           profit_margin?: number | null
           public_token?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          sent_count?: number | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null

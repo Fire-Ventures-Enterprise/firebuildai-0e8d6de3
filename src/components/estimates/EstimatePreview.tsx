@@ -1,14 +1,11 @@
-import { useRef } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Download, Send, FileText } from 'lucide-react';
-import { formatCurrency, cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
-import SignaturePad from '@/components/estimates/SignaturePad';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { PortalLinkActions } from '@/components/admin/PortalLinkActions';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface EstimatePreviewProps {
   estimate: any;
@@ -16,91 +13,7 @@ interface EstimatePreviewProps {
 }
 
 export default function EstimatePreview({ estimate, onClose }: EstimatePreviewProps) {
-  const { toast } = useToast();
-  const signaturePadRef = useRef<any>(null);
-
-  const handleSendEstimate = async () => {
-    try {
-      // Here we would send the estimate via email
-      // For now, just update the status
-      await supabase
-        .from('estimates')
-        .update({ status: 'sent' })
-        .eq('id', estimate.id);
-      
-      toast({
-        title: "Estimate Sent",
-        description: "The estimate has been sent to the customer",
-      });
-      
-      onClose();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send estimate",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleProcessDeposit = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('process-deposit', {
-        body: {
-          estimateId: estimate.id,
-          customerId: estimate.customer_id,
-          depositAmount: estimate.deposit_amount,
-          customerEmail: estimate.customer?.email,
-          estimateNumber: estimate.estimate_number
-        }
-      });
-
-      if (error) throw error;
-      
-      // Redirect to Stripe checkout
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error processing deposit:', error);
-      toast({
-        title: "Error",
-        description: "Failed to process deposit payment",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleSignatureSubmit = async (signatureData: string) => {
-    try {
-      await supabase
-        .from('estimates')
-        .update({
-          signature_data: signatureData,
-          signed_at: new Date().toISOString(),
-          signed_by_name: estimate.customer?.first_name + ' ' + estimate.customer?.last_name,
-          signed_by_email: estimate.customer?.email,
-          status: 'accepted'
-        })
-        .eq('id', estimate.id);
-      
-      toast({
-        title: "Success",
-        description: "Estimate has been signed successfully",
-      });
-      
-      // Process deposit if required
-      if (estimate.deposit_amount > 0) {
-        handleProcessDeposit();
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save signature",
-        variant: "destructive"
-      });
-    }
-  };
+  const isPortal = window.location.pathname.startsWith('/portal/');
 
   return (
     <div className="space-y-6">
@@ -115,19 +28,33 @@ export default function EstimatePreview({ estimate, onClose }: EstimatePreviewPr
             {estimate.signed_at && (
               <Badge variant="default">Signed</Badge>
             )}
+            {estimate.sent_at && (
+              <Badge variant="outline">Sent {format(new Date(estimate.sent_at), 'MMM d, yyyy')}</Badge>
+            )}
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Download PDF
-          </Button>
-          <Button size="sm" onClick={handleSendEstimate}>
-            <Send className="h-4 w-4 mr-2" />
-            Send to Customer
-          </Button>
-        </div>
       </div>
+
+      {/* Admin Portal Actions */}
+      {!isPortal && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Customer Actions</AlertTitle>
+          <AlertDescription className="space-y-3">
+            <p>Customer acceptance and deposit payments are only available via the client portal.</p>
+            <p className="text-sm">Send this estimate to the customer to enable acceptance & deposit payment.</p>
+            <div className="mt-4">
+              <PortalLinkActions
+                kind="estimate"
+                token={estimate.public_token}
+                toEmail={estimate.customer?.email}
+                number={estimate.estimate_number}
+                recordId={estimate.id}
+              />
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Separator />
 
@@ -300,53 +227,7 @@ export default function EstimatePreview({ estimate, onClose }: EstimatePreviewPr
         </Card>
       )}
 
-      {/* Contract Notice */}
-      {estimate.contract_attached && (
-        <Card className="border-primary">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Ontario Construction Contract
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              By accepting this estimate, you agree to the attached Ontario Construction Service Agreement
-              which includes payment terms, warranties, and legal protections under Ontario law.
-            </p>
-            <Button variant="link" className="p-0 h-auto mt-2">
-              View Full Contract →
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Signature Section */}
-      {!estimate.signed_at && estimate.status !== 'draft' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Customer Acceptance</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <SignaturePad
-              ref={signaturePadRef}
-              onSave={handleSignatureSubmit}
-            />
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-muted-foreground">
-                By signing, you accept the estimate and agree to the terms
-              </div>
-              {estimate.deposit_amount > 0 && (
-                <Button onClick={handleProcessDeposit}>
-                  Pay Deposit ({formatCurrency(estimate.deposit_amount)})
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Already Signed */}
+      {/* Already Signed Status */}
       {estimate.signed_at && (
         <Card className="border-green-500">
           <CardContent className="pt-6">

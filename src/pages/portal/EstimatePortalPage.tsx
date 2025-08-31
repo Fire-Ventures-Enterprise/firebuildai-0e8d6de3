@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { notify } from "@/lib/notify";
 import EnhancedSignaturePad from "@/components/estimates/EnhancedSignaturePad";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function EstimatePortalPage() {
   const { token } = useParams<{ token: string }>();
@@ -59,7 +60,26 @@ export default function EstimatePortalPage() {
   };
 
   const payDeposit = async () => {
-    notify.info("Deposit payment feature coming soon. Please contact us to arrange payment.");
+    try {
+      const { data, error } = await supabase.functions.invoke('process-deposit', {
+        body: {
+          estimateToken: token,
+          depositAmount: deposit,
+          customerEmail: est.client?.email || est.customer?.email,
+          estimateNumber: est.estimate_number
+        }
+      });
+
+      if (error) throw error;
+      
+      // Redirect to Stripe checkout
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error processing deposit:', error);
+      notify.error("Failed to process deposit payment", error);
+    }
   };
 
   const getTermsText = () => {

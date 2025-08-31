@@ -17,11 +17,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-  );
-
   const supabaseService = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -31,22 +26,42 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const authHeader = req.headers.get("Authorization")!;
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData } = await supabaseClient.auth.getUser(token);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated");
-    logStep("User authenticated", { userId: user.id, email: user.email });
-
-    const { 
-      estimateId, 
-      customerId,
-      depositAmount,
-      customerEmail,
-      estimateNumber 
-    } = await req.json();
+    // Parse request body
+    const { estimateToken, depositAmount, customerEmail, estimateNumber } = await req.json();
     
-    logStep("Request data", { estimateId, depositAmount, estimateNumber });
+    logStep("Request data", { estimateToken, depositAmount, customerEmail, estimateNumber });
+
+    if (!estimateToken || !depositAmount || !customerEmail || !estimateNumber) {
+      throw new Error('Missing required fields: estimate token, deposit amount, customer email, or estimate number');
+    }
+
+    // Validate estimate eligibility (must be sent and via public token)
+    const { data: estimate, error: estError } = await supabaseService
+      .from("estimates")
+      .select("id, sent_at, status, customer_id, user_id")
+      .eq("public_token", estimateToken)
+      .single();
+
+    if (estError || !estimate) {
+      logStep("Estimate not found", { estimateToken, error: estError });
+      throw new Error("Estimate not found or invalid token");
+    }
+
+    if (!estimate.sent_at) {
+      logStep("Estimate not sent", { estimateId: estimate.id });
+      throw new Error("Estimate must be sent to customer before deposit can be collected");
+    }
+
+    if (!["sent", "viewed", "accepted"].includes(estimate.status)) {
+      logStep("Invalid estimate status", { status: estimate.status });
+      throw new Error("Estimate is not eligible for deposit payment");
+    }
+
+    logStep("Estimate validated", { 
+      estimateId: estimate.id, 
+      status: estimate.status,
+      sentAt: estimate.sent_at 
+    });
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
@@ -67,17 +82,19 @@ serve(async (req) => {
       const newCustomer = await stripe.customers.create({
         email: customerEmail,
         metadata: {
-          supabase_customer_id: customerId,
-          supabase_user_id: user.id
+          supabase_customer_id: estimate.customer_id,
+          supabase_user_id: estimate.user_id
         }
       });
       stripeCustomerId = newCustomer.id;
       logStep("Created new Stripe customer", { stripeCustomerId });
       
       // Update customer record with Stripe ID
-      await supabaseService.from("customers").update({
-        stripe_customer_id: stripeCustomerId
-      }).eq("id", customerId);
+      if (estimate.customer_id) {
+        await supabaseService.from("customers").update({
+          stripe_customer_id: stripeCustomerId
+        }).eq("id", estimate.customer_id);
+      }
     }
 
     // Create payment session for deposit
@@ -97,12 +114,13 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/app/estimates?payment=success&estimate=${estimateId}`,
-      cancel_url: `${req.headers.get("origin")}/app/estimates?payment=cancelled`,
+      success_url: `${req.headers.get("origin")}/portal/estimate/${estimateToken}?payment=success`,
+      cancel_url: `${req.headers.get("origin")}/portal/estimate/${estimateToken}?payment=cancelled`,
       metadata: {
-        estimate_id: estimateId,
-        customer_id: customerId,
-        user_id: user.id,
+        estimate_id: estimate.id,
+        estimate_token: estimateToken,
+        customer_id: estimate.customer_id,
+        user_id: estimate.user_id,
         payment_type: 'deposit'
       }
     });
@@ -111,7 +129,7 @@ serve(async (req) => {
 
     // Create payment stage record for tracking
     await supabaseService.from("payment_stages").insert({
-      estimate_id: estimateId,
+      estimate_id: estimate.id,
       stage_number: 1,
       description: "Initial Deposit",
       amount: depositAmount,
@@ -128,7 +146,7 @@ serve(async (req) => {
     logStep("ERROR", { message: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: 400,
     });
   }
 });
