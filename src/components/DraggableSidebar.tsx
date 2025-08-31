@@ -15,7 +15,9 @@ import {
   Package,
   Wrench,
   HelpCircle,
-  Receipt
+  Receipt,
+  ShoppingCart,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -58,6 +60,8 @@ const defaultNavigationItems: NavigationItem[] = [
   { id: "client-portal", label: "Client Portal", icon: Users, path: "/app/client-portal" },
   { id: "estimates", label: "Estimates", icon: FileText, path: "/app/estimates" },
   { id: "invoices", label: "Invoices", icon: Receipt, path: "/app/invoices" },
+  { id: "purchase-orders", label: "Purchase Orders", icon: ShoppingCart, path: "/app/purchase-orders" },
+  { id: "financial-analytics", label: "Financial Analytics", icon: TrendingUp, path: "/app/financial-analytics" },
   { id: "scheduling", label: "Scheduling", icon: Calendar, path: "/app/scheduling" },
   { id: "fleet", label: "Fleet", icon: Truck, path: "/app/fleet" },
   { id: "teams", label: "Teams", icon: Users, path: "/app/teams" },

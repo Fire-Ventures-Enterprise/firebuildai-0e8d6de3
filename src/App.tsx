@@ -21,6 +21,7 @@ import { InvoicesPage } from "./pages/app/InvoicesPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import PurchaseOrdersPage from "./pages/app/PurchaseOrdersPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
+import SettingsPage from "./pages/app/SettingsPage";
 import { UpgradePage } from "./pages/UpgradePage";
 
 // Admin pages
@@ -104,6 +105,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <FinancialAnalyticsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/settings" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <SettingsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

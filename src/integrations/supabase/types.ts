@@ -1509,6 +1509,126 @@ export type Database = {
         }
         Relationships: []
       }
+      review_platforms: {
+        Row: {
+          auto_send_after_payment: boolean | null
+          created_at: string
+          custom_platform_name: string | null
+          custom_platform_url: string | null
+          default_message: string | null
+          facebook_page_url: string | null
+          google_business_url: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          yelp_business_url: string | null
+        }
+        Insert: {
+          auto_send_after_payment?: boolean | null
+          created_at?: string
+          custom_platform_name?: string | null
+          custom_platform_url?: string | null
+          default_message?: string | null
+          facebook_page_url?: string | null
+          google_business_url?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          yelp_business_url?: string | null
+        }
+        Update: {
+          auto_send_after_payment?: boolean | null
+          created_at?: string
+          custom_platform_name?: string | null
+          custom_platform_url?: string | null
+          default_message?: string | null
+          facebook_page_url?: string | null
+          google_business_url?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          yelp_business_url?: string | null
+        }
+        Relationships: []
+      }
+      review_requests: {
+        Row: {
+          created_at: string
+          custom_review_url: string | null
+          customer_email: string
+          customer_id: string | null
+          customer_name: string
+          facebook_review_url: string | null
+          google_review_url: string | null
+          id: string
+          invoice_id: string | null
+          rating: number | null
+          review_platform: string | null
+          review_text: string | null
+          reviewed_at: string | null
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          yelp_review_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          custom_review_url?: string | null
+          customer_email: string
+          customer_id?: string | null
+          customer_name: string
+          facebook_review_url?: string | null
+          google_review_url?: string | null
+          id?: string
+          invoice_id?: string | null
+          rating?: number | null
+          review_platform?: string | null
+          review_text?: string | null
+          reviewed_at?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          yelp_review_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          custom_review_url?: string | null
+          customer_email?: string
+          customer_id?: string | null
+          customer_name?: string
+          facebook_review_url?: string | null
+          google_review_url?: string | null
+          id?: string
+          invoice_id?: string | null
+          rating?: number | null
+          review_platform?: string | null
+          review_text?: string | null
+          reviewed_at?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          yelp_review_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_requests_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_enhanced"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscribers: {
         Row: {
           cancel_at_period_end: boolean | null

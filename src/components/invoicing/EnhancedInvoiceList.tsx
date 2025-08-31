@@ -30,10 +30,12 @@ import {
   CheckCircle,
   Mail,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Star
 } from "lucide-react";
 import { format } from "date-fns";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
+import { ReviewRequestDialog } from "@/components/reviews/ReviewRequestDialog";
 // Removed InvoicePreview import - will use dialog to open form instead
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -54,6 +56,8 @@ export const EnhancedInvoiceList = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState<EnhancedInvoice | null>(null);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [reviewInvoice, setReviewInvoice] = useState<EnhancedInvoice | null>(null);
   const { toast } = useToast();
 
   const getStatusBadge = (status: string) => {
@@ -247,6 +251,15 @@ export const EnhancedInvoiceList = ({
                               Send Invoice
                             </DropdownMenuItem>
                           )}
+                          {invoice.status === 'paid' && (
+                            <DropdownMenuItem onClick={() => {
+                              setReviewInvoice(invoice);
+                              setShowReviewDialog(true);
+                            }}>
+                              <Star className="h-4 w-4 mr-2" />
+                              Request Review
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem>
                             <Mail className="h-4 w-4 mr-2" />
                             Send Reminder
@@ -289,6 +302,21 @@ export const EnhancedInvoiceList = ({
       )}
       
       </Card>
+
+      {/* Review Request Dialog */}
+      {reviewInvoice && (
+        <ReviewRequestDialog
+          isOpen={showReviewDialog}
+          onClose={() => {
+            setShowReviewDialog(false);
+            setReviewInvoice(null);
+          }}
+          invoice={reviewInvoice}
+          customerId={reviewInvoice.customerId}
+          customerName={reviewInvoice.customerName}
+          customerEmail={reviewInvoice.customerEmail}
+        />
+      )}
     </div>
   );
 };
