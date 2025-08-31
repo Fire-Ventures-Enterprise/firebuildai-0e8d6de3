@@ -108,7 +108,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
       filtered = filtered.filter(po => po.payment_status === statusFilter);
     }
     if (approvalFilter && approvalFilter !== 'all') {
-      filtered = filtered.filter(po => po.approval_status === approvalFilter);
+      filtered = filtered.filter(po => po.status === approvalFilter);
     }
 
     setFilteredPOs(filtered);
@@ -132,27 +132,27 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
     );
   };
 
-  const getStatusBadge = (status: string) => {
+  const getWorkflowBadge = (status: string) => {
     const statusConfig = {
-      pending: { variant: "secondary" as const, label: "Pending" },
-      ordered: { variant: "outline" as const, label: "Ordered" },
-      shipped: { variant: "default" as const, label: "Shipped" },
-      received: { variant: "default" as const, label: "Received" },
-      cancelled: { variant: "destructive" as const, label: "Cancelled" },
+      draft: { variant: "secondary" as const, label: "Draft" },
+      submitted: { variant: "outline" as const, label: "Submitted" },
+      approved: { variant: "default" as const, label: "Approved" },
+      closed: { variant: "secondary" as const, label: "Closed" },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getPaymentStatusBadge = (status: string) => {
+  const getPaymentBadge = (status?: string) => {
     const statusConfig = {
-      unpaid: { variant: "destructive" as const, label: "Unpaid" },
+      pending: { variant: "destructive" as const, label: "Pending" },
       partial: { variant: "outline" as const, label: "Partial" },
       paid: { variant: "default" as const, label: "Paid" },
+      cancelled: { variant: "secondary" as const, label: "Cancelled" },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.unpaid;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
@@ -175,7 +175,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
   }
 
   // Calculate summary stats
-  const totalPending = purchaseOrders.filter(po => po.payment_status === 'unpaid').reduce((sum, po) => sum + po.total, 0);
+  const totalPending = purchaseOrders.filter(po => po.payment_status === 'pending' || !po.payment_status).reduce((sum, po) => sum + po.total, 0);
   const totalPaid = purchaseOrders.filter(po => po.payment_status === 'paid').reduce((sum, po) => sum + po.total, 0);
   const totalOverdue = purchaseOrders.filter(po => {
     if (!po.due_date) return false;
@@ -261,7 +261,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Payment Status</SelectItem>
-                <SelectItem value="unpaid">Unpaid</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="partial">Partially Paid</SelectItem>
                 <SelectItem value="paid">Paid</SelectItem>
               </SelectContent>
@@ -288,9 +288,8 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
                 <TableHead>PO Number</TableHead>
                 <TableHead>Vendor</TableHead>
                 <TableHead>Job</TableHead>
-                <TableHead>Approval</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Payment</TableHead>
+                <TableHead>Approval Status</TableHead>
+                <TableHead>Payment Status</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Due Date</TableHead>
                 <TableHead>Actions</TableHead>
@@ -306,9 +305,8 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
                     <TableCell className="font-medium">{po.po_number}</TableCell>
                     <TableCell>{po.vendor_name}</TableCell>
                     <TableCell>{job?.title || '-'}</TableCell>
-                    <TableCell>{getApprovalBadge(po.approval_status)}</TableCell>
-                    <TableCell>{getStatusBadge(po.status)}</TableCell>
-                    <TableCell>{getPaymentStatusBadge(po.payment_status || 'unpaid')}</TableCell>
+                    <TableCell>{getApprovalBadge(po.status)}</TableCell>
+                    <TableCell>{getPaymentBadge(po.payment_status)}</TableCell>
                     <TableCell className="font-semibold">${po.total.toFixed(2)}</TableCell>
                     <TableCell className={isOverdue ? 'text-red-600 font-semibold' : ''}>
                       {po.due_date
