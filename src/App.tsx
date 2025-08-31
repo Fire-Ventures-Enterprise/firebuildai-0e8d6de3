@@ -29,6 +29,8 @@ import ContractorTrackingPage from "./pages/app/ContractorTrackingPage";
 import ExpensesPage from "./pages/app/ExpensesPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
+import ExpensesNewPage from "./pages/app/ExpensesNewPage";
+import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
 
 // Admin pages
@@ -174,6 +176,14 @@ const App = () => (
               </ProtectedRoute>
             } />
             
+            <Route path="/app/expenses/new" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ExpensesNewPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
             <Route path="/app/fleet" element={
               <ProtectedRoute>
                 <AppLayout>
@@ -230,7 +240,10 @@ const App = () => (
             <Route path="/admin/login" element={<Navigate to="/" replace />} />
             
             {/* 404 */}
-            <Route path="*" element={<NotFound />} />
+        {/* Mobile Pairing Landing */}
+        <Route path="/get/mobile" element={<MobilePairLanding />} />
+        
+        <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

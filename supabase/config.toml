@@ -126,3 +126,6 @@ verify_jwt = true
 
 [functions.ocr-receipt]
 verify_jwt = true
+
+[functions.create-pairing-link]
+verify_jwt = true

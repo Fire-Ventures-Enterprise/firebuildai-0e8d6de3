@@ -278,7 +278,8 @@ export const InvoicePreview = ({ open, onOpenChange, invoice }: InvoicePreviewPr
             </div>
           </div>
 
-          {/* Notes */}
+
+        {/* Notes */}
           {invoice.notes && (
             <div className="mb-6">
               <h4 className="font-semibold mb-2">Notes:</h4>

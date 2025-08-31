@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReviewPlatformSettings } from '@/components/reviews/ReviewPlatformSettings';
-import { Settings, Star, Bell } from 'lucide-react';
+import { MobilePairingQRCode } from '@/components/account/MobilePairingQRCode';
+import { Settings, Star, Bell, Smartphone } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
@@ -16,10 +17,14 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="reviews" className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger value="reviews" className="flex items-center gap-2">
             <Star className="h-4 w-4" />
             Reviews
+          </TabsTrigger>
+          <TabsTrigger value="devices" className="flex items-center gap-2">
+            <Smartphone className="h-4 w-4" />
+            Devices
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -29,6 +34,20 @@ export default function SettingsPage() {
 
         <TabsContent value="reviews">
           <ReviewPlatformSettings />
+        </TabsContent>
+
+        <TabsContent value="devices" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Mobile Device Pairing</CardTitle>
+              <CardDescription>
+                Scan this QR code with your phone to sign in instantly
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MobilePairingQRCode />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="notifications">
