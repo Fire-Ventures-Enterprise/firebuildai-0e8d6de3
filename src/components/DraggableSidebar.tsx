@@ -209,6 +209,10 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
               "w-full justify-start h-10",
               collapsed ? "px-2" : "px-3"
             )}
+            onClick={() => {
+              onTabChange("settings");
+              navigate("/app/settings");
+            }}
           >
             <Settings className={cn("w-5 h-5", collapsed ? "" : "mr-3")} />
             {!collapsed && <span className="text-sm font-medium">Settings</span>}
