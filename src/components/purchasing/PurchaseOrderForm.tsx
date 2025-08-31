@@ -264,14 +264,14 @@ export function PurchaseOrderForm({
             <div>
               <Label htmlFor="invoice_id">Link to Invoice (Optional)</Label>
               <Select
-                value={watch('invoice_id')}
-                onValueChange={(value) => setValue('invoice_id', value)}
+                value={watch('invoice_id') || 'none'}
+                onValueChange={(value) => setValue('invoice_id', value === 'none' ? null : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select an invoice" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {invoices.map((invoice) => (
                     <SelectItem key={invoice.id} value={invoice.id}>
                       {invoice.invoice_number} - {invoice.customer_name || 'No customer'}
