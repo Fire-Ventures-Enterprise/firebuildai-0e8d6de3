@@ -379,6 +379,42 @@ export type Database = {
         }
         Relationships: []
       }
+      device_pairings: {
+        Row: {
+          action_link: string
+          created_at: string
+          device_meta: Json | null
+          email: string
+          expires_at: string
+          id: string
+          pairing_token: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action_link: string
+          created_at?: string
+          device_meta?: Json | null
+          email: string
+          expires_at: string
+          id?: string
+          pairing_token: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action_link?: string
+          created_at?: string
+          device_meta?: Json | null
+          email?: string
+          expires_at?: string
+          id?: string
+          pairing_token?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_leads: {
         Row: {
           accepted_terms: boolean
@@ -2423,6 +2459,10 @@ export type Database = {
         Returns: boolean
       }
       check_trial_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_expired_pairings: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
