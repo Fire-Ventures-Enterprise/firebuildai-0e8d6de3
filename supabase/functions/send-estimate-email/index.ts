@@ -81,6 +81,41 @@ serve(async (req) => {
     const depositUrl = `${siteUrl}/portal/estimate/${estimate.public_token}?action=pay`;
     const contractUrl = estimate.contract_attached ? `${portalUrl}#contract` : portalUrl;
 
+    // Get province/state for contract
+    const getProvince = () => {
+      const province = estimate.service_province || 
+                      estimate.customer?.province || 
+                      profile?.address?.match(/\b(ON|Ontario|BC|British Columbia|AB|Alberta|QC|Quebec|NS|Nova Scotia|NB|New Brunswick|MB|Manitoba|SK|Saskatchewan|PE|Prince Edward Island|NL|Newfoundland)\b/i)?.[0] ||
+                      'Ontario';
+      
+      const provinceMap: Record<string, string> = {
+        'ON': 'Ontario',
+        'BC': 'British Columbia',
+        'AB': 'Alberta',
+        'QC': 'Quebec',
+        'NS': 'Nova Scotia',
+        'NB': 'New Brunswick',
+        'MB': 'Manitoba',
+        'SK': 'Saskatchewan',
+        'PE': 'Prince Edward Island',
+        'NL': 'Newfoundland and Labrador'
+      };
+      
+      return provinceMap[province.toUpperCase()] || province;
+    };
+
+    const province = getProvince();
+    const contractTitle = province === 'Ontario' ? 'Ontario Contract Agreement' : 
+                         ['British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province) ?
+                         `${province} Contract Agreement` : 'Service Contract Agreement';
+    
+    const contractName = province === 'Ontario' ? 'Ontario Construction Service Agreement' :
+                        ['British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province) ?
+                        `${province} Construction Service Agreement` : 'Construction Service Agreement';
+    
+    const jurisdiction = ['Ontario', 'British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province) ?
+                        province : 'local';
+
     // Prepare top items for email (first 5)
     const topItems = estimate.items?.slice(0, 5).map((item: any) => {
       const firstLine = item.description?.split('\n')[0] || `Item`;
@@ -148,8 +183,10 @@ ${companyName} • ${companyPhone} • ${companyEmail}`;
       deposit_amount: formatCurrency(estimate.deposit_amount || 0),
       deposit_url: depositUrl,
       portal_url: portalUrl,
-      contract_title: 'Service Agreement',
+      contract_title: contractTitle,
       contract_url: contractUrl,
+      contract_name: contractName,
+      jurisdiction: jurisdiction,
       top_items: topItems,
     });
 
@@ -378,13 +415,22 @@ function generateHtmlEmail(data: any): string {
       <!-- Contract note -->
       <tr>
         <td class="p-24" style="padding-top:0;">
-          <div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
-            <div style="font-weight:600;">${data.contract_title}</div>
+          <div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;cursor:pointer;background:#f9fafb;" onclick="window.open('${data.contract_url}', '_blank')">
+            <div style="font-weight:600;display:flex;align-items:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              ${data.contract_title}
+            </div>
             <div style="font-size:13px;color:#374151;margin-top:6px;">
-              By paying the deposit, you agree to the attached Service Agreement, including payment terms and warranties.
+              By paying the deposit, you agree to the attached ${data.contract_name}, including payment terms and warranties under ${data.jurisdiction} law.
             </div>
             <div style="margin-top:8px;">
-              <a href="${data.contract_url}" target="_blank" rel="noopener">View Full Contract →</a>
+              <a href="${data.contract_url}" target="_blank" rel="noopener" style="color:#1f6feb;text-decoration:none;">View Full Contract →</a>
             </div>
           </div>
         </td>

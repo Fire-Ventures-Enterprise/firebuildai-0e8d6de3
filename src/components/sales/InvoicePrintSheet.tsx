@@ -1,6 +1,8 @@
 import React from "react";
 import type { InvoicePayment } from "@/types/sales";
 import { Watermark } from "@/components/po/Watermark";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 
 type ClientRef = {
   id: string;
@@ -29,6 +31,7 @@ type Invoice = {
   notes?: string | null;
   client?: ClientRef | null;
   service_address?: string | null;
+  contract_required?: boolean;
 };
 
 type Company = { 
@@ -44,6 +47,7 @@ type Props = {
   payments?: InvoicePayment[];
   company: Company;
   watermarkText?: string;
+  contractUrl?: string;
 };
 
 export function InvoicePrintSheet({ 
@@ -51,13 +55,69 @@ export function InvoicePrintSheet({
   items, 
   payments = [], 
   company, 
-  watermarkText 
+  watermarkText,
+  contractUrl
 }: Props) {
   const subtotal = inv.subtotal ?? 0;
   const tax = inv.tax_amount ?? 0;
   const total = inv.total ?? 0;
   const paid = payments.reduce((a, p) => a + (p.amount ?? 0), 0);
   const balance = Math.max(0, total - paid);
+
+  const getProvince = () => {
+    // Check customer's province first, then company's province
+    const province = (inv as any).service_province || 
+                    (inv as any).customer_province ||
+                    company.address?.match(/\b(ON|Ontario|BC|British Columbia|AB|Alberta|QC|Quebec|NS|Nova Scotia|NB|New Brunswick|MB|Manitoba|SK|Saskatchewan|PE|Prince Edward Island|NL|Newfoundland)\b/i)?.[0] ||
+                    'Ontario';
+    
+    // Normalize province names
+    const provinceMap: Record<string, string> = {
+      'ON': 'Ontario',
+      'BC': 'British Columbia',
+      'AB': 'Alberta',
+      'QC': 'Quebec',
+      'NS': 'Nova Scotia',
+      'NB': 'New Brunswick',
+      'MB': 'Manitoba',
+      'SK': 'Saskatchewan',
+      'PE': 'Prince Edward Island',
+      'NL': 'Newfoundland and Labrador'
+    };
+    
+    return provinceMap[province.toUpperCase()] || province;
+  };
+
+  const getContractTitle = () => {
+    const province = getProvince();
+    if (province === 'Ontario') return 'Ontario Contract Agreement';
+    if (['British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province)) {
+      return `${province} Contract Agreement`;
+    }
+    // For US states or other countries
+    return 'Service Contract Agreement';
+  };
+
+  const getContractName = () => {
+    const province = getProvince();
+    if (province === 'Ontario') return 'Ontario Construction Service Agreement';
+    if (['British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province)) {
+      return `${province} Construction Service Agreement`;
+    }
+    return 'Construction Service Agreement';
+  };
+
+  const getJurisdiction = () => {
+    const province = getProvince();
+    if (['Ontario', 'British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province)) {
+      return province;
+    }
+    // Check if US state
+    const state = (inv as any).service_state;
+    if (state) return state;
+    
+    return 'local';
+  };
 
   return (
     <div id="invoice-print-root" className="relative bg-white text-black p-6 max-w-[900px] mx-auto">
@@ -171,6 +231,25 @@ export function InvoicePrintSheet({
           <div className="flex justify-between font-semibold"><span>Balance Due</span><span>${balance.toFixed(2)}</span></div>
         </div>
       </div>
+
+      {/* Contract Section */}
+      {inv.contract_required && (
+        <div 
+          className="mt-6 border border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+          onClick={() => window.open(contractUrl || '#', '_blank')}
+        >
+          <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            {getContractTitle()}
+          </h3>
+          <p className="text-sm opacity-80 mb-3">
+            By accepting this invoice, you agree to the attached {getContractName()} which includes payment terms, warranties, and legal protections under {getJurisdiction()} law.
+          </p>
+          <Button variant="link" className="p-0 h-auto text-blue-600">
+            View Full Contract →
+          </Button>
+        </div>
+      )}
 
       {inv.notes && (
         <>

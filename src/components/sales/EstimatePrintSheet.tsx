@@ -1,6 +1,8 @@
 import React from "react";
 import type { Estimate, EstimateItem } from "@/types/sales";
 import { Watermark } from "@/components/po/Watermark";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 
 type ClientRef = {
   id: string;
@@ -43,10 +45,64 @@ export function EstimatePrintSheet({
   const total = est.total ?? 0;
   const deposit = est.deposit_required ?? 0;
 
+  const getProvince = () => {
+    // Check customer's province first, then company's province
+    const province = (est as any).service_province || 
+                    (est as any).customer?.province || 
+                    company.address?.match(/\b(ON|Ontario|BC|British Columbia|AB|Alberta|QC|Quebec|NS|Nova Scotia|NB|New Brunswick|MB|Manitoba|SK|Saskatchewan|PE|Prince Edward Island|NL|Newfoundland)\b/i)?.[0] ||
+                    'Ontario';
+    
+    // Normalize province names
+    const provinceMap: Record<string, string> = {
+      'ON': 'Ontario',
+      'BC': 'British Columbia',
+      'AB': 'Alberta',
+      'QC': 'Quebec',
+      'NS': 'Nova Scotia',
+      'NB': 'New Brunswick',
+      'MB': 'Manitoba',
+      'SK': 'Saskatchewan',
+      'PE': 'Prince Edward Island',
+      'NL': 'Newfoundland and Labrador'
+    };
+    
+    return provinceMap[province.toUpperCase()] || province;
+  };
+
+  const getContractTitle = () => {
+    const province = getProvince();
+    if (province === 'Ontario') return 'Ontario Contract Agreement';
+    if (['British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province)) {
+      return `${province} Contract Agreement`;
+    }
+    // For US states or other countries
+    return 'Service Contract Agreement';
+  };
+
+  const getContractName = () => {
+    const province = getProvince();
+    if (province === 'Ontario') return 'Ontario Construction Service Agreement';
+    if (['British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province)) {
+      return `${province} Construction Service Agreement`;
+    }
+    return 'Construction Service Agreement';
+  };
+
+  const getJurisdiction = () => {
+    const province = getProvince();
+    if (['Ontario', 'British Columbia', 'Alberta', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Prince Edward Island', 'Newfoundland and Labrador'].includes(province)) {
+      return province;
+    }
+    // Check if US state
+    const state = (est as any).service_state;
+    if (state) return state;
+    
+    return 'local';
+  };
+
   return (
     <div id="estimate-print-root" className="relative bg-white text-black p-6 max-w-[900px] mx-auto">
       {watermarkText && <Watermark text={watermarkText} />}
-
       <style>{`
         @media print {
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -174,24 +230,22 @@ export function EstimatePrintSheet({
         </div>
       </div>
 
-      {/* Contract */}
-      {(contractTitle || est.contract_title) && (
-        <div className="mt-6 p-3 border rounded">
-          <div className="flex items-center gap-2">
-            <span className="font-medium">{contractTitle ?? est.contract_title ?? "Contract"}</span>
-          </div>
-          <div className="text-sm mt-2">
-            By accepting this estimate, you agree to the attached Service Agreement which includes payment terms,
-            warranties, and legal protections under applicable law.
-          </div>
-          {contractUrl && (
-            <div className="mt-2 text-sm">
-              <a href={contractUrl} className="text-blue-600 underline" target="_blank">View Full Contract →</a>
-            </div>
-          )}
-          {contractHtml && (
-            <div className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: contractHtml }} />
-          )}
+      {/* Contract Section */}
+      {(est as any).contract_attached && (
+        <div 
+          className="mt-6 border border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+          onClick={() => window.open(contractUrl || '#', '_blank')}
+        >
+          <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            {getContractTitle()}
+          </h3>
+          <p className="text-sm opacity-80 mb-3">
+            By accepting this estimate, you agree to the attached {getContractName()} which includes payment terms, warranties, and legal protections under {getJurisdiction()} law.
+          </p>
+          <Button variant="link" className="p-0 h-auto text-blue-600">
+            View Full Contract →
+          </Button>
         </div>
       )}
 
