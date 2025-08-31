@@ -321,9 +321,14 @@ ${companyName} • ${siteUrl}`;
       expiring: `Estimate ${estimate.estimate_number} expires soon — Secure your booking`
     };
 
-    // Send email
+    // Send email with proper from address
+    // For production, replace with your verified domain email
+    const fromEmail = companyEmail && companyEmail !== "info@company.com" 
+      ? `${companyName} <${companyEmail}>` 
+      : `${companyName} <estimates@resend.dev>`;
+    
     const { data, error } = await resend.emails.send({
-      from: `${companyName} <onboarding@resend.dev>`, // Replace with your verified domain
+      from: fromEmail,
       to: [estimate.customer?.email],
       subject: subjects[action],
       html,
