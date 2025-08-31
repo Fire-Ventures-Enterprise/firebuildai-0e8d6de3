@@ -17,7 +17,8 @@ import {
   HelpCircle,
   Receipt,
   ShoppingCart,
-  TrendingUp
+  TrendingUp,
+  Building2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,7 @@ interface NavigationItem {
 
 const defaultNavigationItems: NavigationItem[] = [
   { id: "dashboard", label: "Dashboard", icon: Home, path: "/app/dashboard" },
+  { id: "company", label: "Company", icon: Building2, path: "/app/company" },
   { id: "client-portal", label: "Client Portal", icon: Users, path: "/app/client-portal" },
   { id: "estimates", label: "Estimates", icon: FileText, path: "/app/estimates" },
   { id: "invoices", label: "Invoices", icon: Receipt, path: "/app/invoices" },

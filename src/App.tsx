@@ -19,6 +19,7 @@ import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
+import CompanyPage from "./pages/app/CompanyPage";
 import PurchaseOrdersPage from "./pages/app/PurchaseOrdersPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
@@ -89,6 +90,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <ClientPortalPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/company" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <CompanyPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

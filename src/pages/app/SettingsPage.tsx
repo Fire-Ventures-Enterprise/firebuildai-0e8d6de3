@@ -38,11 +38,13 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle>Company Information</CardTitle>
                 <CardDescription>
-                  Update your company details and branding
+                  Company settings have been moved to the dedicated Company page
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Company settings coming soon...</p>
+                <p className="text-muted-foreground">
+                  Please navigate to the Company tab in the sidebar to manage your company information, documents, team, and more.
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
