@@ -20,6 +20,8 @@ import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanyPage from "./pages/app/CompanyPage";
+import JobsPage from "./pages/app/JobsPage";
+import JobDetailsPage from "./pages/app/JobDetailsPage";
 import PurchaseOrdersPage from "./pages/app/PurchaseOrdersPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
@@ -98,6 +100,22 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <CompanyPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/jobs" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <JobsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/jobs/:jobId" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <JobDetailsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

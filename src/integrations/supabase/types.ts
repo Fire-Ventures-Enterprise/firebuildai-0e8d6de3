@@ -125,6 +125,82 @@ export type Database = {
           },
         ]
       }
+      chat_messages: {
+        Row: {
+          attachments: Json | null
+          created_at: string
+          edited: boolean | null
+          edited_at: string | null
+          id: string
+          message: string
+          room_id: string
+          sender_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string
+          edited?: boolean | null
+          edited_at?: string | null
+          id?: string
+          message: string
+          room_id: string
+          sender_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string
+          edited?: boolean | null
+          edited_at?: string | null
+          id?: string
+          message?: string
+          room_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "job_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_room_members: {
+        Row: {
+          id: string
+          invited_by: string | null
+          joined_at: string
+          role: string
+          room_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          role?: string
+          room_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          role?: string
+          room_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_room_members_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "job_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_companies: {
         Row: {
           active: boolean | null
@@ -1142,6 +1218,90 @@ export type Database = {
           },
         ]
       }
+      job_chat_rooms: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          job_id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          job_id: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          job_id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      jobs: {
+        Row: {
+          actual_cost: number | null
+          budget: number | null
+          created_at: string
+          customer_id: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          priority: string | null
+          progress: number | null
+          start_date: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          budget?: number | null
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          priority?: string | null
+          progress?: number | null
+          start_date?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actual_cost?: number | null
+          budget?: number | null
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          priority?: string | null
+          progress?: number | null
+          start_date?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           browser_notifications: boolean | null
@@ -1692,6 +1852,42 @@ export type Database = {
           trial_start?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          role: string | null
+          specialty: string | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          phone?: string | null
+          role?: string | null
+          specialty?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          role?: string | null
+          specialty?: string | null
+          user_id?: string
         }
         Relationships: []
       }
