@@ -19,6 +19,8 @@ import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
+import PurchaseOrdersPage from "./pages/app/PurchaseOrdersPage";
+import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import { UpgradePage } from "./pages/UpgradePage";
 
 // Admin pages
@@ -86,6 +88,22 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <ClientPortalPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/purchase-orders" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <PurchaseOrdersPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/financial-analytics" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <FinancialAnalyticsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

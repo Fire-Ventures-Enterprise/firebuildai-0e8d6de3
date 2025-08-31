@@ -479,6 +479,54 @@ export type Database = {
         }
         Relationships: []
       }
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          invoice_id: string | null
+          notes: string | null
+          purchase_order_id: string | null
+          reference_number: string | null
+          updated_at: string
+          user_id: string
+          vendor: string | null
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          date?: string
+          description: string
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          purchase_order_id?: string | null
+          reference_number?: string | null
+          updated_at?: string
+          user_id: string
+          vendor?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          purchase_order_id?: string | null
+          reference_number?: string | null
+          updated_at?: string
+          user_id?: string
+          vendor?: string | null
+        }
+        Relationships: []
+      }
       invoice_attachments: {
         Row: {
           id: string
@@ -953,15 +1001,19 @@ export type Database = {
           discount_amount: number | null
           discount_type: string | null
           due_date: string | null
+          gross_profit: number | null
           id: string
           invoice_number: string
           issue_date: string
           markup_total: number | null
+          net_profit: number | null
           notes: string | null
+          overhead_percentage: number | null
           paid_amount: number | null
           photos: Json | null
           po_number: string | null
           private_notes: string | null
+          profit_margin: number | null
           service_address: string | null
           service_city: string | null
           service_postal_code: string | null
@@ -972,6 +1024,7 @@ export type Database = {
           tax_amount: number
           tax_rate: number | null
           total: number
+          total_expenses: number | null
           updated_at: string
           user_id: string
         }
@@ -1000,15 +1053,19 @@ export type Database = {
           discount_amount?: number | null
           discount_type?: string | null
           due_date?: string | null
+          gross_profit?: number | null
           id?: string
           invoice_number: string
           issue_date?: string
           markup_total?: number | null
+          net_profit?: number | null
           notes?: string | null
+          overhead_percentage?: number | null
           paid_amount?: number | null
           photos?: Json | null
           po_number?: string | null
           private_notes?: string | null
+          profit_margin?: number | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -1019,6 +1076,7 @@ export type Database = {
           tax_amount?: number
           tax_rate?: number | null
           total?: number
+          total_expenses?: number | null
           updated_at?: string
           user_id: string
         }
@@ -1047,15 +1105,19 @@ export type Database = {
           discount_amount?: number | null
           discount_type?: string | null
           due_date?: string | null
+          gross_profit?: number | null
           id?: string
           invoice_number?: string
           issue_date?: string
           markup_total?: number | null
+          net_profit?: number | null
           notes?: string | null
+          overhead_percentage?: number | null
           paid_amount?: number | null
           photos?: Json | null
           po_number?: string | null
           private_notes?: string | null
+          profit_margin?: number | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -1066,6 +1128,7 @@ export type Database = {
           tax_amount?: number
           tax_rate?: number | null
           total?: number
+          total_expenses?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -1356,12 +1419,46 @@ export type Database = {
           },
         ]
       }
+      purchase_order_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          purchase_order_id: string
+          quantity: number
+          rate: number
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          purchase_order_id: string
+          quantity?: number
+          rate: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          purchase_order_id?: string
+          quantity?: number
+          rate?: number
+        }
+        Relationships: []
+      }
       purchase_orders: {
         Row: {
+          category: string | null
           created_at: string
           expected_delivery: string | null
           id: string
+          invoice_id: string | null
           notes: string | null
+          paid_amount: number | null
+          payment_status: string | null
           po_number: string
           status: string
           subtotal: number
@@ -1373,10 +1470,14 @@ export type Database = {
           vendor_name: string
         }
         Insert: {
+          category?: string | null
           created_at?: string
           expected_delivery?: string | null
           id?: string
+          invoice_id?: string | null
           notes?: string | null
+          paid_amount?: number | null
+          payment_status?: string | null
           po_number: string
           status?: string
           subtotal?: number
@@ -1388,10 +1489,14 @@ export type Database = {
           vendor_name: string
         }
         Update: {
+          category?: string | null
           created_at?: string
           expected_delivery?: string | null
           id?: string
+          invoice_id?: string | null
           notes?: string | null
+          paid_amount?: number | null
+          payment_status?: string | null
           po_number?: string
           status?: string
           subtotal?: number

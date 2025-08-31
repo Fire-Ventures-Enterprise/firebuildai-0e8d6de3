@@ -32,6 +32,7 @@ const navigationItems = [
   { id: "gps-tracking", label: "GPS Tracking", icon: MapPin },
   { id: "contractors", label: "Contractors", icon: Users },
   { id: "expenses", label: "Expenses", icon: DollarSign },
+  { id: "financial-analytics", label: "Financial Analytics", icon: BarChart3 },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "messages", label: "Messages", icon: Calendar },
   { id: "fleet", label: "Fleet", icon: MapPin },
