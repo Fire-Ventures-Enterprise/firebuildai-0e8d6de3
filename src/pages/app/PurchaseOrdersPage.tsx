@@ -118,6 +118,7 @@ export default function PurchaseOrdersPage() {
     setShowForm(false);
   };
 
+  // Handle payment recording
   const handleRecordPayment = (po: PurchaseOrder) => {
     setSelectedPoForPayment(po);
     setPaymentDialogOpen(true);
