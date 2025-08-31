@@ -39,6 +39,10 @@ import { ConsultationManagement } from "./pages/admin/ConsultationManagement";
 // Other pages
 import NotFound from "./pages/NotFound";
 
+// Portal pages
+import EstimatePortalPage from "./pages/portal/EstimatePortalPage";
+import InvoicePortalPage from "./pages/portal/InvoicePortalPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -55,6 +59,10 @@ const App = () => (
             {/* Auth Routes */}
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
+            
+            {/* Portal Routes - Public */}
+            <Route path="/portal/estimate/:token" element={<EstimatePortalPage />} />
+            <Route path="/portal/invoice/:token" element={<InvoicePortalPage />} />
             
             {/* Upgrade Page */}
             <Route path="/upgrade" element={<UpgradePage />} />

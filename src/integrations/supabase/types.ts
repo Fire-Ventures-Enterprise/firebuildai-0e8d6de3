@@ -455,6 +455,10 @@ export type Database = {
       }
       estimates: {
         Row: {
+          accepted_at: string | null
+          accepted_by_email: string | null
+          accepted_by_name: string | null
+          accepted_ip: string | null
           contract_attached: boolean | null
           converted_to_invoice: boolean | null
           created_at: string
@@ -467,6 +471,7 @@ export type Database = {
           invoice_id: string | null
           issue_date: string
           notes: string | null
+          public_token: string | null
           scope_of_work: string | null
           service_address: string | null
           service_city: string | null
@@ -486,8 +491,13 @@ export type Database = {
           total: number
           updated_at: string
           user_id: string
+          viewed_at: string | null
         }
         Insert: {
+          accepted_at?: string | null
+          accepted_by_email?: string | null
+          accepted_by_name?: string | null
+          accepted_ip?: string | null
           contract_attached?: boolean | null
           converted_to_invoice?: boolean | null
           created_at?: string
@@ -500,6 +510,7 @@ export type Database = {
           invoice_id?: string | null
           issue_date?: string
           notes?: string | null
+          public_token?: string | null
           scope_of_work?: string | null
           service_address?: string | null
           service_city?: string | null
@@ -519,8 +530,13 @@ export type Database = {
           total?: number
           updated_at?: string
           user_id: string
+          viewed_at?: string | null
         }
         Update: {
+          accepted_at?: string | null
+          accepted_by_email?: string | null
+          accepted_by_name?: string | null
+          accepted_ip?: string | null
           contract_attached?: boolean | null
           converted_to_invoice?: boolean | null
           created_at?: string
@@ -533,6 +549,7 @@ export type Database = {
           invoice_id?: string | null
           issue_date?: string
           notes?: string | null
+          public_token?: string | null
           scope_of_work?: string | null
           service_address?: string | null
           service_city?: string | null
@@ -552,6 +569,7 @@ export type Database = {
           total?: number
           updated_at?: string
           user_id?: string
+          viewed_at?: string | null
         }
         Relationships: []
       }
@@ -1090,6 +1108,7 @@ export type Database = {
           po_number: string | null
           private_notes: string | null
           profit_margin: number | null
+          public_token: string | null
           service_address: string | null
           service_city: string | null
           service_postal_code: string | null
@@ -1142,6 +1161,7 @@ export type Database = {
           po_number?: string | null
           private_notes?: string | null
           profit_margin?: number | null
+          public_token?: string | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -1194,6 +1214,7 @@ export type Database = {
           po_number?: string | null
           private_notes?: string | null
           profit_margin?: number | null
+          public_token?: string | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -2165,6 +2186,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_estimate: {
+        Args: { p_email?: string; p_name?: string; p_token: string }
+        Returns: undefined
+      }
       can_edit_invoice: {
         Args: { invoice_id_param: string; override_phrase?: string }
         Returns: boolean
@@ -2184,6 +2209,10 @@ export type Database = {
       is_admin: {
         Args: { check_user_id?: string }
         Returns: boolean
+      }
+      mark_estimate_viewed: {
+        Args: { p_token: string }
+        Returns: undefined
       }
       update_trial_and_subscription_status: {
         Args: Record<PropertyKey, never>
