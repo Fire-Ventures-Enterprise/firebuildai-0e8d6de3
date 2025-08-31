@@ -9,7 +9,11 @@ import { RecordPaymentDialog } from "./RecordPaymentDialog";
 import { PayByCardButton } from "./PayByCardButton";
 import { PaymentSummary } from "./PaymentSummary";
 import { PaymentHistory } from "./PaymentHistory";
+import { ReceiptUpload } from "./ReceiptUpload";
+import { POReceiptsGallery } from "./POReceiptsGallery";
+import { POPrintExport } from "./POPrintExport";
 import { PurchaseOrders } from "@/services/purchaseOrders";
+import { POFiles } from "@/services/poFiles";
 import type { PurchaseOrderWithJoins, PoPayment } from "@/domain/db";
 import { outstanding as getOutstanding } from "@/utils/po";
 
@@ -22,19 +26,26 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [payments, setPayments] = useState<PoPayment[]>([]);
   const [loadingPayments, setLoadingPayments] = useState(true);
+  const [receiptThumbs, setReceiptThumbs] = useState<string[]>([]);
   
-  // Fetch payment history
+  // Fetch payment history and receipts
+  const fetchPayments = async () => {
+    try {
+      const paymentHistory = await PurchaseOrders.getPayments(purchaseOrder.id);
+      setPayments(paymentHistory);
+      
+      // Load receipt thumbnails for print/export
+      const paths = await POFiles.gatherReceiptPaths(purchaseOrder.id, paymentHistory);
+      const signed = await POFiles.signMany(paths);
+      setReceiptThumbs(Object.values(signed));
+    } catch (error) {
+      console.error('Failed to fetch payments:', error);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const paymentHistory = await PurchaseOrders.getPayments(purchaseOrder.id);
-        setPayments(paymentHistory);
-      } catch (error) {
-        console.error('Failed to fetch payments:', error);
-      } finally {
-        setLoadingPayments(false);
-      }
-    };
     fetchPayments();
   }, [purchaseOrder.id]);
 
@@ -44,24 +55,34 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
   const outstanding = getOutstanding(poWithPayments);
   const isPaid = purchaseOrder.payment_status === 'paid';
   
-  const getStatusBadge = (status: string) => {
+  const getApprovalBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      draft: "secondary",
-      submitted: "default",
+      draft: "outline",
+      submitted: "secondary",
       approved: "default",
       closed: "outline",
     };
-    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
+    return (
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-muted-foreground">Approval:</span>
+        <Badge variant={variants[status] || "outline"}>{status}</Badge>
+      </div>
+    );
   };
   
   const getPaymentBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      pending: "destructive",
+      pending: "outline",
       partial: "secondary",
       paid: "default",
-      cancelled: "outline",
+      cancelled: "destructive",
     };
-    return <Badge variant={variants[status] || "secondary"}>{status}</Badge>;
+    return (
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-muted-foreground">Payment:</span>
+        <Badge variant={variants[status] || "outline"}>{status}</Badge>
+      </div>
+    );
   };
 
   return (
@@ -75,8 +96,8 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
                 {purchaseOrder.vendor?.name || 'Unknown Vendor'}
               </p>
             </div>
-            <div className="flex gap-2">
-              {getStatusBadge(purchaseOrder.status)}
+            <div className="flex flex-col gap-1">
+              {getApprovalBadge(purchaseOrder.status)}
               {getPaymentBadge(purchaseOrder.payment_status || 'pending')}
             </div>
           </div>
@@ -207,6 +228,19 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
               <p className="text-muted-foreground">{purchaseOrder.notes}</p>
             </div>
           )}
+
+          <Separator />
+
+          {/* Receipt Upload */}
+          <div>
+            <ReceiptUpload 
+              poId={purchaseOrder.id} 
+              onUploaded={() => {
+                fetchPayments();
+                onRefresh();
+              }} 
+            />
+          </div>
         </CardContent>
       </Card>
 
@@ -220,15 +254,25 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
         />
       )}
 
+      {/* Receipts Gallery */}
+      <POReceiptsGallery poId={purchaseOrder.id} payments={payments} />
+
+      {/* Print/Export */}
+      <POPrintExport 
+        po={purchaseOrder} 
+        items={purchaseOrder.items} 
+        payments={payments} 
+        receiptThumbs={receiptThumbs} 
+      />
+
       <RecordPaymentDialog
         poId={purchaseOrder.id}
         open={paymentDialogOpen}
         onOpenChange={setPaymentDialogOpen}
         outstanding={outstanding}
         onDone={() => {
+          fetchPayments();
           onRefresh();
-          // Also refresh payments
-          PurchaseOrders.getPayments(purchaseOrder.id).then(setPayments);
         }}
       />
     </div>
