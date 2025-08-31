@@ -123,3 +123,6 @@ verify_jwt = true
 
 [functions.send-estimate-email]
 verify_jwt = true
+
+[functions.ocr-receipt]
+verify_jwt = true

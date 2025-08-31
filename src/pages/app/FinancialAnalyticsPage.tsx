@@ -60,14 +60,15 @@ export default function FinancialAnalyticsPage() {
       setInvoices(invoiceData || []);
 
       // Fetch expenses
-      const { data: expenseData, error: expenseError } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('user_id', user.user.id)
-        .order('date', { ascending: false });
+      // Temporarily comment out expenses fetch until we update the component
+      // const { data: expenseData, error: expenseError } = await supabase
+      //   .from('expenses')
+      //   .select('*')
+      //   .eq('user_id', user.user.id)
+      //   .order('date', { ascending: false });
 
-      if (expenseError) throw expenseError;
-      setExpenses(expenseData || []);
+      // if (expenseError) throw expenseError;
+      // setExpenses(expenseData || []);
     } catch (error) {
       console.error('Error fetching financial data:', error);
       toast({
