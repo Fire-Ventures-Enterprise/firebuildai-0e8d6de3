@@ -1,5 +1,7 @@
 # Welcome to your Lovable project
 
+[![Architecture](https://img.shields.io/badge/Architecture-Documentation-blue)](./docs/ARCHITECTURE.md)
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/2c86a246-efc9-41cc-aae2-dc1f5ae58ed8
