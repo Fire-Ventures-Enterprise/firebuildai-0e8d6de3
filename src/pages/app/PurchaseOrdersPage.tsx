@@ -63,26 +63,27 @@ export default function PurchaseOrdersPage() {
       const posWithInvoices = await Promise.all((data || []).map(async (po) => {
         let invoiceNumber = null;
         
-        // If PO has an invoice_id, fetch by that
+        // If PO has an invoice_id, try to fetch from both tables
         if (po.invoice_id) {
-          const { data: invoiceData } = await supabase
+          // First try invoices_enhanced table
+          const { data: enhancedInvoice } = await supabase
             .from('invoices_enhanced')
             .select('invoice_number')
             .eq('id', po.invoice_id)
             .maybeSingle();
           
-          invoiceNumber = invoiceData?.invoice_number;
-        }
-        
-        // If no invoice found by id, try by po_number as fallback
-        if (!invoiceNumber && po.po_number) {
-          const { data: invoiceData } = await supabase
-            .from('invoices_enhanced')
-            .select('invoice_number')
-            .eq('po_number', po.po_number)
-            .maybeSingle();
-          
-          invoiceNumber = invoiceData?.invoice_number;
+          if (enhancedInvoice?.invoice_number) {
+            invoiceNumber = enhancedInvoice.invoice_number;
+          } else {
+            // If not found, try regular invoices table
+            const { data: regularInvoice } = await supabase
+              .from('invoices')
+              .select('invoice_number')
+              .eq('id', po.invoice_id)
+              .maybeSingle();
+            
+            invoiceNumber = regularInvoice?.invoice_number;
+          }
         }
         
         return {
