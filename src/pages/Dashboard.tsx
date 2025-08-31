@@ -1,4 +1,5 @@
 import { DollarSign, Briefcase, Users, Star, MapPin, Building } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DraggableSidebar } from "@/components/DraggableSidebar";
 import { MetricsCard } from "@/components/MetricsCard";
@@ -46,6 +47,7 @@ const metrics = [
 
 export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const navigate = useNavigate();
 
   const renderContent = () => {
     switch (activeTab) {

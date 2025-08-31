@@ -22,7 +22,11 @@ import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanyPage from "./pages/app/CompanyPage";
 import JobsPage from "./pages/app/JobsPage";
 import JobDetailsPage from "./pages/app/JobDetailsPage";
+import CreateJobPage from "./pages/app/CreateJobPage";
 import PurchaseOrdersPage from "./pages/app/PurchaseOrdersPage";
+import CreatePurchaseOrderPage from "./pages/app/CreatePurchaseOrderPage";
+import ContractorTrackingPage from "./pages/app/ContractorTrackingPage";
+import ExpensesPage from "./pages/app/ExpensesPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
 import { UpgradePage } from "./pages/UpgradePage";
@@ -120,10 +124,64 @@ const App = () => (
               </ProtectedRoute>
             } />
             
+            <Route path="/app/jobs/create" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <CreateJobPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
             <Route path="/app/purchase-orders" element={
               <ProtectedRoute>
                 <AppLayout>
                   <PurchaseOrdersPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/purchase-orders/create" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <CreatePurchaseOrderPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/contractors/tracking" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ContractorTrackingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/finance/expenses" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ExpensesPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/fleet" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <div className="p-8">
+                    <h1 className="text-3xl font-bold">Fleet Management</h1>
+                    <p className="text-muted-foreground mt-2">Fleet management dashboard coming soon...</p>
+                  </div>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/clients/messages" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <div className="p-8">
+                    <h1 className="text-3xl font-bold">Client Messages</h1>
+                    <p className="text-muted-foreground mt-2">Client messaging system coming soon...</p>
+                  </div>
                 </AppLayout>
               </ProtectedRoute>
             } />
