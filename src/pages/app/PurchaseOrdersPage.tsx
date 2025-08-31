@@ -65,7 +65,7 @@ export default function PurchaseOrdersPage() {
           .from('invoices_enhanced')
           .select('invoice_number')
           .eq('po_number', po.po_number)
-          .single();
+          .maybeSingle();
         
         return {
           ...po,
