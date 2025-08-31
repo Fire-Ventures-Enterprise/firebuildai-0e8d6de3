@@ -1,24 +1,29 @@
 import type { PurchaseOrderWithJoins, PoPayment, PurchaseOrderItem } from "@/domain/db";
 import { Badge } from "@/components/ui/badge";
+import { Watermark } from "./Watermark";
 
 type Props = {
   po: PurchaseOrderWithJoins;
   items?: PurchaseOrderItem[];
   payments?: PoPayment[];
   receiptThumbs?: string[]; // signed urls
+  watermarkText?: string; // NEW
 };
 
 export const POPrintSheet = ({ 
   po, 
   items = po.items ?? [], 
   payments = po.payments ?? [], 
-  receiptThumbs = [] 
+  receiptThumbs = [],
+  watermarkText 
 }: Props) => {
   const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
   const outstanding = po.total - totalPaid;
 
   return (
-    <div id="po-print-root" className="bg-background text-foreground p-6 print:p-4 print:bg-white print:text-black max-w-[900px] mx-auto">
+    <div id="po-print-root" className="relative bg-background text-foreground p-6 print:p-4 print:bg-white print:text-black max-w-[900px] mx-auto">
+      {/* Watermark sits behind content */}
+      <Watermark text={watermarkText ?? ""} />
       <style>{`
         @media print {
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

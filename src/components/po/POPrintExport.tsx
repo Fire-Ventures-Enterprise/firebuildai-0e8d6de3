@@ -9,9 +9,10 @@ type Props = {
   items?: PurchaseOrderItem[];
   payments?: PoPayment[];
   receiptThumbs?: string[]; // signed URLs
+  watermarkText?: string; // NEW
 };
 
-export function POPrintExport({ po, items, payments, receiptThumbs }: Props) {
+export function POPrintExport({ po, items, payments, receiptThumbs, watermarkText }: Props) {
   const print = () => {
     window.print();
   };
@@ -78,7 +79,7 @@ export function POPrintExport({ po, items, payments, receiptThumbs }: Props) {
           Export PDF
         </Button>
       </div>
-      <POPrintSheet po={po} items={items} payments={payments} receiptThumbs={receiptThumbs} />
+      <POPrintSheet po={po} items={items} payments={payments} receiptThumbs={receiptThumbs} watermarkText={watermarkText} />
     </div>
   );
 }

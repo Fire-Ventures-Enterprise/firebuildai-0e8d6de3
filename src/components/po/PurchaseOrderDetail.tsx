@@ -16,6 +16,8 @@ import { PurchaseOrders } from "@/services/purchaseOrders";
 import { POFiles } from "@/services/poFiles";
 import type { PurchaseOrderWithJoins, PoPayment } from "@/domain/db";
 import { outstanding as getOutstanding } from "@/utils/po";
+import { buildWatermark } from "@/utils/poWatermark";
+import { getCurrentProfile } from "@/services/session";
 
 interface PurchaseOrderDetailProps {
   purchaseOrder: PurchaseOrderWithJoins;
@@ -27,6 +29,7 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
   const [payments, setPayments] = useState<PoPayment[]>([]);
   const [loadingPayments, setLoadingPayments] = useState(true);
   const [receiptThumbs, setReceiptThumbs] = useState<string[]>([]);
+  const [companyName, setCompanyName] = useState<string>();
   
   // Fetch payment history and receipts
   const fetchPayments = async () => {
@@ -47,6 +50,10 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
 
   useEffect(() => {
     fetchPayments();
+    // Get company name for watermark
+    getCurrentProfile().then(profile => {
+      if (profile) setCompanyName(profile.company_name || undefined);
+    });
   }, [purchaseOrder.id]);
 
   // Update purchaseOrder with fetched payments for calculations
@@ -262,7 +269,8 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
         po={purchaseOrder} 
         items={purchaseOrder.items} 
         payments={payments} 
-        receiptThumbs={receiptThumbs} 
+        receiptThumbs={receiptThumbs}
+        watermarkText={buildWatermark(purchaseOrder, companyName)}
       />
 
       <RecordPaymentDialog
