@@ -38,6 +38,7 @@ interface PurchaseOrder {
   approval_status?: string;
   notes?: string;
   invoice_id?: string;
+  invoice_number?: string;
   category?: string;
   paid_amount?: number;
   created_at: string;
@@ -288,6 +289,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
                 <TableHead>PO Number</TableHead>
                 <TableHead>Vendor</TableHead>
                 <TableHead>Job</TableHead>
+                <TableHead>Invoice #</TableHead>
                 <TableHead>Approval Status</TableHead>
                 <TableHead>Payment Status</TableHead>
                 <TableHead>Total</TableHead>
@@ -305,6 +307,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete, onRecordPa
                     <TableCell className="font-medium">{po.po_number}</TableCell>
                     <TableCell>{po.vendor_name}</TableCell>
                     <TableCell>{job?.title || '-'}</TableCell>
+                    <TableCell className="font-medium">{po.invoice_number || '-'}</TableCell>
                     <TableCell>{getApprovalBadge(po.status)}</TableCell>
                     <TableCell>{getPaymentBadge(po.payment_status)}</TableCell>
                     <TableCell className="font-semibold">${po.total.toFixed(2)}</TableCell>

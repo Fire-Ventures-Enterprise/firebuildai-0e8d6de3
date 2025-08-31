@@ -22,6 +22,7 @@ interface PurchaseOrder {
   expected_delivery?: string;
   notes?: string;
   invoice_id?: string;
+  invoice_number?: string;
   category?: string;
   payment_status?: string;
   paid_amount?: number;
@@ -49,6 +50,7 @@ export default function PurchaseOrdersPage() {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) return;
 
+      // Fetch purchase orders with related invoice numbers
       const { data, error } = await supabase
         .from('purchase_orders')
         .select('*')
@@ -56,7 +58,22 @@ export default function PurchaseOrdersPage() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPurchaseOrders(data || []);
+      
+      // Now fetch invoice numbers for each PO
+      const posWithInvoices = await Promise.all((data || []).map(async (po) => {
+        const { data: invoiceData } = await supabase
+          .from('invoices_enhanced')
+          .select('invoice_number')
+          .eq('po_number', po.po_number)
+          .single();
+        
+        return {
+          ...po,
+          invoice_number: invoiceData?.invoice_number || null
+        };
+      }));
+      
+      setPurchaseOrders(posWithInvoices);
     } catch (error) {
       console.error('Error fetching purchase orders:', error);
       toast({
