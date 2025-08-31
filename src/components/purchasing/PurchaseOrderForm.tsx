@@ -49,6 +49,8 @@ export function PurchaseOrderForm({
     { description: '', quantity: 1, rate: 0, amount: 0 }
   ]);
   const [invoices, setInvoices] = useState<any[]>([]);
+  const [vendors, setVendors] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -59,6 +61,43 @@ export function PurchaseOrderForm({
       loadPurchaseOrder();
     }
   }, [mode, purchaseOrder]);
+
+  const fetchVendors = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { data, error } = await supabase
+        .from('vendors')
+        .select('*')
+        .eq('user_id', user.user.id)
+        .order('company_name', { ascending: true });
+
+      if (error) throw error;
+      setVendors(data || []);
+    } catch (error) {
+      console.error('Error fetching vendors:', error);
+    }
+  };
+
+  const fetchJobs = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('id, name, customer_name, status')
+        .eq('user_id', user.user.id)
+        .in('status', ['Not Started', 'In Progress', 'On Hold'])
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setJobs(data || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    }
+  };
 
   const fetchInvoices = async () => {
     try {
