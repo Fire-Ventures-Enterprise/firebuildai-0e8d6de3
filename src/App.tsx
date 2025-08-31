@@ -42,6 +42,7 @@ import NotFound from "./pages/NotFound";
 // Portal pages
 import EstimatePortalPage from "./pages/portal/EstimatePortalPage";
 import InvoicePortalPage from "./pages/portal/InvoicePortalPage";
+import EstimateOpenPage from "./pages/open/EstimateOpenPage";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             
             {/* Portal Routes - Public */}
+            <Route path="/open/estimate/:token" element={<EstimateOpenPage />} />
             <Route path="/portal/estimate/:token" element={<EstimatePortalPage />} />
             <Route path="/portal/invoice/:token" element={<InvoicePortalPage />} />
             

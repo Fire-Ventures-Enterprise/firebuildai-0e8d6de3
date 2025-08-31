@@ -27,7 +27,7 @@ serve(async (req) => {
     logStep("Function started");
 
     // Parse request body
-    const { estimateToken, depositAmount, customerEmail, estimateNumber } = await req.json();
+    const { estimateToken, depositAmount, customerEmail, estimateNumber, returnUrl } = await req.json();
     
     logStep("Request data", { estimateToken, depositAmount, customerEmail, estimateNumber });
 
@@ -97,6 +97,14 @@ serve(async (req) => {
       }
     }
 
+    // Use provided return URL or default to portal
+    const successUrl = returnUrl 
+      ? `${returnUrl}?payment=success`
+      : `${req.headers.get("origin")}/portal/estimate/${estimateToken}?payment=success`;
+    const cancelUrl = returnUrl
+      ? `${returnUrl}?payment=cancelled`
+      : `${req.headers.get("origin")}/portal/estimate/${estimateToken}?payment=cancelled`;
+
     // Create payment session for deposit
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
@@ -114,8 +122,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/portal/estimate/${estimateToken}?payment=success`,
-      cancel_url: `${req.headers.get("origin")}/portal/estimate/${estimateToken}?payment=cancelled`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         estimate_id: estimate.id,
         estimate_token: estimateToken,

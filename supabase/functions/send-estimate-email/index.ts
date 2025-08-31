@@ -3,10 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { Resend } from "npm:resend@2.0.0";
 import React from "npm:react@18.3.1";
 import { render as renderEmail } from "npm:@react-email/render@0.0.17";
-import {
-  Body, Button, Column, Container, Head, Heading, Hr, Html,
-  Img, Link, Preview, Row, Section, Tailwind, Text
-} from "npm:@react-email/components@0.0.27";
+import BrandedEstimateEmail from "./BrandedEstimateEmail.tsx";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -221,9 +218,10 @@ serve(async (req) => {
     // Get site URL from environment or use default
     const siteUrl = Deno.env.get("SITE_URL") || "https://yourdomain.com";
     
-    // Generate URLs
-    const portalUrl = `${siteUrl}/portal/estimate/${estimate.public_token}`;
-    const depositUrl = `${siteUrl}/portal/estimate/${estimate.public_token}?action=pay`;
+    // Generate URLs with UTM tracking
+    const landingUrl = `${siteUrl}/open/estimate/${estimate.public_token}?utm_source=email&utm_medium=estimate&utm_campaign=${encodeURIComponent(estimate.estimate_number)}`;
+    const portalUrl = `${siteUrl}/portal/estimate/${estimate.public_token}?utm_source=email&utm_medium=estimate`;
+    const payUrl = `${siteUrl}/api/process-deposit?estimate_token=${estimate.public_token}&return_url=${encodeURIComponent(portalUrl)}`;
     const contractUrl = estimate.contract_attached ? `${portalUrl}#contract` : portalUrl;
 
     // Get province/state for contract
@@ -260,11 +258,12 @@ serve(async (req) => {
     const companyPhone = profile?.phone || "(555) 123-4567";
     const companyAddress = profile?.address || "123 Main St, City, ST 12345";
 
-    // Prepare email props
-    const emailProps = {
+    // Prepare branded email props
+    const brandedEmailProps = {
       company: {
         name: companyName,
-        logoUrl: `${siteUrl}/logo.png`,
+        logoUrl: `${siteUrl}/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png`,
+        siteUrl: siteUrl,
         address: companyAddress,
         phone: companyPhone,
         email: companyEmail
@@ -281,36 +280,39 @@ serve(async (req) => {
         tax: formatCurrency(estimate.tax_amount),
         total: formatCurrency(estimate.total),
         deposit: formatCurrency(estimate.deposit_amount || 0),
-        serviceAddress: estimate.service_address || estimate.customer?.address,
-        contractTitle,
-        contractUrl
+        serviceAddress: estimate.service_address || estimate.customer?.address
       },
-      portalUrl,
-      depositUrl,
-      items: estimate.items?.map((item: any) => ({
-        title: item.description?.split('\n')[0] || 'Item',
-        description: item.description,
-        qty: item.quantity || 1,
-        unit_price: item.rate || 0,
-        line_total: item.amount || 0
-      })) || []
+      landUrl: landingUrl,
+      portalUrl: portalUrl,
+      payUrl: payUrl,
+      items: estimate.items?.slice(0, 5).map((item: any, idx: number) => {
+        const title = item.description?.split('\n')[0] || `Item ${idx + 1}`;
+        const details = item.description?.replace(title, '').trim();
+        return {
+          title,
+          qty: item.quantity || 1,
+          unit: formatCurrency(item.rate || 0),
+          amount: formatCurrency(item.amount || 0),
+          details: details || undefined
+        };
+      }) || []
     };
 
     // Render HTML and plain text
-    const html = renderEmail(React.createElement(EstimateEmail, emailProps), { pretty: true });
+    const html = renderEmail(React.createElement(BrandedEstimateEmail, brandedEmailProps), { pretty: true });
     
-    const plainText = `Estimate ${emailProps.estimate.number}
+    const plainText = `Estimate ${brandedEmailProps.estimate.number}
 
-Total: ${emailProps.estimate.total}
-Deposit required to approve: ${emailProps.estimate.deposit}
+Total: ${brandedEmailProps.estimate.total}
+Deposit required to approve: ${brandedEmailProps.estimate.deposit}
 
-View / approve: ${portalUrl}
-Pay deposit: ${depositUrl}
+Pay deposit: ${payUrl}
+View details: ${landingUrl}
 
-Issue date: ${emailProps.estimate.issueDate}
-Expires: ${emailProps.estimate.expiryDate ?? "-"}
+Issue date: ${brandedEmailProps.estimate.issueDate}
+Expires: ${brandedEmailProps.estimate.expiryDate ?? "-"}
 
-${companyName}`;
+${companyName} • ${siteUrl}`;
 
     // Email subject based on action
     const subjects = {
