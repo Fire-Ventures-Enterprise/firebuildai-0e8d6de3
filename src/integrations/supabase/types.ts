@@ -1611,14 +1611,22 @@ export type Database = {
       }
       purchase_orders: {
         Row: {
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
+          attachments: Json | null
           category: string | null
           created_at: string
+          due_date: string | null
           expected_delivery: string | null
           id: string
           invoice_id: string | null
+          job_id: string | null
           notes: string | null
           paid_amount: number | null
+          payment_method: string | null
           payment_status: string | null
+          payment_terms: string | null
           po_number: string
           status: string
           subtotal: number
@@ -1627,17 +1635,26 @@ export type Database = {
           updated_at: string
           user_id: string
           vendor_email: string | null
+          vendor_id: string | null
           vendor_name: string
         }
         Insert: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          attachments?: Json | null
           category?: string | null
           created_at?: string
+          due_date?: string | null
           expected_delivery?: string | null
           id?: string
           invoice_id?: string | null
+          job_id?: string | null
           notes?: string | null
           paid_amount?: number | null
+          payment_method?: string | null
           payment_status?: string | null
+          payment_terms?: string | null
           po_number: string
           status?: string
           subtotal?: number
@@ -1646,17 +1663,26 @@ export type Database = {
           updated_at?: string
           user_id: string
           vendor_email?: string | null
+          vendor_id?: string | null
           vendor_name: string
         }
         Update: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          attachments?: Json | null
           category?: string | null
           created_at?: string
+          due_date?: string | null
           expected_delivery?: string | null
           id?: string
           invoice_id?: string | null
+          job_id?: string | null
           notes?: string | null
           paid_amount?: number | null
+          payment_method?: string | null
           payment_status?: string | null
+          payment_terms?: string | null
           po_number?: string
           status?: string
           subtotal?: number
@@ -1665,9 +1691,18 @@ export type Database = {
           updated_at?: string
           user_id?: string
           vendor_email?: string | null
+          vendor_id?: string | null
           vendor_name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       review_platforms: {
         Row: {
@@ -1891,6 +1926,66 @@ export type Database = {
         }
         Relationships: []
       }
+      vendors: {
+        Row: {
+          active: boolean | null
+          address: string | null
+          city: string | null
+          company_name: string
+          contact_person: string | null
+          created_at: string
+          default_category: string | null
+          email: string | null
+          id: string
+          notes: string | null
+          payment_terms: string | null
+          phone: string | null
+          postal_code: string | null
+          province: string | null
+          tax_rate: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          address?: string | null
+          city?: string | null
+          company_name: string
+          contact_person?: string | null
+          created_at?: string
+          default_category?: string | null
+          email?: string | null
+          id?: string
+          notes?: string | null
+          payment_terms?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          province?: string | null
+          tax_rate?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          address?: string | null
+          city?: string | null
+          company_name?: string
+          contact_person?: string | null
+          created_at?: string
+          default_category?: string | null
+          email?: string | null
+          id?: string
+          notes?: string | null
+          payment_terms?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          province?: string | null
+          tax_rate?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1903,6 +1998,10 @@ export type Database = {
       check_trial_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      generate_po_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_admin_role: {
         Args: { check_user_id?: string }
