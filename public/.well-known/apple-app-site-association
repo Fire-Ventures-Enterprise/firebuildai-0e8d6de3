@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "ABCDE12345.com.firebuildai.app",
+        "paths": [
+          "/portal/*",
+          "/open/*",
+          "/get/*",
+          "/app/*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["ABCDE12345.com.firebuildai.app"]
+  }
+}

@@ -7,11 +7,11 @@ import QRCode from "qrcode";
 export function MobileAppSection() {
   const [qrImage, setQrImage] = useState<string>();
   
-  // For now, both links redirect to the web app
+  // For now, both links redirect to the download page
   // Replace these with actual app store links when native apps are ready
-  const iosAppLink = "https://app.firebuildai.com"; // Future: https://apps.apple.com/...
-  const androidAppLink = "https://app.firebuildai.com"; // Future: https://play.google.com/...
-  const webAppLink = "https://app.firebuildai.com";
+  const iosAppLink = "/download"; // Future: https://apps.apple.com/...
+  const androidAppLink = "/download"; // Future: https://play.google.com/...
+  const webAppLink = "/download";
   
   useEffect(() => {
     // Generate QR code for mobile download page

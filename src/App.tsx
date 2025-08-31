@@ -45,6 +45,7 @@ import NotFound from "./pages/NotFound";
 import EstimatePortalPage from "./pages/portal/EstimatePortalPage";
 import InvoicePortalPage from "./pages/portal/InvoicePortalPage";
 import EstimateOpenPage from "./pages/open/EstimateOpenPage";
+import DownloadAppPage from "./pages/marketing/DownloadAppPage";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
           <Routes>
             {/* Marketing Site */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/download" element={<DownloadAppPage />} />
             
             {/* Auth Routes */}
             <Route path="/signup" element={<SignUpPage />} />
