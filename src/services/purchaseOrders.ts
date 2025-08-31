@@ -47,8 +47,7 @@ export const PurchaseOrders = {
         *,
         vendor:vendors ( id, name, email, phone ),
         job:jobs ( id, title ),
-        items:purchase_order_items(*),
-        payments:po_payments(*)
+        items:purchase_order_items(*)
       `)
       .eq("id", id)
       .single();
@@ -90,8 +89,14 @@ export const PurchaseOrders = {
     return await this.get(po.id) as PurchaseOrderWithJoins;
   },
 
-  async upsertItems(poId: UUID, items: Array<Omit<PurchaseOrderItem, "id"|"po_id"|"line_total">>) {
-    const payload = items.map(i => ({ ...i, po_id: poId }));
+  async upsertItems(poId: UUID, items: Array<any>) {
+    const payload = items.map(i => ({ 
+      purchase_order_id: poId,
+      description: i.description,
+      quantity: i.qty || i.quantity,
+      rate: i.unit_price || i.rate,
+      amount: (i.qty || i.quantity) * (i.unit_price || i.rate)
+    }));
     const { data, error } = await supabase.from("purchase_order_items").upsert(payload).select("*");
     if (error) throw error;
     return data ?? [];
@@ -117,9 +122,14 @@ export const PurchaseOrders = {
   },
 
   async recordPayment(poId: UUID, amount: number, method: PaymentMethod, reference?: string) {
-    const { data, error } = await supabase.from("po_payments")
-      .insert({ po_id: poId, amount, method, reference: reference ?? null })
-      .select("*").single();
+    // Since po_payments table doesn't exist, we'll track this in the main PO table
+    const { data, error } = await supabase.from("purchase_orders")
+      .update({ 
+        payment_status: 'paid',
+        payment_method: method,
+        paid_amount: amount
+      })
+      .eq("id", poId).select("*").single();
     if (error) throw error;
     return data!;
   },

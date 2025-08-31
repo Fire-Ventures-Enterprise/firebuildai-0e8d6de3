@@ -8,8 +8,14 @@ export type ChatRole = 'member' | 'manager';
 
 export interface Profile {
   id: UUID;                 // auth.uid()
-  company_id: UUID | null;
-  theme?: ThemePref;
+  email: string;
+  full_name?: string | null;
+  company_name?: string | null;
+  trial_starts_at: string;
+  trial_ends_at: string;
+  trial_status: string;
+  subscription_status?: string | null;
+  is_subscribed: boolean;
 }
 
 export interface Job {

@@ -24,8 +24,11 @@ export const JobChatService = {
   },
 
   async sendMessage(chatId: UUID, message: string, attachments?: any): Promise<any> {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) throw new Error("No user context");
+    
     const { data, error } = await supabase.from("job_chat_messages")
-      .insert({ chat_id: chatId, message, attachments: attachments ?? [] })
+      .insert({ chat_id: chatId, message, attachments: attachments ?? [], user_id: user.user.id })
       .select("*").single();
     if (error) throw error;
     return data!;
