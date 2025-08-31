@@ -52,10 +52,10 @@ export function PurchaseOrderForm({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    fetchVendors();
+    fetchJobs();
     fetchInvoices();
-    if (mode === 'create') {
-      generatePONumber();
-    } else if (purchaseOrder) {
+    if (purchaseOrder && mode === 'edit') {
       loadPurchaseOrder();
     }
   }, [mode, purchaseOrder]);
