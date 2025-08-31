@@ -1218,6 +1218,82 @@ export type Database = {
           },
         ]
       }
+      job_chat_members: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          chat_id: string
+          id: string
+          role: Database["public"]["Enums"]["chat_role"]
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          chat_id: string
+          id?: string
+          role?: Database["public"]["Enums"]["chat_role"]
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          chat_id?: string
+          id?: string
+          role?: Database["public"]["Enums"]["chat_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_chat_members_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "job_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_chat_messages: {
+        Row: {
+          attachments: Json | null
+          chat_id: string
+          created_at: string
+          edited: boolean | null
+          edited_at: string | null
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          chat_id: string
+          created_at?: string
+          edited?: boolean | null
+          edited_at?: string | null
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          chat_id?: string
+          created_at?: string
+          edited?: boolean | null
+          edited_at?: string | null
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_chat_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "job_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_chat_rooms: {
         Row: {
           created_at: string
@@ -1244,6 +1320,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      job_chats: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          job_id: string
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          job_id: string
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          job_id?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_chats_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       jobs: {
         Row: {
@@ -2017,7 +2131,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      chat_role: "member" | "manager" | "owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2144,6 +2258,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      chat_role: ["member", "manager", "owner"],
+    },
   },
 } as const
