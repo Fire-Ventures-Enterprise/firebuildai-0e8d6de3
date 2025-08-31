@@ -585,53 +585,213 @@ export type Database = {
         }
         Relationships: []
       }
-      expenses: {
+      expense_categories: {
         Row: {
-          amount: number
-          category: string
           created_at: string
-          date: string
-          description: string
           id: string
-          invoice_id: string | null
-          notes: string | null
-          purchase_order_id: string | null
-          reference_number: string | null
+          is_fuel: boolean
+          is_mileage: boolean
+          name: string
+          slug: string
           updated_at: string
           user_id: string
-          vendor: string | null
         }
         Insert: {
-          amount: number
-          category: string
           created_at?: string
-          date?: string
-          description: string
           id?: string
-          invoice_id?: string | null
-          notes?: string | null
-          purchase_order_id?: string | null
-          reference_number?: string | null
+          is_fuel?: boolean
+          is_mileage?: boolean
+          name: string
+          slug: string
           updated_at?: string
           user_id: string
-          vendor?: string | null
         }
         Update: {
-          amount?: number
-          category?: string
           created_at?: string
-          date?: string
-          description?: string
           id?: string
-          invoice_id?: string | null
-          notes?: string | null
-          purchase_order_id?: string | null
-          reference_number?: string | null
+          is_fuel?: boolean
+          is_mileage?: boolean
+          name?: string
+          slug?: string
           updated_at?: string
           user_id?: string
-          vendor?: string | null
         }
         Relationships: []
+      }
+      expense_job_allocations: {
+        Row: {
+          amount: number | null
+          cost_code: string | null
+          created_at: string
+          expense_id: string
+          id: string
+          job_id: string | null
+          percent: number | null
+        }
+        Insert: {
+          amount?: number | null
+          cost_code?: string | null
+          created_at?: string
+          expense_id: string
+          id?: string
+          job_id?: string | null
+          percent?: number | null
+        }
+        Update: {
+          amount?: number | null
+          cost_code?: string | null
+          created_at?: string
+          expense_id?: string
+          id?: string
+          job_id?: string | null
+          percent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_job_allocations_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_job_allocations_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_receipts: {
+        Row: {
+          created_at: string
+          expense_id: string
+          id: string
+          mime: string
+          ocr_json: Json | null
+          parsed: Json | null
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          expense_id: string
+          id?: string
+          mime: string
+          ocr_json?: Json | null
+          parsed?: Json | null
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          expense_id?: string
+          id?: string
+          mime?: string
+          ocr_json?: Json | null
+          parsed?: Json | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_receipts_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses: {
+        Row: {
+          category_id: string
+          created_at: string
+          created_by: string
+          currency: string
+          id: string
+          job_locked: boolean
+          notes: string | null
+          paid_at: string | null
+          payment_method: string | null
+          po_id: string | null
+          status: string
+          subtotal: number
+          tax: number
+          total: number | null
+          txn_date: string
+          updated_at: string
+          user_id: string
+          vendor_id: string | null
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          created_by: string
+          currency?: string
+          id?: string
+          job_locked?: boolean
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          po_id?: string | null
+          status?: string
+          subtotal?: number
+          tax?: number
+          total?: number | null
+          txn_date?: string
+          updated_at?: string
+          user_id: string
+          vendor_id?: string | null
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          created_by?: string
+          currency?: string
+          id?: string
+          job_locked?: boolean
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          po_id?: string | null
+          status?: string
+          subtotal?: number
+          tax?: number
+          total?: number | null
+          txn_date?: string
+          updated_at?: string
+          user_id?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_po_id_fkey"
+            columns: ["po_id"]
+            isOneToOne: false
+            referencedRelation: "po_payment_totals"
+            referencedColumns: ["po_id"]
+          },
+          {
+            foreignKeyName: "expenses_po_id_fkey"
+            columns: ["po_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoice_attachments: {
         Row: {
@@ -1461,6 +1621,50 @@ export type Database = {
         }
         Relationships: []
       }
+      mileage_logs: {
+        Row: {
+          amount: number | null
+          created_at: string
+          distance_km: number | null
+          end_odometer: number | null
+          expense_id: string
+          id: string
+          rate_per_km: number
+          start_odometer: number | null
+          vehicle_name: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          distance_km?: number | null
+          end_odometer?: number | null
+          expense_id: string
+          id?: string
+          rate_per_km?: number
+          start_odometer?: number | null
+          vehicle_name?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          distance_km?: number | null
+          end_odometer?: number | null
+          expense_id?: string
+          id?: string
+          rate_per_km?: number
+          start_odometer?: number | null
+          vehicle_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mileage_logs_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           browser_notifications: boolean | null
@@ -2236,6 +2440,10 @@ export type Database = {
       }
       mark_estimate_viewed: {
         Args: { p_token: string }
+        Returns: undefined
+      }
+      seed_expense_categories_for_user: {
+        Args: { p_user_id: string }
         Returns: undefined
       }
       update_trial_and_subscription_status: {
