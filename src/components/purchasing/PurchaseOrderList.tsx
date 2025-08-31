@@ -52,10 +52,10 @@ interface PurchaseOrderListProps {
 
 export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: PurchaseOrderListProps) {
   const [filteredPOs, setFilteredPOs] = useState(purchaseOrders);
-  const [vendorFilter, setVendorFilter] = useState('');
-  const [jobFilter, setJobFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [approvalFilter, setApprovalFilter] = useState('');
+  const [vendorFilter, setVendorFilter] = useState('all');
+  const [jobFilter, setJobFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [approvalFilter, setApprovalFilter] = useState('all');
   const [vendors, setVendors] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
 
@@ -97,16 +97,16 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: Purchase
   const filterPurchaseOrders = () => {
     let filtered = [...purchaseOrders];
 
-    if (vendorFilter) {
+    if (vendorFilter && vendorFilter !== 'all') {
       filtered = filtered.filter(po => po.vendor_id === vendorFilter);
     }
-    if (jobFilter) {
+    if (jobFilter && jobFilter !== 'all') {
       filtered = filtered.filter(po => po.job_id === jobFilter);
     }
-    if (statusFilter) {
+    if (statusFilter && statusFilter !== 'all') {
       filtered = filtered.filter(po => po.payment_status === statusFilter);
     }
-    if (approvalFilter) {
+    if (approvalFilter && approvalFilter !== 'all') {
       filtered = filtered.filter(po => po.approval_status === approvalFilter);
     }
 
@@ -231,7 +231,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: Purchase
                 <SelectValue placeholder="All Vendors" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Vendors</SelectItem>
+                <SelectItem value="all">All Vendors</SelectItem>
                 {vendors.map(vendor => (
                   <SelectItem key={vendor.id} value={vendor.id}>
                     {vendor.company_name}
@@ -245,7 +245,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: Purchase
                 <SelectValue placeholder="All Jobs" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Jobs</SelectItem>
+                <SelectItem value="all">All Jobs</SelectItem>
                 {jobs.map(job => (
                   <SelectItem key={job.id} value={job.id}>
                     {job.title}
@@ -259,7 +259,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: Purchase
                 <SelectValue placeholder="All Payment Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Payment Status</SelectItem>
+                <SelectItem value="all">All Payment Status</SelectItem>
                 <SelectItem value="unpaid">Unpaid</SelectItem>
                 <SelectItem value="partial">Partially Paid</SelectItem>
                 <SelectItem value="paid">Paid</SelectItem>
@@ -271,7 +271,7 @@ export function PurchaseOrderList({ purchaseOrders, onEdit, onDelete }: Purchase
                 <SelectValue placeholder="All Approval Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Approval Status</SelectItem>
+                <SelectItem value="all">All Approval Status</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="submitted">Submitted</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
