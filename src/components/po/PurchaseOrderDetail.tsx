@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,11 @@ import { DollarSign, FileText, Calendar, Package, CreditCard } from "lucide-reac
 import { format } from "date-fns";
 import { RecordPaymentDialog } from "./RecordPaymentDialog";
 import { PayByCardButton } from "./PayByCardButton";
-import type { PurchaseOrderWithJoins } from "@/domain/db";
+import { PaymentSummary } from "./PaymentSummary";
+import { PaymentHistory } from "./PaymentHistory";
+import { PurchaseOrders } from "@/services/purchaseOrders";
+import type { PurchaseOrderWithJoins, PoPayment } from "@/domain/db";
+import { outstanding as getOutstanding } from "@/utils/po";
 
 interface PurchaseOrderDetailProps {
   purchaseOrder: PurchaseOrderWithJoins;
@@ -16,10 +20,28 @@ interface PurchaseOrderDetailProps {
 
 export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderDetailProps) {
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [payments, setPayments] = useState<PoPayment[]>([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
   
-  // Calculate paid amount from payments array
-  const paidAmount = purchaseOrder.payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0;
-  const outstanding = (purchaseOrder.total || 0) - paidAmount;
+  // Fetch payment history
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const paymentHistory = await PurchaseOrders.getPayments(purchaseOrder.id);
+        setPayments(paymentHistory);
+      } catch (error) {
+        console.error('Failed to fetch payments:', error);
+      } finally {
+        setLoadingPayments(false);
+      }
+    };
+    fetchPayments();
+  }, [purchaseOrder.id]);
+
+  // Update purchaseOrder with fetched payments for calculations
+  const poWithPayments = { ...purchaseOrder, payments };
+  const paidAmount = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+  const outstanding = getOutstanding(poWithPayments);
   const isPaid = purchaseOrder.payment_status === 'paid';
   
   const getStatusBadge = (status: string) => {
@@ -188,12 +210,26 @@ export function PurchaseOrderDetail({ purchaseOrder, onRefresh }: PurchaseOrderD
         </CardContent>
       </Card>
 
+      {/* Payment Summary */}
+      <PaymentSummary po={poWithPayments} />
+
+      {/* Payment History */}
+      {!loadingPayments && (
+        <PaymentHistory 
+          rows={[...payments].sort((a, b) => (a.paid_at > b.paid_at ? 1 : -1))} 
+        />
+      )}
+
       <RecordPaymentDialog
         poId={purchaseOrder.id}
         open={paymentDialogOpen}
         onOpenChange={setPaymentDialogOpen}
         outstanding={outstanding}
-        onDone={onRefresh}
+        onDone={() => {
+          onRefresh();
+          // Also refresh payments
+          PurchaseOrders.getPayments(purchaseOrder.id).then(setPayments);
+        }}
       />
     </div>
   );

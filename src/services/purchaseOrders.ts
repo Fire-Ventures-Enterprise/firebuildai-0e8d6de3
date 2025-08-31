@@ -121,16 +121,27 @@ export const PurchaseOrders = {
     return data!;
   },
 
-  async recordPayment(poId: UUID, amount: number, method: PaymentMethod, reference?: string) {
-    // Since po_payments table doesn't exist, we'll track this in the main PO table
-    const { data, error } = await supabase.from("purchase_orders")
-      .update({ 
-        payment_status: 'paid',
-        payment_method: method,
-        paid_amount: amount
-      })
-      .eq("id", poId).select("*").single();
+  async getPayments(poId: UUID): Promise<PoPayment[]> {
+    const { data, error } = await supabase
+      .from("po_payments")
+      .select("*")
+      .eq("po_id", poId)
+      .order("paid_at", { ascending: false });
     if (error) throw error;
-    return data!;
+    return (data ?? []) as any as PoPayment[];
+  },
+
+  async recordPayment(
+    poId: UUID,
+    amount: number,
+    method: PaymentMethod,
+    reference?: string,
+    paidAt?: string // yyyy-mm-dd
+  ): Promise<PoPayment> {
+    const payload: any = { po_id: poId, amount, method, reference: reference ?? null };
+    if (paidAt) payload.paid_at = `${paidAt}T00:00:00Z`;
+    const { data, error } = await supabase.from("po_payments").insert(payload).select("*").single();
+    if (error) throw error;
+    return data as any as PoPayment;
   },
 };

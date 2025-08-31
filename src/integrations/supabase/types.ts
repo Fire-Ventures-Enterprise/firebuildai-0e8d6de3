@@ -1552,6 +1552,57 @@ export type Database = {
           },
         ]
       }
+      po_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          paid_at: string
+          po_id: string
+          receipt_url: string | null
+          reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          method: string
+          paid_at?: string
+          po_id: string
+          receipt_url?: string | null
+          reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          paid_at?: string
+          po_id?: string
+          receipt_url?: string | null
+          reference?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "po_payments_po_id_fkey"
+            columns: ["po_id"]
+            isOneToOne: false
+            referencedRelation: "po_payment_totals"
+            referencedColumns: ["po_id"]
+          },
+          {
+            foreignKeyName: "po_payments_po_id_fkey"
+            columns: ["po_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -2102,7 +2153,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      po_payment_totals: {
+        Row: {
+          last_paid_at: string | null
+          outstanding: number | null
+          paid_to_date: number | null
+          po_id: string | null
+          po_total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_edit_invoice: {

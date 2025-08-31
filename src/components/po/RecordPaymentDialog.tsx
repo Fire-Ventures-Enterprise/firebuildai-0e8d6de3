@@ -22,14 +22,23 @@ type Props = {
 export function RecordPaymentDialog({ poId, open, onOpenChange, outstanding, onDone }: Props) {
   const form = useForm<{ amount: number; method: any; paid_at?: string; reference?: string | null; }>({
     resolver: zodResolver(poPaymentSchema),
-    defaultValues: { amount: Math.max(0, outstanding), method: "bank_transfer" },
+    defaultValues: { 
+      amount: Math.max(0, outstanding), 
+      method: "bank_transfer",
+      paid_at: new Date().toISOString().split('T')[0] // Today's date
+    },
   });
 
   const submit = async (v: any) => {
     try {
-      await PurchaseOrders.recordPayment(poId, v.amount, v.method, v.reference ?? undefined);
-      // update high-level status heuristically
-      await PurchaseOrders.setPayment(poId, v.amount >= outstanding ? "paid" : "partial", v.method);
+      await PurchaseOrders.recordPayment(
+        poId, 
+        v.amount, 
+        v.method, 
+        v.reference ?? undefined, 
+        v.paid_at
+      );
+      // DB trigger will auto-sync payment_status
       notify.success("Payment recorded");
       onOpenChange(false);
       onDone?.();
@@ -64,6 +73,13 @@ export function RecordPaymentDialog({ poId, open, onOpenChange, outstanding, onD
             </Select>
             {form.formState.errors.method && (
               <p className="text-destructive text-sm mt-1">{String(form.formState.errors.method.message)}</p>
+            )}
+          </div>
+          <div>
+            <Label>Payment Date</Label>
+            <Input type="date" {...form.register("paid_at")} />
+            {form.formState.errors.paid_at && (
+              <p className="text-destructive text-sm mt-1">{String(form.formState.errors.paid_at.message)}</p>
             )}
           </div>
           <div>

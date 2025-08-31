@@ -86,6 +86,9 @@ export interface PoPayment {
   method: PaymentMethod | null;
   paid_at: string;
   reference: string | null;
+  receipt_url?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface JobChat {
