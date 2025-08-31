@@ -1,15 +1,19 @@
-import { Bell, Search, User, Settings, HardHat, ExternalLink, Shield } from "lucide-react";
+import { Bell, Search, User, Settings, HardHat, ExternalLink, Shield, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "next-themes";
 
 export const DashboardHeader = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     checkAdminStatus();
   }, []);
 
@@ -65,6 +69,22 @@ export const DashboardHeader = () => {
               <span className="hidden sm:inline">View Site</span>
             </Button>
           </Link>
+          
+          {/* Theme Toggle */}
+          {mounted && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </Button>
+          )}
           
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="w-5 h-5" />
