@@ -109,20 +109,34 @@ export const EstimatesPage = () => {
 
   const handleSendEstimate = async (estimate: Estimate) => {
     try {
-      // Here we would integrate with email service
-      toast({
-        title: "Estimate Sent",
-        description: `Estimate #${estimate.estimate_number} has been sent to the customer`,
-      });
-      
-      // Update status
+      // Update status to sent
       await supabase
         .from('estimates')
         .update({ status: 'sent' })
         .eq('id', estimate.id);
       
+      // Send email via edge function
+      const { error } = await supabase.functions.invoke('send-estimate-email', {
+        body: { estimateId: estimate.id, action: 'created' }
+      });
+      
+      if (error) {
+        console.error('Error sending email:', error);
+        toast({
+          title: "Estimate Updated",
+          description: "Status updated but email failed to send. Check your email configuration.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Estimate Sent",
+          description: `Estimate #${estimate.estimate_number} has been sent to the customer`,
+        });
+      }
+      
       fetchEstimates();
     } catch (error) {
+      console.error('Error sending estimate:', error);
       toast({
         title: "Error",
         description: "Failed to send estimate",
