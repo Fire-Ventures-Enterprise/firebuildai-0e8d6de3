@@ -182,7 +182,7 @@ export const SalesPublic = {
       console.warn('Bundle RPC not available, falling back to existing RPCs');
     }
 
-    // Fallback to existing RPCs
+    // Fallback to existing RPCs if bundle not available
     const { data: invoiceData, error: invoiceError } = await supabase
       .rpc('get_invoice_by_token', { p_token: token });
     
@@ -201,11 +201,9 @@ export const SalesPublic = {
       console.error('Error fetching items:', itemsError);
     }
     
-    // Get payments (still need direct access for this)
+    // Get payments via secure RPC (no longer using direct table access)
     const { data: paymentsData } = await supabase
-      .from("invoice_payments")
-      .select("*")
-      .eq("invoice_id", invoice.id);
+      .rpc('get_invoice_payments_by_token', { p_token: token });
     
     // Format client data from the invoice
     const client = invoice.customer_name ? {
