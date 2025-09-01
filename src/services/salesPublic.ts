@@ -1,38 +1,43 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const SalesPublic = {
-  // Fetch by token (RLS should permit SELECT where public_token = :token)
+  // Use secure token-based function to fetch estimate
   async getEstimateByToken(token: string) {
-    const { data, error } = await supabase
-      .from("estimates")
-      .select(`
-        *,
-        items:estimate_items(*)
-      `)
-      .eq("public_token", token)
-      .single();
-    if (error) throw error;
+    // Get estimate via secure RPC function
+    const { data: estimateData, error: estimateError } = await supabase
+      .rpc('get_estimate_by_token', { p_token: token });
     
-    // Get customer separately to avoid type issues
-    let client = null;
-    if (data.customer_id) {
-      const { data: customerData } = await supabase
-        .from("customers")
-        .select("*")
-        .eq("id", data.customer_id)
-        .single();
-      
-      if (customerData) {
-        client = {
-          id: customerData.id,
-          name: customerData.company_name || `${customerData.first_name || ''} ${customerData.last_name || ''}`.trim(),
-          email: customerData.email,
-          address: customerData.address ? `${customerData.address}, ${customerData.city}, ${customerData.province} ${customerData.postal_code}` : null
-        };
-      }
+    if (estimateError) throw estimateError;
+    if (!estimateData || estimateData.length === 0) {
+      throw new Error('Estimate not found');
     }
     
-    return { ...data, client };
+    const estimate = estimateData[0];
+    
+    // Get items via secure RPC function
+    const { data: itemsData, error: itemsError } = await supabase
+      .rpc('get_estimate_items_by_token', { p_token: token });
+    
+    if (itemsError) {
+      console.error('Error fetching items:', itemsError);
+    }
+    
+    // Format client data from the estimate
+    const client = estimate.customer_name ? {
+      id: null,
+      name: estimate.customer_name,
+      email: estimate.customer_email,
+      address: estimate.service_address ? 
+        `${estimate.service_address}, ${estimate.service_city}, ${estimate.service_province} ${estimate.service_postal_code}` : 
+        null
+    } : null;
+    
+    return { 
+      ...estimate, 
+      client,
+      items: itemsData || [],
+      customer: client // Add customer for backward compatibility
+    };
   },
 
   async markViewedEstimate(token: string) {
@@ -75,38 +80,43 @@ export const SalesPublic = {
   },
 
   async getInvoiceByToken(token: string) {
-    const { data, error } = await supabase
-      .from("invoices_enhanced")
-      .select(`
-        *,
-        items:invoice_items_enhanced(*),
-        payments:invoice_payments(*)
-      `)
-      .eq("public_token", token)
-      .single();
-    if (error) throw error;
+    // Get invoice via secure RPC function
+    const { data: invoiceData, error: invoiceError } = await supabase
+      .rpc('get_invoice_by_token', { p_token: token });
     
-    // Get customer separately to avoid type issues
-    let client = null;
-    if (data.customer_id) {
-      const { data: customerData } = await supabase
-        .from("customers")
-        .select("*")
-        .eq("id", data.customer_id)
-        .single();
-      
-      if (customerData) {
-        client = {
-          id: customerData.id,
-          name: customerData.company_name || `${customerData.first_name || ''} ${customerData.last_name || ''}`.trim(),
-          email: customerData.email,
-          address: customerData.address ? `${customerData.address}, ${customerData.city}, ${customerData.province} ${customerData.postal_code}` : null
-        };
-      }
+    if (invoiceError) throw invoiceError;
+    if (!invoiceData || invoiceData.length === 0) {
+      throw new Error('Invoice not found');
     }
     
+    const invoice = invoiceData[0];
+    
+    // Get items via secure RPC function
+    const { data: itemsData, error: itemsError } = await supabase
+      .rpc('get_invoice_items_by_token', { p_token: token });
+    
+    if (itemsError) {
+      console.error('Error fetching items:', itemsError);
+    }
+    
+    // Get payments (still need direct access for this)
+    const { data: paymentsData } = await supabase
+      .from("invoice_payments")
+      .select("*")
+      .eq("invoice_id", invoice.id);
+    
+    // Format client data from the invoice
+    const client = invoice.customer_name ? {
+      id: null,
+      name: invoice.customer_name,
+      email: invoice.customer_email,
+      address: invoice.customer_address ? 
+        `${invoice.customer_address}, ${invoice.customer_city}, ${invoice.customer_province} ${invoice.customer_postal_code}` : 
+        null
+    } : null;
+    
     // Transform items to expected format
-    const items = data.items ? data.items.map((item: any) => ({
+    const items = itemsData ? itemsData.map((item: any) => ({
       id: item.id,
       description: item.item_name || item.description,
       quantity: item.quantity,
@@ -115,6 +125,11 @@ export const SalesPublic = {
       line_total: item.amount
     })) : [];
     
-    return { ...data, client, items };
+    return { 
+      ...invoice, 
+      client, 
+      items,
+      payments: paymentsData || []
+    };
   },
 };

@@ -418,6 +418,45 @@ export type Database = {
         }
         Relationships: []
       }
+      device_sessions: {
+        Row: {
+          created_at: string
+          device_name: string | null
+          device_type: string | null
+          id: string
+          ip_address: string | null
+          last_active: string
+          revoked_at: string | null
+          revoked_by: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_name?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          last_active?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_name?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          last_active?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_leads: {
         Row: {
           accepted_terms: boolean
@@ -1891,6 +1930,45 @@ export type Database = {
           },
         ]
       }
+      portal_access_tokens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          resource_id: string
+          resource_type: string
+          single_use: boolean | null
+          token_hash: string
+          used_at: string | null
+          used_by_ip: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          resource_id: string
+          resource_type: string
+          single_use?: boolean | null
+          token_hash: string
+          used_at?: string | null
+          used_by_ip?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          resource_id?: string
+          resource_type?: string
+          single_use?: boolean | null
+          token_hash?: string
+          used_at?: string | null
+          used_by_ip?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -2706,9 +2784,22 @@ export type Database = {
         Args: { p_token: string }
         Returns: undefined
       }
+      revoke_device_session: {
+        Args: { p_session_id: string }
+        Returns: undefined
+      }
       seed_expense_categories_for_user: {
         Args: { p_user_id: string }
         Returns: undefined
+      }
+      track_device_session: {
+        Args: {
+          p_device_name: string
+          p_device_type: string
+          p_ip_address: string
+          p_user_agent: string
+        }
+        Returns: string
       }
       update_trial_and_subscription_status: {
         Args: Record<PropertyKey, never>

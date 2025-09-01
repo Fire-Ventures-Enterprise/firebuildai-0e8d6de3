@@ -4,20 +4,21 @@
  */
 
 export const securityHeaders = {
-  // Content Security Policy
+  // Enhanced Content Security Policy with stricter rules
   'Content-Security-Policy': [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https: blob:",
+    "script-src 'self' https://js.stripe.com https://checkout.stripe.com",
+    "style-src 'self' 'unsafe-inline'", // Keep unsafe-inline for Tailwind
+    "img-src 'self' data: https://*.supabase.co https://*.stripe.com blob:",
     "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com wss://*.supabase.co",
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://checkout.stripe.com wss://*.supabase.co",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "upgrade-insecure-requests"
+    "upgrade-insecure-requests",
+    "block-all-mixed-content"
   ].join('; '),
   
   // Prevent clickjacking
@@ -26,22 +27,50 @@ export const securityHeaders = {
   // Prevent MIME type sniffing
   'X-Content-Type-Options': 'nosniff',
   
-  // Enable XSS filter
+  // Enhanced XSS protection
   'X-XSS-Protection': '1; mode=block',
   
-  // Referrer policy
+  // Stricter referrer policy
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   
-  // Permissions policy
+  // Restrictive permissions policy
   'Permissions-Policy': [
-    'camera=()',
-    'microphone=()',
+    'accelerometer=()',
+    'ambient-light-sensor=()',
+    'autoplay=()',
+    'battery=()',
+    'camera=(self)', // Only on specific pages that need it
+    'cross-origin-isolated=()',
+    'display-capture=()',
+    'document-domain=()',
+    'encrypted-media=()',
+    'execution-while-not-rendered=()',
+    'execution-while-out-of-viewport=()',
+    'fullscreen=(self)',
     'geolocation=()',
-    'payment=(self https://js.stripe.com)',
+    'gyroscope=()',
+    'keyboard-map=()',
+    'magnetometer=()',
+    'microphone=()',
+    'midi=()',
+    'navigation-override=()',
+    'payment=(self https://js.stripe.com https://checkout.stripe.com)',
+    'picture-in-picture=()',
+    'publickey-credentials-get=()',
+    'screen-wake-lock=()',
+    'sync-xhr=()',
+    'usb=()',
+    'web-share=()',
+    'xr-spatial-tracking=()'
   ].join(', '),
   
-  // HSTS (only in production)
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  // HSTS with preload
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+  
+  // Additional security headers
+  'X-Permitted-Cross-Domain-Policies': 'none',
+  'X-Download-Options': 'noopen',
+  'X-DNS-Prefetch-Control': 'off',
 };
 
 /**
