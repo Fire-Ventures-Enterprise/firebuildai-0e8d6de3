@@ -249,7 +249,7 @@ export type Database = {
           message: string | null
           name: string
           phone: string | null
-          public_token: string | null
+          public_token: string
           slot_id: string | null
           status: string | null
           updated_at: string
@@ -263,7 +263,7 @@ export type Database = {
           message?: string | null
           name: string
           phone?: string | null
-          public_token?: string | null
+          public_token?: string
           slot_id?: string | null
           status?: string | null
           updated_at?: string
@@ -277,7 +277,7 @@ export type Database = {
           message?: string | null
           name?: string
           phone?: string | null
-          public_token?: string | null
+          public_token?: string
           slot_id?: string | null
           status?: string | null
           updated_at?: string
@@ -2480,18 +2480,29 @@ export type Database = {
       get_consultation_booking_by_token: {
         Args: { p_token: string }
         Returns: {
-          company_name: string | null
-          confirmation_token: string | null
+          company_name: string
+          confirmation_token: string
           created_at: string
           email: string
           id: string
-          message: string | null
+          message: string
           name: string
-          phone: string | null
-          public_token: string | null
-          slot_id: string | null
-          status: string | null
+          phone: string
+          public_token: string
+          slot_id: string
+          status: string
           updated_at: string
+        }[]
+      }
+      get_consultation_confirmation: {
+        Args: { p_token: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          slot_date: string
+          slot_time: string
+          status: string
         }[]
       }
       is_admin: {
