@@ -786,6 +786,7 @@ export type Database = {
           created_by: string
           currency: string
           id: string
+          invoice_id: string | null
           job_locked: boolean
           notes: string | null
           paid_at: string | null
@@ -806,6 +807,7 @@ export type Database = {
           created_by: string
           currency?: string
           id?: string
+          invoice_id?: string | null
           job_locked?: boolean
           notes?: string | null
           paid_at?: string | null
@@ -826,6 +828,7 @@ export type Database = {
           created_by?: string
           currency?: string
           id?: string
+          invoice_id?: string | null
           job_locked?: boolean
           notes?: string | null
           paid_at?: string | null
@@ -846,6 +849,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_enhanced"
             referencedColumns: ["id"]
           },
           {
