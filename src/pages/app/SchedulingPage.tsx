@@ -53,13 +53,13 @@ export default function SchedulingPage() {
   const fetchSchedules = async () => {
     try {
       const { data, error } = await supabase
-        .from('schedules')
+        .from('schedules' as any)
         .select('*')
         .order('start_time', { ascending: true });
 
       if (error) throw error;
 
-      const formattedEvents = (data || []).map(schedule => ({
+      const formattedEvents = (data || []).map((schedule: any) => ({
         id: schedule.id,
         title: schedule.title,
         description: schedule.description,
@@ -98,7 +98,7 @@ export default function SchedulingPage() {
       if (!userData.user) throw new Error("Not authenticated");
 
       const { error } = await supabase
-        .from('schedules')
+        .from('schedules' as any)
         .insert({
           title: formData.title,
           description: formData.description,

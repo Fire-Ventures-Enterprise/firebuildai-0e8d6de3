@@ -39,12 +39,15 @@ export default function TeamsPage() {
   const fetchTeamMembers = async () => {
     try {
       const { data, error } = await supabase
-        .from('team_members')
+        .from('team_members' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTeamMembers(data || []);
+      setTeamMembers((data || []).map((member: any) => ({
+        ...member,
+        status: member.status || (member.active ? 'active' : 'inactive')
+      })));
     } catch (error: any) {
       toast.error("Failed to load team members");
       console.error(error);
@@ -59,7 +62,7 @@ export default function TeamsPage() {
       if (!userData.user) throw new Error("Not authenticated");
 
       const { error } = await supabase
-        .from('team_members')
+        .from('team_members' as any)
         .insert({
           ...formData,
           user_id: userData.user.id,
@@ -87,7 +90,7 @@ export default function TeamsPage() {
   const handleStatusChange = async (memberId: string, newStatus: TeamMember['status']) => {
     try {
       const { error } = await supabase
-        .from('team_members')
+        .from('team_members' as any)
         .update({ status: newStatus })
         .eq('id', memberId);
 
