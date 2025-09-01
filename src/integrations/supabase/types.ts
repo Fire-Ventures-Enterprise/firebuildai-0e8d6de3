@@ -2987,6 +2987,21 @@ export type Database = {
           tax: boolean
         }[]
       }
+      get_invoice_payments_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          amount: number
+          created_at: string
+          id: string
+          invoice_id: string
+          notes: string | null
+          payment_date: string
+          payment_method: string
+          status: string
+          transaction_id: string | null
+          updated_at: string
+        }[]
+      }
       is_admin: {
         Args: { check_user_id?: string }
         Returns: boolean
