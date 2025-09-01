@@ -249,6 +249,7 @@ export type Database = {
           email: string | null
           id: string
           logo_url: string | null
+          payment_settings: Json | null
           phone: string | null
           postal_code: string | null
           state: string | null
@@ -265,6 +266,7 @@ export type Database = {
           email?: string | null
           id?: string
           logo_url?: string | null
+          payment_settings?: Json | null
           phone?: string | null
           postal_code?: string | null
           state?: string | null
@@ -281,6 +283,7 @@ export type Database = {
           email?: string | null
           id?: string
           logo_url?: string | null
+          payment_settings?: Json | null
           phone?: string | null
           postal_code?: string | null
           state?: string | null
@@ -941,6 +944,13 @@ export type Database = {
             foreignKeyName: "expenses_invoice_id_fkey"
             columns: ["invoice_id"]
             isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
             referencedRelation: "invoices_enhanced"
             referencedColumns: ["id"]
           },
@@ -996,6 +1006,13 @@ export type Database = {
           url?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "invoice_attachments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoice_attachments_invoice_id_fkey"
             columns: ["invoice_id"]
@@ -1151,6 +1168,13 @@ export type Database = {
             foreignKeyName: "invoice_items_enhanced_invoice_id_fkey"
             columns: ["invoice_id"]
             isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_enhanced_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
             referencedRelation: "invoices_enhanced"
             referencedColumns: ["id"]
           },
@@ -1191,6 +1215,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "invoice_payment_schedule_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoice_payment_schedule_invoice_id_fkey"
             columns: ["invoice_id"]
@@ -1242,6 +1273,13 @@ export type Database = {
             foreignKeyName: "invoice_payments_invoice_id_fkey"
             columns: ["invoice_id"]
             isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
             referencedRelation: "invoices_enhanced"
             referencedColumns: ["id"]
           },
@@ -1270,6 +1308,13 @@ export type Database = {
           url?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "invoice_photos_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoice_photos_invoice_id_fkey"
             columns: ["invoice_id"]
@@ -1311,6 +1356,13 @@ export type Database = {
           type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "invoice_signatures_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoice_signatures_invoice_id_fkey"
             columns: ["invoice_id"]
@@ -2497,6 +2549,13 @@ export type Database = {
             foreignKeyName: "review_requests_invoice_id_fkey"
             columns: ["invoice_id"]
             isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_requests_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
             referencedRelation: "invoices_enhanced"
             referencedColumns: ["id"]
           },
@@ -2771,6 +2830,33 @@ export type Database = {
       }
     }
     Views: {
+      invoices_due_view: {
+        Row: {
+          currency: string | null
+          customer_email: string | null
+          due_cents: number | null
+          id: string | null
+          number: string | null
+          public_token: string | null
+        }
+        Insert: {
+          currency?: never
+          customer_email?: string | null
+          due_cents?: never
+          id?: string | null
+          number?: string | null
+          public_token?: string | null
+        }
+        Update: {
+          currency?: never
+          customer_email?: string | null
+          due_cents?: never
+          id?: string | null
+          number?: string | null
+          public_token?: string | null
+        }
+        Relationships: []
+      }
       po_payment_totals: {
         Row: {
           last_paid_at: string | null
@@ -3026,6 +3112,15 @@ export type Database = {
           p_window_secs?: number
         }
         Returns: boolean
+      }
+      record_invoice_card_payment: {
+        Args: {
+          p_amount_cents: number
+          p_invoice_id: string
+          p_provider: string
+          p_reference: string
+        }
+        Returns: undefined
       }
       revoke_device_session: {
         Args: { p_session_id: string }
