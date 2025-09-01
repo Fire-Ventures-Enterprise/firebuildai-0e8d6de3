@@ -33,6 +33,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { R } from "@/routes/routeMap";
 
 interface SidebarProps {
   activeTab: string;
@@ -45,6 +46,7 @@ interface NavigationItem {
   icon: any;
   path: string;
   badge?: string;
+  testId?: string;
 }
 
 interface NavigationGroup {
@@ -62,7 +64,7 @@ const navigationGroups: NavigationGroup[] = [
     icon: Home,
     color: "text-blue-600",
     items: [
-      { id: "dashboard", label: "Dashboard", icon: Home, path: "/app/dashboard" },
+      { id: "dashboard", label: "Dashboard", icon: Home, path: R.dashboard, testId: "nav-dashboard" },
     ],
   },
   {
@@ -71,11 +73,12 @@ const navigationGroups: NavigationGroup[] = [
     icon: DollarSign,
     color: "text-green-600",
     items: [
-      { id: "estimates", label: "Estimates", icon: FileText, path: "/app/estimates" },
-      { id: "invoices", label: "Invoices", icon: Receipt, path: "/app/invoices" },
-      { id: "purchase-orders", label: "Purchase Orders", icon: ShoppingCart, path: "/app/purchase-orders" },
-      { id: "expenses", label: "Expenses", icon: DollarSign, path: "/app/finance/expenses" },
-      { id: "financial-analytics", label: "Financial Analytics", icon: TrendingUp, path: "/app/financial-analytics" },
+      { id: "estimates", label: "Estimates", icon: FileText, path: R.estimates, testId: "nav-estimates" },
+      { id: "invoices", label: "Invoices", icon: Receipt, path: R.invoices, testId: "nav-invoices" },
+      { id: "purchase-orders", label: "Purchase Orders", icon: ShoppingCart, path: R.purchaseOrders, testId: "nav-purchase-orders" },
+      { id: "expenses", label: "Expenses", icon: DollarSign, path: R.expenses, testId: "nav-expenses" },
+      { id: "vendors", label: "Vendors", icon: Building2, path: R.vendors, testId: "nav-vendors" },
+      { id: "financial-analytics", label: "Financial Analytics", icon: TrendingUp, path: R.financialAnalytics, testId: "nav-financial-analytics" },
     ],
   },
   {
@@ -84,10 +87,10 @@ const navigationGroups: NavigationGroup[] = [
     icon: Briefcase,
     color: "text-purple-600",
     items: [
-      { id: "jobs", label: "Jobs", icon: Briefcase, path: "/app/jobs" },
-      { id: "scheduling", label: "Scheduling", icon: Calendar, path: "/app/scheduling" },
-      { id: "fleet", label: "Fleet", icon: Truck, path: "/app/fleet" },
-      { id: "teams", label: "Teams", icon: UserCheck, path: "/app/teams" },
+      { id: "jobs", label: "Jobs", icon: Briefcase, path: R.jobs, testId: "nav-jobs" },
+      { id: "scheduling", label: "Scheduling", icon: Calendar, path: R.scheduling, testId: "nav-scheduling" },
+      { id: "fleet", label: "Fleet", icon: Truck, path: R.fleet, testId: "nav-fleet" },
+      { id: "teams", label: "Teams", icon: UserCheck, path: R.teams, testId: "nav-teams" },
     ],
   },
   {
@@ -96,8 +99,8 @@ const navigationGroups: NavigationGroup[] = [
     icon: Users,
     color: "text-orange-600",
     items: [
-      { id: "client-portal", label: "Client Portal", icon: Users, path: "/app/client-portal" },
-      { id: "client-reports", label: "Client Reports", icon: FileBarChart, path: "/app/client-reports" },
+      { id: "client-portal", label: "Client Portal", icon: Users, path: R.clients, testId: "nav-clients" },
+      { id: "client-reports", label: "Client Reports", icon: FileBarChart, path: R.clientReports, testId: "nav-client-reports" },
     ],
   },
   {
@@ -106,9 +109,9 @@ const navigationGroups: NavigationGroup[] = [
     icon: BarChart3,
     color: "text-indigo-600",
     items: [
-      { id: "analytics", label: "Overview", icon: BarChart3, path: "/app/analytics" },
-      { id: "job-performance", label: "Job Performance", icon: FileBarChart, path: "/app/job-performance" },
-      { id: "team-performance", label: "Team Performance", icon: UserCheck, path: "/app/team-performance" },
+      { id: "analytics", label: "Overview", icon: BarChart3, path: R.analyticsHub, testId: "nav-analytics" },
+      { id: "job-performance", label: "Job Performance", icon: FileBarChart, path: R.jobPerformance, testId: "nav-job-performance" },
+      { id: "team-performance", label: "Team Performance", icon: UserCheck, path: R.teamPerformance, testId: "nav-team-performance" },
     ],
   },
   {
@@ -117,8 +120,8 @@ const navigationGroups: NavigationGroup[] = [
     icon: Settings,
     color: "text-gray-600",
     items: [
-      { id: "company", label: "Company", icon: Building2, path: "/app/company" },
-      { id: "settings", label: "Settings", icon: Settings, path: "/app/settings" },
+      { id: "company", label: "Company", icon: Building2, path: R.company, testId: "nav-company" },
+      { id: "settings", label: "Settings", icon: Settings, path: R.settings, testId: "nav-settings" },
     ],
   },
 ];
@@ -195,6 +198,7 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
                         key={item.id}
                         variant={isActive ? "default" : "ghost"}
                         size="icon"
+                        data-testid={item.testId}
                         onClick={() => handleNavigation(item)}
                         className={cn(
                           "w-full h-10",
@@ -248,6 +252,7 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
                       <Button
                         key={item.id}
                         variant={isActive ? "default" : "ghost"}
+                        data-testid={item.testId}
                         onClick={() => handleNavigation(item)}
                         className={cn(
                           "w-full justify-start gap-2 h-9 transition-all",
@@ -280,7 +285,7 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
             <Button
               variant="outline"
               className="w-full justify-start gap-2 h-9"
-              onClick={() => navigate("/help")}
+              onClick={() => navigate(R.help)}
             >
               <HelpCircle className="h-4 w-4" />
               <span className="text-sm">Help & Support</span>
@@ -290,7 +295,7 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/help")}
+            onClick={() => navigate(R.help)}
             title="Help & Support"
           >
             <HelpCircle className="h-5 w-5" />

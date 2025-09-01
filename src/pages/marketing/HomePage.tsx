@@ -120,27 +120,27 @@ export const HomePage = () => {
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
                 <li><Link to="/tutorials" className="hover:text-foreground transition-colors">Tutorials</Link></li>
                 <li><Link to="/download" className="hover:text-foreground transition-colors">Download</Link></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">API</a></li>
+                <li><Link to="/api-docs" className="hover:text-foreground transition-colors">API</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
+                <li><Link to="/about" className="hover:text-foreground transition-colors">About</Link></li>
+                <li><Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
+                <li><Link to="/careers" className="hover:text-foreground transition-colors">Careers</Link></li>
+                <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Support</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Status</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Terms & Privacy</a></li>
+                <li><Link to="/help-center" className="hover:text-foreground transition-colors">Help Center</Link></li>
+                <li><Link to="/docs" className="hover:text-foreground transition-colors">Documentation</Link></li>
+                <li><Link to="/status" className="hover:text-foreground transition-colors">Status</Link></li>
+                <li><Link to="/terms" className="hover:text-foreground transition-colors">Terms & Privacy</Link></li>
               </ul>
             </div>
           </div>
