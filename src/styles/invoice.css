@@ -5,10 +5,11 @@
 }
 
 .invoice-surface * { 
-  color: inherit !important; 
+  color: #0f172a !important; 
 }
 
 .invoice-surface .text-muted-foreground,
+.invoice-surface .text-muted,
 .invoice-surface .muted { 
   color: #64748b !important; 
 }
@@ -20,6 +21,31 @@
 .invoice-surface th,
 .invoice-surface td {
   color: #0f172a !important;
+}
+
+/* Force all text elements to be dark */
+.invoice-surface h1,
+.invoice-surface h2,
+.invoice-surface h3,
+.invoice-surface h4,
+.invoice-surface h5,
+.invoice-surface h6,
+.invoice-surface p,
+.invoice-surface span,
+.invoice-surface div,
+.invoice-surface label {
+  color: #0f172a !important;
+}
+
+/* Specific overrides for any problematic classes */
+.invoice-surface .text-white {
+  color: #0f172a !important;
+}
+
+.invoice-surface .text-gray-500,
+.invoice-surface .text-gray-400,
+.invoice-surface .text-gray-300 {
+  color: #64748b !important;
 }
 
 /* Print-specific styles */
