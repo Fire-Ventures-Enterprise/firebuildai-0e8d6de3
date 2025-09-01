@@ -4,6 +4,8 @@ import { SalesPublic } from "@/services/salesPublic";
 import { notify } from "@/lib/notify";
 import { InvoicePrintSheet } from "@/components/sales/InvoicePrintSheet";
 import { InvoiceHeaderActions } from "@/components/sales/InvoiceHeaderActions";
+import { Button } from "@/components/ui/button";
+import { downloadPdfFromNode } from "@/lib/pdf";
 import "@/styles/invoice.css";
 
 export default function InvoicePortalPage() {
@@ -32,16 +34,11 @@ export default function InvoicePortalPage() {
   const balance = Math.max(0, (inv.total ?? 0) - paid);
 
   const downloadPdf = async () => {
-    const node = document.getElementById("invoice-print-root");
-    if (!node) return;
-    const canvas = await html2canvas(node, { scale: 2, useCORS: true });
-    const img = canvas.toDataURL("image/png", 1.0);
-    const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
-    const pw = pdf.internal.pageSize.getWidth();
-    const ph = pdf.internal.pageSize.getHeight();
-    const r = Math.min(pw / canvas.width, ph / canvas.height);
-    pdf.addImage(img, "PNG", (pw - canvas.width * r)/2, 20, canvas.width * r, canvas.height * r, undefined, "FAST");
-    pdf.save(`Invoice_${inv.invoice_number ?? inv.id}.pdf`);
+    try {
+      await downloadPdfFromNode("invoice-sheet", `Invoice_${inv.invoice_number ?? inv.id}.pdf`);
+    } catch (error) {
+      notify.error("Failed to download PDF", error);
+    }
   };
 
   const payNow = async () => {
