@@ -120,7 +120,7 @@ export function InvoicePrintSheet({
   };
 
   return (
-    <div id="invoice-print-root" className="relative bg-white text-black p-6 max-w-[900px] mx-auto">
+    <div id="invoice-print-root" className="invoice-surface relative bg-white text-slate-900 p-6 max-w-[900px] mx-auto">
       {watermarkText && <Watermark text={watermarkText} />}
 
       <style>{`

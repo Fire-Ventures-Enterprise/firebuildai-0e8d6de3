@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SalesPublic } from "@/services/salesPublic";
-import { Button } from "@/components/ui/button";
 import { notify } from "@/lib/notify";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { InvoicePrintSheet } from "@/components/sales/InvoicePrintSheet";
+import { InvoiceHeaderActions } from "@/components/sales/InvoiceHeaderActions";
+import "@/styles/invoice.css";
 
 export default function InvoicePortalPage() {
   const { token } = useParams<{ token: string }>();

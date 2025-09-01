@@ -1,0 +1,47 @@
+/* Invoice-specific styles to ensure readability */
+.invoice-surface { 
+  background: #ffffff !important; 
+  color: #0f172a !important; 
+}
+
+.invoice-surface * { 
+  color: inherit !important; 
+}
+
+.invoice-surface .text-muted-foreground,
+.invoice-surface .muted { 
+  color: #64748b !important; 
+}
+
+.invoice-surface table {
+  color: #0f172a !important;
+}
+
+.invoice-surface th,
+.invoice-surface td {
+  color: #0f172a !important;
+}
+
+/* Print-specific styles */
+@media print { 
+  html, body { 
+    background: #ffffff !important; 
+  } 
+  
+  .no-print { 
+    display: none !important; 
+  }
+  
+  .invoice-surface {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .invoice-surface * {
+    color: #000000 !important;
+  }
+  
+  .invoice-surface .text-muted-foreground {
+    color: #4b5563 !important;
+  }
+}
