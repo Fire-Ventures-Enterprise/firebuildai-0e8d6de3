@@ -21,6 +21,8 @@ import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanyPage from "./pages/app/CompanyPage";
+import TeamsPage from "./pages/app/TeamsPage";
+import SchedulingPage from "./pages/app/SchedulingPage";
 import JobsPage from "./pages/app/JobsPage";
 import JobDetailsPage from "./pages/app/JobDetailsPage";
 import CreateJobPage from "./pages/app/CreateJobPage";
@@ -120,6 +122,22 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <CompanyPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/teams" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <TeamsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/scheduling" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <SchedulingPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
