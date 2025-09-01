@@ -1,29 +1,28 @@
-/* Invoice-specific styles to ensure readability */
+/* Invoice-specific styles that respect theme */
 .invoice-surface { 
-  background: #ffffff !important; 
-  color: #0f172a !important; 
+  background: hsl(var(--card)) !important; 
+  color: hsl(var(--card-foreground)) !important; 
 }
 
 .invoice-surface * { 
-  color: #0f172a !important; 
+  color: inherit !important; 
 }
 
 .invoice-surface .text-muted-foreground,
 .invoice-surface .text-muted,
 .invoice-surface .muted { 
-  color: #64748b !important; 
+  color: hsl(var(--muted-foreground)) !important; 
 }
 
 .invoice-surface table {
-  color: #0f172a !important;
+  color: hsl(var(--card-foreground)) !important;
 }
 
 .invoice-surface th,
 .invoice-surface td {
-  color: #0f172a !important;
+  color: hsl(var(--card-foreground)) !important;
 }
 
-/* Force all text elements to be dark */
 .invoice-surface h1,
 .invoice-surface h2,
 .invoice-surface h3,
@@ -34,21 +33,10 @@
 .invoice-surface span,
 .invoice-surface div,
 .invoice-surface label {
-  color: #0f172a !important;
+  color: hsl(var(--card-foreground)) !important;
 }
 
-/* Specific overrides for any problematic classes */
-.invoice-surface .text-white {
-  color: #0f172a !important;
-}
-
-.invoice-surface .text-gray-500,
-.invoice-surface .text-gray-400,
-.invoice-surface .text-gray-300 {
-  color: #64748b !important;
-}
-
-/* Print-specific styles */
+/* Print-specific styles - always white background */
 @media print { 
   html, body { 
     background: #ffffff !important; 

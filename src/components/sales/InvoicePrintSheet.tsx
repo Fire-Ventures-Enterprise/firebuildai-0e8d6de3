@@ -120,20 +120,10 @@ export function InvoicePrintSheet({
   };
 
   return (
-    <div id="invoice-sheet" className="invoice-surface relative p-6 max-w-[900px] mx-auto" style={{ backgroundColor: '#ffffff', color: '#0f172a' }}>
+    <div id="invoice-sheet" className="invoice-surface relative p-6 max-w-[900px] mx-auto">
       {watermarkText && <Watermark text={watermarkText} />}
 
       <style dangerouslySetInnerHTML={{ __html: `
-        #invoice-sheet, #invoice-sheet * {
-          color: #0f172a !important;
-        }
-        #invoice-sheet .text-muted-foreground,
-        #invoice-sheet .text-muted,
-        #invoice-sheet .text-gray-600,
-        #invoice-sheet .text-gray-500,
-        #invoice-sheet .text-gray-700 {
-          color: #64748b !important;
-        }
         @media print {
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .no-print { display: none !important; }
@@ -144,59 +134,59 @@ export function InvoicePrintSheet({
           .joist .item-block { page-break-inside: avoid; }
         }
         .table { width: 100%; border-collapse: collapse; }
-        .table th, .table td { border: 1px solid #ddd; padding: 6px; color: #0f172a !important; }
-        .table th { background: #f7f7f7; color: #0f172a !important; }
+        .table th, .table td { border: 1px solid hsl(var(--border)); padding: 6px; }
+        .table th { background: hsl(var(--muted)); }
         /* Joist layout */
-        .joist .item-row td { vertical-align: top; color: #0f172a !important; }
-        .joist .item-title { width: 100%; color: #0f172a !important; }
-        .joist .num { text-align: right; white-space: nowrap; color: #0f172a !important; }
+        .joist .item-row td { vertical-align: top; }
+        .joist .item-title { width: 100%; }
+        .joist .num { text-align: right; white-space: nowrap; }
         .joist .item-desc td { border-top: 0; }
         .joist .desc {
-          font-size: 12px; color: #64748b !important; padding: 6px;
+          font-size: 12px; padding: 6px;
           white-space: pre-wrap; /* keep line breaks */
         }
         .joist .section {
-          background: #fafafa; font-weight: 600; color: #0f172a !important;
+          background: hsl(var(--muted)); font-weight: 600;
         }
       ` }} />
 
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-2xl font-semibold" style={{ color: '#0f172a' }}>Invoice</h2>
-          <div className="text-sm" style={{ color: '#64748b' }}>Invoice #: {inv.invoice_number ?? inv.id}</div>
-          <div className="text-sm" style={{ color: '#64748b' }}>Issue Date: {new Date(inv.issue_date).toLocaleDateString()}</div>
-          {inv.due_date && <div className="text-sm" style={{ color: '#64748b' }}>Due Date: {new Date(inv.due_date).toLocaleDateString()}</div>}
+          <h2 className="text-2xl font-semibold">Invoice</h2>
+          <div className="text-sm text-muted-foreground">Invoice #: {inv.invoice_number ?? inv.id}</div>
+          <div className="text-sm text-muted-foreground">Issue Date: {new Date(inv.issue_date).toLocaleDateString()}</div>
+          {inv.due_date && <div className="text-sm text-muted-foreground">Due Date: {new Date(inv.due_date).toLocaleDateString()}</div>}
         </div>
         <div className="text-right">
-          <div className="text-sm" style={{ color: '#64748b' }}>From</div>
-          <div className="font-medium" style={{ color: '#0f172a' }}>{company.name}</div>
-          {company.address && <div className="text-sm" style={{ color: '#64748b' }}>{company.address}</div>}
-          {company.phone && <div className="text-sm" style={{ color: '#64748b' }}>{company.phone}</div>}
-          {company.email && <div className="text-sm" style={{ color: '#64748b' }}>{company.email}</div>}
+          <div className="text-sm text-muted-foreground">From</div>
+          <div className="font-medium">{company.name}</div>
+          {company.address && <div className="text-sm text-muted-foreground">{company.address}</div>}
+          {company.phone && <div className="text-sm text-muted-foreground">{company.phone}</div>}
+          {company.email && <div className="text-sm text-muted-foreground">{company.email}</div>}
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mt-6">
         <div>
-          <div className="text-sm" style={{ color: '#64748b' }}>Bill To</div>
-          <div className="font-medium" style={{ color: '#0f172a' }}>{inv.client?.name ?? "—"}</div>
-          {inv.client?.email && <div className="text-sm" style={{ color: '#64748b' }}>{inv.client.email}</div>}
-          {inv.client?.address && <div className="text-sm" style={{ color: '#64748b' }}>{inv.client.address}</div>}
+          <div className="text-sm text-muted-foreground">Bill To</div>
+          <div className="font-medium">{inv.client?.name ?? "—"}</div>
+          {inv.client?.email && <div className="text-sm text-muted-foreground">{inv.client.email}</div>}
+          {inv.client?.address && <div className="text-sm text-muted-foreground">{inv.client.address}</div>}
         </div>
         <div>
-          <div className="text-sm" style={{ color: '#64748b' }}>Service Address</div>
-          <div className="text-sm" style={{ color: '#64748b' }}>{(inv as any).service_address ?? "Same as billing address"}</div>
+          <div className="text-sm text-muted-foreground">Service Address</div>
+          <div className="text-sm text-muted-foreground">{(inv as any).service_address ?? "Same as billing address"}</div>
         </div>
       </div>
 
-      <h3 className="mt-6 mb-2 font-medium" style={{ color: '#0f172a' }}>Line Items</h3>
+      <h3 className="mt-6 mb-2 font-medium">Line Items</h3>
       <table className="table text-sm joist">
         <thead>
           <tr>
-            <th style={{ color: '#0f172a' }}>Item</th>
-            <th className="num" style={{ color: '#0f172a' }}>Rate</th>
-            <th className="num" style={{ color: '#0f172a' }}>Qty</th>
-            <th className="num" style={{ color: '#0f172a' }}>Amount</th>
+            <th>Item</th>
+            <th className="num">Rate</th>
+            <th className="num">Qty</th>
+            <th className="num">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -212,18 +202,18 @@ export function InvoicePrintSheet({
                 {/* Item Row */}
                 <tr className="item-row item-block">
                   <td className="item-title">
-                    <div className="font-medium" style={{ color: '#0f172a' }}>{firstLine}</div>
+                    <div className="font-medium">{firstLine}</div>
                   </td>
-                  <td className="num" style={{ color: '#0f172a' }}>${i.unit_price.toFixed(2)}</td>
-                  <td className="num" style={{ color: '#0f172a' }}>{i.quantity}</td>
-                  <td className="num" style={{ color: '#0f172a' }}>${i.line_total.toFixed(2)}</td>
+                  <td className="num">${i.unit_price.toFixed(2)}</td>
+                  <td className="num">{i.quantity}</td>
+                  <td className="num">${i.line_total.toFixed(2)}</td>
                 </tr>
 
                 {/* Optional Description Row */}
                 {details && (
                   <tr className="item-desc item-block">
                     <td colSpan={4}>
-                      <div className="desc" style={{ color: '#64748b' }}>{details}</div>
+                      <div className="desc text-muted-foreground">{details}</div>
                     </td>
                   </tr>
                 )}
@@ -235,28 +225,28 @@ export function InvoicePrintSheet({
 
       <div className="flex justify-end mt-3 text-sm">
         <div className="w-64">
-          <div className="flex justify-between" style={{ color: '#0f172a' }}><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-          <div className="flex justify-between" style={{ color: '#0f172a' }}><span>Tax</span><span>${tax.toFixed(2)}</span></div>
-          <div className="flex justify-between font-semibold" style={{ color: '#0f172a' }}><span>Total</span><span>${total.toFixed(2)}</span></div>
-          <div className="flex justify-between" style={{ color: '#0f172a' }}><span>Paid</span><span>${paid.toFixed(2)}</span></div>
-          <div className="flex justify-between font-semibold" style={{ color: '#0f172a' }}><span>Balance Due</span><span>${balance.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span>Tax</span><span>${tax.toFixed(2)}</span></div>
+          <div className="flex justify-between font-semibold"><span>Total</span><span>${total.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span>Paid</span><span>${paid.toFixed(2)}</span></div>
+          <div className="flex justify-between font-semibold"><span>Balance Due</span><span>${balance.toFixed(2)}</span></div>
         </div>
       </div>
 
       {/* Contract Section */}
       {inv.contract_required && (
         <div 
-          className="mt-6 border border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+          className="mt-6 border rounded-lg p-6 bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
           onClick={() => window.open(contractUrl || '#', '_blank')}
         >
-          <h3 className="font-semibold text-lg mb-2 flex items-center gap-2" style={{ color: '#0f172a' }}>
-            <FileText className="h-5 w-5" style={{ color: '#64748b' }} />
+          <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+            <FileText className="h-5 w-5 text-muted-foreground" />
             {getContractTitle()}
           </h3>
-          <p className="text-sm mb-3" style={{ color: '#64748b' }}>
+          <p className="text-sm mb-3 text-muted-foreground">
             By accepting this invoice, you agree to the attached {getContractName()} which includes payment terms, warranties, and legal protections under {getJurisdiction()} law.
           </p>
-          <Button variant="link" className="p-0 h-auto" style={{ color: '#3b82f6' }}>
+          <Button variant="link" className="p-0 h-auto">
             View Full Contract →
           </Button>
         </div>
@@ -264,8 +254,8 @@ export function InvoicePrintSheet({
 
       {inv.notes && (
         <>
-          <h3 className="mt-6 mb-2 font-medium" style={{ color: '#0f172a' }}>Notes</h3>
-          <div className="text-sm whitespace-pre-wrap" style={{ color: '#64748b' }}>{inv.notes}</div>
+          <h3 className="mt-6 mb-2 font-medium">Notes</h3>
+          <div className="text-sm whitespace-pre-wrap text-muted-foreground">{inv.notes}</div>
         </>
       )}
     </div>
