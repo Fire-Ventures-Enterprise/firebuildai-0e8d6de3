@@ -2157,6 +2157,33 @@ export type Database = {
           },
         ]
       }
+      rate_limit_tracking: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          identifier: string
+          request_count: number | null
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          identifier: string
+          request_count?: number | null
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          identifier?: string
+          request_count?: number | null
+          window_start?: string
+        }
+        Relationships: []
+      }
       review_platforms: {
         Row: {
           auto_send_after_payment: boolean | null
@@ -2276,6 +2303,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      security_audit_log: {
+        Row: {
+          created_at: string
+          event_description: string | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_description?: string | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_description?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       subscribers: {
         Row: {
@@ -2469,6 +2532,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_rate_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_po_number: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -2531,9 +2598,109 @@ export type Database = {
           status: string
         }[]
       }
+      get_estimate_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          accepted_at: string
+          accepted_by_name: string
+          contract_attached: boolean
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          deposit_amount: number
+          deposit_percentage: number
+          estimate_number: string
+          expiration_date: string
+          id: string
+          issue_date: string
+          notes: string
+          public_token: string
+          scope_of_work: string
+          sent_at: string
+          service_address: string
+          service_city: string
+          service_postal_code: string
+          service_province: string
+          signature_data: string
+          signature_required: boolean
+          signed_at: string
+          signed_by_name: string
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          terms_conditions: string
+          total: number
+          viewed_at: string
+        }[]
+      }
+      get_estimate_items_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          amount: number
+          description: string
+          id: string
+          quantity: number
+          rate: number
+          sort_order: number
+        }[]
+      }
+      get_invoice_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          balance: number
+          customer_address: string
+          customer_city: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          customer_postal_code: string
+          customer_province: string
+          deposit_amount: number
+          deposit_request: number
+          due_date: string
+          id: string
+          invoice_number: string
+          issue_date: string
+          notes: string
+          paid_amount: number
+          private_notes: string
+          public_token: string
+          service_address: string
+          service_city: string
+          service_postal_code: string
+          service_province: string
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total: number
+        }[]
+      }
+      get_invoice_items_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          amount: number
+          description: string
+          id: string
+          item_name: string
+          quantity: number
+          rate: number
+          sort_order: number
+          tax: boolean
+        }[]
+      }
       is_admin: {
         Args: { check_user_id?: string }
         Returns: boolean
+      }
+      log_security_event: {
+        Args: {
+          p_event_description: string
+          p_event_type: string
+          p_metadata?: Json
+        }
+        Returns: undefined
       }
       mark_estimate_viewed: {
         Args: { p_token: string }
