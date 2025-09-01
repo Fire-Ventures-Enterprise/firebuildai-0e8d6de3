@@ -120,72 +120,83 @@ export function InvoicePrintSheet({
   };
 
   return (
-    <div id="invoice-print-root" className="invoice-surface relative bg-white text-slate-900 p-6 max-w-[900px] mx-auto">
+    <div id="invoice-sheet" className="invoice-surface relative p-6 max-w-[900px] mx-auto" style={{ backgroundColor: '#ffffff', color: '#0f172a' }}>
       {watermarkText && <Watermark text={watermarkText} />}
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
+        #invoice-sheet, #invoice-sheet * {
+          color: #0f172a !important;
+        }
+        #invoice-sheet .text-muted-foreground,
+        #invoice-sheet .text-muted,
+        #invoice-sheet .text-gray-600,
+        #invoice-sheet .text-gray-500,
+        #invoice-sheet .text-gray-700 {
+          color: #64748b !important;
+        }
         @media print {
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .no-print { display: none !important; }
+          #invoice-sheet, #invoice-sheet * { color: #000 !important; }
           .table { width: 100%; border-collapse: collapse; }
-          .table th, .table td { border: 1px solid #ddd; padding: 6px; color: #000; }
-          .table th { background: #f7f7f7; color: #000; }
+          .table th, .table td { border: 1px solid #ddd; padding: 6px; color: #000 !important; }
+          .table th { background: #f7f7f7; color: #000 !important; }
           .joist .item-block { page-break-inside: avoid; }
         }
         .table { width: 100%; border-collapse: collapse; }
-        .table th, .table td { border: 1px solid #ddd; padding: 6px; color: #000; }
-        .table th { background: #f7f7f7; color: #000; }
+        .table th, .table td { border: 1px solid #ddd; padding: 6px; color: #0f172a !important; }
+        .table th { background: #f7f7f7; color: #0f172a !important; }
         /* Joist layout */
-        .joist .item-row td { vertical-align: top; }
-        .joist .item-title { width: 100%; }
-        .joist .num { text-align: right; white-space: nowrap; }
+        .joist .item-row td { vertical-align: top; color: #0f172a !important; }
+        .joist .item-title { width: 100%; color: #0f172a !important; }
+        .joist .num { text-align: right; white-space: nowrap; color: #0f172a !important; }
         .joist .item-desc td { border-top: 0; }
         .joist .desc {
-          font-size: 12px; color: #666; padding: 6px;
+          font-size: 12px; color: #64748b !important; padding: 6px;
           white-space: pre-wrap; /* keep line breaks */
         }
         .joist .section {
-          background: #fafafa; font-weight: 600; color: #000;
+          background: #fafafa; font-weight: 600; color: #0f172a !important;
         }
-      `}</style>
+      ` }} />
 
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-black">Invoice</h2>
-          <div className="text-sm text-gray-600">Invoice #: {inv.invoice_number ?? inv.id}</div>
-          <div className="text-sm text-gray-600">Issue Date: {new Date(inv.issue_date).toLocaleDateString()}</div>
-          {inv.due_date && <div className="text-sm text-gray-600">Due Date: {new Date(inv.due_date).toLocaleDateString()}</div>}
+          <h2 className="text-2xl font-semibold" style={{ color: '#0f172a' }}>Invoice</h2>
+          <div className="text-sm" style={{ color: '#64748b' }}>Invoice #: {inv.invoice_number ?? inv.id}</div>
+          <div className="text-sm" style={{ color: '#64748b' }}>Issue Date: {new Date(inv.issue_date).toLocaleDateString()}</div>
+          {inv.due_date && <div className="text-sm" style={{ color: '#64748b' }}>Due Date: {new Date(inv.due_date).toLocaleDateString()}</div>}
         </div>
         <div className="text-right">
-          <div className="text-sm text-gray-500">From</div>
-          <div className="font-medium text-black">{company.name}</div>
-          {company.address && <div className="text-sm text-gray-700">{company.address}</div>}
-          {company.phone && <div className="text-sm text-gray-700">{company.phone}</div>}
-          {company.email && <div className="text-sm text-gray-700">{company.email}</div>}
+          <div className="text-sm" style={{ color: '#64748b' }}>From</div>
+          <div className="font-medium" style={{ color: '#0f172a' }}>{company.name}</div>
+          {company.address && <div className="text-sm" style={{ color: '#64748b' }}>{company.address}</div>}
+          {company.phone && <div className="text-sm" style={{ color: '#64748b' }}>{company.phone}</div>}
+          {company.email && <div className="text-sm" style={{ color: '#64748b' }}>{company.email}</div>}
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mt-6">
         <div>
-          <div className="text-sm text-gray-500">Bill To</div>
-          <div className="font-medium text-black">{inv.client?.name ?? "—"}</div>
-          {inv.client?.email && <div className="text-sm text-gray-700">{inv.client.email}</div>}
-          {inv.client?.address && <div className="text-sm text-gray-700">{inv.client.address}</div>}
+          <div className="text-sm" style={{ color: '#64748b' }}>Bill To</div>
+          <div className="font-medium" style={{ color: '#0f172a' }}>{inv.client?.name ?? "—"}</div>
+          {inv.client?.email && <div className="text-sm" style={{ color: '#64748b' }}>{inv.client.email}</div>}
+          {inv.client?.address && <div className="text-sm" style={{ color: '#64748b' }}>{inv.client.address}</div>}
         </div>
         <div>
-          <div className="text-sm text-gray-500">Service Address</div>
-          <div className="text-sm text-gray-700">{(inv as any).service_address ?? "Same as billing address"}</div>
+          <div className="text-sm" style={{ color: '#64748b' }}>Service Address</div>
+          <div className="text-sm" style={{ color: '#64748b' }}>{(inv as any).service_address ?? "Same as billing address"}</div>
         </div>
       </div>
 
-      <h3 className="mt-6 mb-2 font-medium text-black">Line Items</h3>
+      <h3 className="mt-6 mb-2 font-medium" style={{ color: '#0f172a' }}>Line Items</h3>
       <table className="table text-sm joist">
         <thead>
           <tr>
-            <th>Item</th>
-            <th className="num">Rate</th>
-            <th className="num">Qty</th>
-            <th className="num">Amount</th>
+            <th style={{ color: '#0f172a' }}>Item</th>
+            <th className="num" style={{ color: '#0f172a' }}>Rate</th>
+            <th className="num" style={{ color: '#0f172a' }}>Qty</th>
+            <th className="num" style={{ color: '#0f172a' }}>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -201,18 +212,18 @@ export function InvoicePrintSheet({
                 {/* Item Row */}
                 <tr className="item-row item-block">
                   <td className="item-title">
-                    <div className="font-medium text-black">{firstLine}</div>
+                    <div className="font-medium" style={{ color: '#0f172a' }}>{firstLine}</div>
                   </td>
-                  <td className="num text-black">${i.unit_price.toFixed(2)}</td>
-                  <td className="num text-black">{i.quantity}</td>
-                  <td className="num text-black">${i.line_total.toFixed(2)}</td>
+                  <td className="num" style={{ color: '#0f172a' }}>${i.unit_price.toFixed(2)}</td>
+                  <td className="num" style={{ color: '#0f172a' }}>{i.quantity}</td>
+                  <td className="num" style={{ color: '#0f172a' }}>${i.line_total.toFixed(2)}</td>
                 </tr>
 
                 {/* Optional Description Row */}
                 {details && (
                   <tr className="item-desc item-block">
                     <td colSpan={4}>
-                      <div className="desc">{details}</div>
+                      <div className="desc" style={{ color: '#64748b' }}>{details}</div>
                     </td>
                   </tr>
                 )}
@@ -224,11 +235,11 @@ export function InvoicePrintSheet({
 
       <div className="flex justify-end mt-3 text-sm">
         <div className="w-64">
-          <div className="flex justify-between text-black"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-          <div className="flex justify-between text-black"><span>Tax</span><span>${tax.toFixed(2)}</span></div>
-          <div className="flex justify-between font-semibold text-black"><span>Total</span><span>${total.toFixed(2)}</span></div>
-          <div className="flex justify-between text-black"><span>Paid</span><span>${paid.toFixed(2)}</span></div>
-          <div className="flex justify-between font-semibold text-black"><span>Balance Due</span><span>${balance.toFixed(2)}</span></div>
+          <div className="flex justify-between" style={{ color: '#0f172a' }}><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+          <div className="flex justify-between" style={{ color: '#0f172a' }}><span>Tax</span><span>${tax.toFixed(2)}</span></div>
+          <div className="flex justify-between font-semibold" style={{ color: '#0f172a' }}><span>Total</span><span>${total.toFixed(2)}</span></div>
+          <div className="flex justify-between" style={{ color: '#0f172a' }}><span>Paid</span><span>${paid.toFixed(2)}</span></div>
+          <div className="flex justify-between font-semibold" style={{ color: '#0f172a' }}><span>Balance Due</span><span>${balance.toFixed(2)}</span></div>
         </div>
       </div>
 
@@ -238,14 +249,14 @@ export function InvoicePrintSheet({
           className="mt-6 border border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
           onClick={() => window.open(contractUrl || '#', '_blank')}
         >
-          <h3 className="font-semibold text-lg mb-2 flex items-center gap-2 text-black">
-            <FileText className="h-5 w-5 text-gray-700" />
+          <h3 className="font-semibold text-lg mb-2 flex items-center gap-2" style={{ color: '#0f172a' }}>
+            <FileText className="h-5 w-5" style={{ color: '#64748b' }} />
             {getContractTitle()}
           </h3>
-          <p className="text-sm text-gray-700 mb-3">
+          <p className="text-sm mb-3" style={{ color: '#64748b' }}>
             By accepting this invoice, you agree to the attached {getContractName()} which includes payment terms, warranties, and legal protections under {getJurisdiction()} law.
           </p>
-          <Button variant="link" className="p-0 h-auto text-blue-600">
+          <Button variant="link" className="p-0 h-auto" style={{ color: '#3b82f6' }}>
             View Full Contract →
           </Button>
         </div>
@@ -253,8 +264,8 @@ export function InvoicePrintSheet({
 
       {inv.notes && (
         <>
-          <h3 className="mt-6 mb-2 font-medium text-black">Notes</h3>
-          <div className="text-sm text-gray-700 whitespace-pre-wrap">{inv.notes}</div>
+          <h3 className="mt-6 mb-2 font-medium" style={{ color: '#0f172a' }}>Notes</h3>
+          <div className="text-sm whitespace-pre-wrap" style={{ color: '#64748b' }}>{inv.notes}</div>
         </>
       )}
     </div>
