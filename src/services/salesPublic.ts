@@ -4,47 +4,81 @@ export const SalesPublic = {
   // Use secure bundle RPC for estimates
   async getEstimateByToken(token: string) {
     try {
-      // Get complete bundle in one secure call
+      // Try the new secure bundle RPC first
       const { data, error } = await supabase.rpc('get_estimate_bundle_by_token', {
         p_token: token,
         p_user_agent: navigator.userAgent,
         p_ip: null
       });
       
-      if (error) throw error;
-      if (!data || data.length === 0) {
-        throw new Error('Estimate not found');
+      if (!error && data && data.length > 0) {
+        const bundle = data[0];
+        const estimate = bundle.estimate as any || {};
+        const items = bundle.items as any[] || [];
+        
+        // Format client data for backward compatibility
+        const client = estimate.customer_name ? {
+          id: null,
+          name: estimate.customer_name,
+          email: estimate.customer_email,
+          address: estimate.service_address ? 
+            `${estimate.service_address}, ${estimate.service_city}, ${estimate.service_province} ${estimate.service_postal_code}` : 
+            null
+        } : null;
+        
+        return { 
+          ...estimate,
+          client,
+          items,
+          customer: client // Backward compatibility
+        };
       }
-      
-      const bundle = data[0];
-      const estimate = bundle.estimate || {};
-      const items = bundle.items || [];
-      
-      // Format client data for backward compatibility
-      const client = estimate.customer_name ? {
-        id: null,
-        name: estimate.customer_name,
-        email: estimate.customer_email,
-        address: estimate.service_address ? 
-          `${estimate.service_address}, ${estimate.service_city}, ${estimate.service_province} ${estimate.service_postal_code}` : 
-          null
-      } : null;
-      
-      return { 
-        ...estimate,
-        client,
-        items,
-        customer: client // Backward compatibility
-      };
-    } catch (error) {
-      console.error('Failed to fetch estimate:', error);
-      throw error;
+    } catch (err) {
+      console.warn('Bundle RPC not available, falling back to existing RPCs');
     }
+
+    // Fallback to existing RPCs if bundle not available
+    const { data: estimateData, error: estimateError } = await supabase
+      .rpc('get_estimate_by_token', { p_token: token });
+    
+    if (estimateError) throw estimateError;
+    if (!estimateData || estimateData.length === 0) {
+      throw new Error('Estimate not found');
+    }
+    
+    const estimate = estimateData[0];
+    
+    // Get items via secure RPC function
+    const { data: itemsData, error: itemsError } = await supabase
+      .rpc('get_estimate_items_by_token', { p_token: token });
+    
+    if (itemsError) {
+      console.error('Error fetching items:', itemsError);
+    }
+    
+    // Format client data from the estimate
+    const client = estimate.customer_name ? {
+      id: null,
+      name: estimate.customer_name,
+      email: estimate.customer_email,
+      address: estimate.service_address ? 
+        `${estimate.service_address}, ${estimate.service_city}, ${estimate.service_province} ${estimate.service_postal_code}` : 
+        null
+    } : null;
+    
+    return { 
+      ...estimate, 
+      client,
+      items: itemsData || [],
+      customer: client // Add customer for backward compatibility
+    };
   },
 
   async markViewedEstimate(token: string) {
     // View marking is now handled atomically in get_estimate_bundle_by_token
     // Keeping this for backward compatibility
+    const { error } = await supabase.rpc("mark_estimate_viewed", { p_token: token });
+    if (error) console.error("Failed to mark viewed:", error);
   },
 
   async acceptEstimate(token: string, signer: { 
@@ -53,14 +87,32 @@ export const SalesPublic = {
     signature?: string;
     agreedToTerms?: boolean;
   }) {
-    // Use secure accept function
-    const { data, error } = await supabase.rpc("accept_estimate_secure", { 
+    try {
+      // Try secure accept function first
+      const { data, error } = await supabase.rpc("accept_estimate_secure", { 
+        p_token: token,
+        p_name: signer.name || null,
+        p_email: signer.email || null,
+        p_signature: signer.signature || null,
+        p_user_agent: navigator.userAgent,
+        p_ip: null
+      });
+      
+      if (!error) {
+        if (!data) {
+          throw new Error("Failed to accept estimate - invalid token or already accepted");
+        }
+        return;
+      }
+    } catch (err) {
+      console.warn('Secure accept not available, falling back to existing RPC');
+    }
+    
+    // Fallback to existing RPC
+    const { error } = await supabase.rpc("accept_estimate", { 
       p_token: token,
       p_name: signer.name || null,
-      p_email: signer.email || null,
-      p_signature: signer.signature || null,
-      p_user_agent: navigator.userAgent,
-      p_ip: null
+      p_email: signer.email || null
     });
     
     if (error) {
@@ -68,59 +120,118 @@ export const SalesPublic = {
       throw new Error(error.message || "Failed to accept estimate");
     }
     
-    if (!data) {
-      throw new Error("Failed to accept estimate - invalid token or already accepted");
+    // Also update signature data if provided
+    if (signer.signature) {
+      const { error: sigError } = await supabase
+        .from("estimates")
+        .update({
+          signature_data: signer.signature,
+          signed_at: new Date().toISOString(),
+          signed_by_name: signer.name || null,
+          signed_by_email: signer.email || null,
+        })
+        .eq("public_token", token);
+      
+      if (sigError) throw sigError;
     }
   },
 
   async getInvoiceByToken(token: string) {
     try {
-      // Get complete bundle in one secure call
+      // Try the new secure bundle RPC first
       const { data, error } = await supabase.rpc('get_invoice_bundle_by_token', {
         p_token: token,
         p_user_agent: navigator.userAgent,
         p_ip: null
       });
       
-      if (error) throw error;
-      if (!data || data.length === 0) {
-        throw new Error('Invoice not found');
+      if (!error && data && data.length > 0) {
+        const bundle = data[0];
+        const invoice = bundle.invoice as any || {};
+        const items = bundle.items as any[] || [];
+        const payments = bundle.payments as any[] || [];
+        
+        // Format client data for backward compatibility
+        const client = invoice.customer_name ? {
+          id: null,
+          name: invoice.customer_name,
+          email: invoice.customer_email,
+          address: invoice.customer_address ? 
+            `${invoice.customer_address}, ${invoice.customer_city}, ${invoice.customer_province} ${invoice.customer_postal_code}` : 
+            null
+        } : null;
+        
+        // Transform items to expected format
+        const formattedItems = items.map((item: any) => ({
+          id: item.id,
+          description: item.item_name || item.description,
+          quantity: item.quantity,
+          unit_price: item.rate,
+          tax_rate: item.tax ? 13 : 0,
+          line_total: item.amount
+        }));
+        
+        return { 
+          ...invoice,
+          client,
+          items: formattedItems,
+          payments
+        };
       }
-      
-      const bundle = data[0];
-      const invoice = bundle.invoice || {};
-      const items = bundle.items || [];
-      const payments = bundle.payments || [];
-      
-      // Format client data for backward compatibility
-      const client = invoice.customer_name ? {
-        id: null,
-        name: invoice.customer_name,
-        email: invoice.customer_email,
-        address: invoice.customer_address ? 
-          `${invoice.customer_address}, ${invoice.customer_city}, ${invoice.customer_province} ${invoice.customer_postal_code}` : 
-          null
-      } : null;
-      
-      // Transform items to expected format
-      const formattedItems = items.map((item: any) => ({
-        id: item.id,
-        description: item.item_name || item.description,
-        quantity: item.quantity,
-        unit_price: item.rate,
-        tax_rate: item.tax ? 13 : 0,
-        line_total: item.amount
-      }));
-      
-      return { 
-        ...invoice,
-        client,
-        items: formattedItems,
-        payments
-      };
-    } catch (error) {
-      console.error('Failed to fetch invoice:', error);
-      throw error;
+    } catch (err) {
+      console.warn('Bundle RPC not available, falling back to existing RPCs');
     }
+
+    // Fallback to existing RPCs
+    const { data: invoiceData, error: invoiceError } = await supabase
+      .rpc('get_invoice_by_token', { p_token: token });
+    
+    if (invoiceError) throw invoiceError;
+    if (!invoiceData || invoiceData.length === 0) {
+      throw new Error('Invoice not found');
+    }
+    
+    const invoice = invoiceData[0];
+    
+    // Get items via secure RPC function
+    const { data: itemsData, error: itemsError } = await supabase
+      .rpc('get_invoice_items_by_token', { p_token: token });
+    
+    if (itemsError) {
+      console.error('Error fetching items:', itemsError);
+    }
+    
+    // Get payments (still need direct access for this)
+    const { data: paymentsData } = await supabase
+      .from("invoice_payments")
+      .select("*")
+      .eq("invoice_id", invoice.id);
+    
+    // Format client data from the invoice
+    const client = invoice.customer_name ? {
+      id: null,
+      name: invoice.customer_name,
+      email: invoice.customer_email,
+      address: invoice.customer_address ? 
+        `${invoice.customer_address}, ${invoice.customer_city}, ${invoice.customer_province} ${invoice.customer_postal_code}` : 
+        null
+    } : null;
+    
+    // Transform items to expected format
+    const items = itemsData ? itemsData.map((item: any) => ({
+      id: item.id,
+      description: item.item_name || item.description,
+      quantity: item.quantity,
+      unit_price: item.rate,
+      tax_rate: item.tax ? 13 : 0,
+      line_total: item.amount
+    })) : [];
+    
+    return { 
+      ...invoice, 
+      client, 
+      items,
+      payments: paymentsData || []
+    };
   },
 };

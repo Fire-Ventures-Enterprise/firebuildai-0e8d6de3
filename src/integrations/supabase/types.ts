@@ -531,6 +531,38 @@ export type Database = {
           },
         ]
       }
+      estimate_views: {
+        Row: {
+          estimate_id: string
+          id: string
+          ip: unknown | null
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          estimate_id: string
+          id?: string
+          ip?: unknown | null
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          estimate_id?: string
+          id?: string
+          ip?: unknown | null
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimate_views_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estimates: {
         Row: {
           accepted_at: string | null
@@ -551,6 +583,7 @@ export type Database = {
           last_sent_to: string | null
           notes: string | null
           public_token: string | null
+          public_token_hash: string | null
           scope_of_work: string | null
           sent_at: string | null
           sent_by: string | null
@@ -594,6 +627,7 @@ export type Database = {
           last_sent_to?: string | null
           notes?: string | null
           public_token?: string | null
+          public_token_hash?: string | null
           scope_of_work?: string | null
           sent_at?: string | null
           sent_by?: string | null
@@ -637,6 +671,7 @@ export type Database = {
           last_sent_to?: string | null
           notes?: string | null
           public_token?: string | null
+          public_token_hash?: string | null
           scope_of_work?: string | null
           sent_at?: string | null
           sent_by?: string | null
@@ -1370,6 +1405,7 @@ export type Database = {
           private_notes: string | null
           profit_margin: number | null
           public_token: string | null
+          public_token_hash: string | null
           sent_at: string | null
           sent_by: string | null
           sent_count: number | null
@@ -1427,6 +1463,7 @@ export type Database = {
           private_notes?: string | null
           profit_margin?: number | null
           public_token?: string | null
+          public_token_hash?: string | null
           sent_at?: string | null
           sent_by?: string | null
           sent_count?: number | null
@@ -1484,6 +1521,7 @@ export type Database = {
           private_notes?: string | null
           profit_margin?: number | null
           public_token?: string | null
+          public_token_hash?: string | null
           sent_at?: string | null
           sent_by?: string | null
           sent_count?: number | null
@@ -1976,6 +2014,27 @@ export type Database = {
           token_hash?: string
           used_at?: string | null
           used_by_ip?: string | null
+        }
+        Relationships: []
+      }
+      portal_rate_limiter: {
+        Row: {
+          bucket_start: string
+          cnt: number
+          ip: unknown
+          token_hash: string
+        }
+        Insert: {
+          bucket_start: string
+          cnt?: number
+          ip: unknown
+          token_hash: string
+        }
+        Update: {
+          bucket_start?: string
+          cnt?: number
+          ip?: unknown
+          token_hash?: string
         }
         Relationships: []
       }
@@ -2608,6 +2667,17 @@ export type Database = {
         Args: { p_email?: string; p_name?: string; p_token: string }
         Returns: undefined
       }
+      accept_estimate_secure: {
+        Args: {
+          p_email?: string
+          p_ip?: unknown
+          p_name?: string
+          p_signature?: string
+          p_token: string
+          p_user_agent?: string
+        }
+        Returns: boolean
+      }
       can_edit_invoice: {
         Args: { invoice_id_param: string; override_phrase?: string }
         Returns: boolean
@@ -2617,6 +2687,10 @@ export type Database = {
         Returns: undefined
       }
       cleanup_expired_pairings: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_portal_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2686,6 +2760,13 @@ export type Database = {
           status: string
         }[]
       }
+      get_estimate_bundle_by_token: {
+        Args: { p_ip?: unknown; p_token: string; p_user_agent?: string }
+        Returns: {
+          estimate: Json
+          items: Json
+        }[]
+      }
       get_estimate_by_token: {
         Args: { p_token: string }
         Returns: {
@@ -2731,6 +2812,14 @@ export type Database = {
           quantity: number
           rate: number
           sort_order: number
+        }[]
+      }
+      get_invoice_bundle_by_token: {
+        Args: { p_ip?: unknown; p_token: string; p_user_agent?: string }
+        Returns: {
+          invoice: Json
+          items: Json
+          payments: Json
         }[]
       }
       get_invoice_by_token: {
@@ -2793,6 +2882,15 @@ export type Database = {
       mark_estimate_viewed: {
         Args: { p_token: string }
         Returns: undefined
+      }
+      portal_rate_limit: {
+        Args: {
+          p_ip: unknown
+          p_limit?: number
+          p_token: string
+          p_window_secs?: number
+        }
+        Returns: boolean
       }
       revoke_device_session: {
         Args: { p_session_id: string }
