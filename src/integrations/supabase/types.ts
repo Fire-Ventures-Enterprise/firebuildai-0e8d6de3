@@ -2477,6 +2477,15 @@ export type Database = {
         Args: { check_user_id?: string }
         Returns: string
       }
+      get_booking_confirmation: {
+        Args: { p_token: string }
+        Returns: {
+          appointment_date: string
+          appointment_time: string
+          booking_name: string
+          booking_status: string
+        }[]
+      }
       get_consultation_booking_by_token: {
         Args: { p_token: string }
         Returns: {
@@ -2491,6 +2500,23 @@ export type Database = {
           public_token: string
           slot_id: string
           status: string
+          updated_at: string
+        }[]
+      }
+      get_consultation_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          company_name: string | null
+          confirmation_token: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          public_token: string
+          slot_id: string | null
+          status: string | null
           updated_at: string
         }[]
       }
