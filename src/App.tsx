@@ -10,6 +10,10 @@ import { AppLayout } from "./layouts/AppLayout";
 // Marketing pages
 import { HomePage } from "./pages/marketing/HomePage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
+import AboutPage from "./pages/marketing/AboutPage";
+
+// Public pages
+import HelpPage from "./pages/HelpPage";
 
 // Auth pages
 import { SignUpPage } from "./pages/auth/SignUpPage";
@@ -32,9 +36,17 @@ import ContractorTrackingPage from "./pages/app/ContractorTrackingPage";
 import ExpensesPage from "./pages/app/ExpensesPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
+import VendorsPage from "./pages/app/VendorsPage";
 import ExpensesNewPage from "./pages/app/ExpensesNewPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
+
+// Analytics pages
+import AnalyticsPage from "./pages/AnalyticsPage";
+import JobPerformancePage from "./pages/JobPerformancePage";
+import TeamPerformancePage from "./pages/TeamPerformancePage";
+import ClientReportsPage from "./pages/ClientReportsPage";
+import FleetPage from "./pages/FleetPage";
 
 // Admin pages
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
@@ -62,6 +74,8 @@ const App = () => (
           <Routes>
             {/* Marketing Site */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/help" element={<HelpPage />} />
             <Route path="/download" element={<DownloadAppPage />} />
             <Route path="/tutorials" element={<TutorialsPage />} />
             
@@ -209,10 +223,47 @@ const App = () => (
             <Route path="/app/fleet" element={
               <ProtectedRoute>
                 <AppLayout>
-                  <div className="p-8">
-                    <h1 className="text-3xl font-bold">Fleet Management</h1>
-                    <p className="text-muted-foreground mt-2">Fleet management dashboard coming soon...</p>
-                  </div>
+                  <FleetPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/finance/vendors" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <VendorsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/analytics" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <AnalyticsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/job-performance" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <JobPerformancePage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/team-performance" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <TeamPerformancePage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/client-reports" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ClientReportsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

@@ -120,7 +120,7 @@ export const HomePage = () => {
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
                 <li><Link to="/tutorials" className="hover:text-foreground transition-colors">Tutorials</Link></li>
                 <li><Link to="/download" className="hover:text-foreground transition-colors">Download</Link></li>
-                <li><Link to="/api-docs" className="hover:text-foreground transition-colors">API</Link></li>
+                <li><Link to="/api-docs" className="hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">API</Link></li>
               </ul>
             </div>
             

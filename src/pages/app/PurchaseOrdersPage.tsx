@@ -181,7 +181,7 @@ export default function PurchaseOrdersPage() {
       {Confirm}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Purchase Orders</h1>
-        <Button onClick={handleCreatePO}>
+        <Button onClick={handleCreatePO} data-testid="po-create-button">
           <Plus className="mr-2 h-4 w-4" /> Create Purchase Order
         </Button>
       </div>

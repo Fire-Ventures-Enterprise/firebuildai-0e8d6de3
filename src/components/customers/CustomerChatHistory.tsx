@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { R } from '@/routes/routeMap';
 
 interface CustomerChatHistoryProps {
   customerId: string;
@@ -144,7 +145,7 @@ export function CustomerChatHistory({ customerId }: CustomerChatHistoryProps) {
                 <Card 
                   key={room.id} 
                   className="cursor-pointer hover:bg-accent/50 transition-colors"
-                  onClick={() => navigate(`/app/jobs/${room.job_id}`)}
+                  onClick={() => navigate(R.jobDetail(room.job_id))}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">

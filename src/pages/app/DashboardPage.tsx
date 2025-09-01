@@ -8,6 +8,8 @@ import { FleetStatusCard } from "@/components/FleetStatusCard";
 import { ReviewsCard } from "@/components/ReviewsCard";
 import { Button } from "@/components/ui/button";
 import { TrialBanner } from "@/components/app/TrialBanner";
+import { useNavigate } from "react-router-dom";
+import { R } from "@/routes/routeMap";
 
 // Mock data matching the reference dashboard
 const metrics = [
@@ -42,6 +44,8 @@ const metrics = [
 ];
 
 export const DashboardPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-6">
       <TrialBanner />
@@ -53,10 +57,20 @@ export const DashboardPage = () => {
           <p className="text-muted-foreground mt-1">Overview of your contractor management platform</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="default" size="sm">
+          <Button 
+            variant="default" 
+            size="sm"
+            onClick={() => navigate(R.jobNew)}
+            data-testid="dashboard-new-job"
+          >
             + New Job
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(R.purchaseOrderNew)}
+            data-testid="dashboard-new-po"
+          >
             New PO
           </Button>
         </div>
