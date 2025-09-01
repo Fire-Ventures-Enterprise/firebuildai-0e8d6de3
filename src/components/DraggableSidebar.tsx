@@ -74,6 +74,7 @@ const navigationGroups: NavigationGroup[] = [
       { id: "estimates", label: "Estimates", icon: FileText, path: "/app/estimates" },
       { id: "invoices", label: "Invoices", icon: Receipt, path: "/app/invoices" },
       { id: "purchase-orders", label: "Purchase Orders", icon: ShoppingCart, path: "/app/purchase-orders" },
+      { id: "expenses", label: "Expenses", icon: DollarSign, path: "/app/finance/expenses" },
       { id: "financial-analytics", label: "Financial Analytics", icon: TrendingUp, path: "/app/financial-analytics" },
     ],
   },
