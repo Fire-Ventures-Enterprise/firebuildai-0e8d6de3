@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserCheck, Trophy, Clock, TrendingUp } from "lucide-react";
 
-export default function TeamPerformancePage() {
+const TeamPerformancePage = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
@@ -65,4 +65,6 @@ export default function TeamPerformancePage() {
       </Card>
     </div>
   );
-}
+};
+
+export default TeamPerformancePage;

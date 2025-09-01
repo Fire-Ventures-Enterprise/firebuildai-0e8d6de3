@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Truck, MapPin, Fuel, Wrench } from "lucide-react";
 
-export default function FleetPage() {
+const FleetPage = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
@@ -61,4 +61,6 @@ export default function FleetPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default FleetPage;

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { R } from "@/routes/routeMap";
 
-export default function AboutPage() {
+const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="container mx-auto px-6 py-16">
@@ -38,4 +38,6 @@ export default function AboutPage() {
       </div>
     </div>
   );
-}
+};
+
+export default AboutPage;

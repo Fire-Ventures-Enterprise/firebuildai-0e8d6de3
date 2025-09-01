@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Users, DollarSign } from "lucide-react";
 
-export default function AnalyticsPage() {
+const AnalyticsPage = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
@@ -65,4 +65,6 @@ export default function AnalyticsPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default AnalyticsPage;

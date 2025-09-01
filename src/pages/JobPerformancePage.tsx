@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileBarChart, Clock, CheckCircle, AlertCircle } from "lucide-react";
 
-export default function JobPerformancePage() {
+const JobPerformancePage = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
@@ -65,4 +65,6 @@ export default function JobPerformancePage() {
       </Card>
     </div>
   );
-}
+};
+
+export default JobPerformancePage;

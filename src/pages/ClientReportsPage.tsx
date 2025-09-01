@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileBarChart, Download, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function ClientReportsPage() {
+const ClientReportsPage = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -77,4 +77,6 @@ export default function ClientReportsPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default ClientReportsPage;

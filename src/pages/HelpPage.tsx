@@ -4,7 +4,7 @@ import { ArrowLeft, Book, MessageSquare, Phone, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { R } from "@/routes/routeMap";
 
-export default function HelpPage() {
+const HelpPage = () => {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
@@ -89,4 +89,6 @@ export default function HelpPage() {
       </div>
     </div>
   );
-}
+};
+
+export default HelpPage;

@@ -12,7 +12,7 @@ import { HomePage } from "./pages/marketing/HomePage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
 import AboutPage from "./pages/marketing/AboutPage";
 
-// Public pages
+// Public pages  
 import HelpPage from "./pages/HelpPage";
 
 // Auth pages
