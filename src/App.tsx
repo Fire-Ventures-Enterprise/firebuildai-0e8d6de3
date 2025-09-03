@@ -74,6 +74,9 @@ import InvoicePortalPage from "./pages/portal/InvoicePortalPage";
 import EstimateOpenPage from "./pages/open/EstimateOpenPage";
 import DownloadAppPage from "./pages/marketing/DownloadAppPage";
 
+// Legacy redirects
+import { legacyRedirects } from "./routes/legacyRedirects";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -84,6 +87,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            {/* Legacy redirects */}
+            {legacyRedirects}
             {/* Marketing Site */}
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
