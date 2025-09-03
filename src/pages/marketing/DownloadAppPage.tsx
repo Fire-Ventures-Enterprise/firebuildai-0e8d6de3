@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import QRCode from "qrcode";
 import { Apple, Chrome, Download, Smartphone, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { R } from "@/routes/routeMap";
 
 const LINKS = {
   ANDROID_APK: "https://cdn.firebuildai.com/app/firebuildai-latest.apk", // Host versioned APKs
@@ -54,17 +56,17 @@ export default function DownloadAppPage() {
       <header className="border-b border-border bg-background/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center gap-2">
+            <Link to={R.home} className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
                 alt="FireBuildAI" 
                 className="h-8" 
               />
               <span className="text-xl font-bold">FireBuild</span>
-            </a>
-            <a href="/login">
+            </Link>
+            <Link to={R.login}>
               <Button variant="outline">Sign In</Button>
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -282,11 +284,11 @@ export default function DownloadAppPage() {
             <p className="text-muted-foreground mb-6">
               Join thousands of contractors who are streamlining their operations with FireBuildAI
             </p>
-            <a href="/signup">
+            <Link to={R.signup}>
               <Button size="lg" className="px-8">
                 Start Free Trial
               </Button>
-            </a>
+            </Link>
           </Card>
         </div>
       </div>

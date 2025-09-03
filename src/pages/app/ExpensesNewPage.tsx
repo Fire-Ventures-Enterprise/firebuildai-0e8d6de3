@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { R } from '@/routes/routeMap';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -117,7 +118,7 @@ export default function ExpensesNewPage() {
         description: `Expense ${status === 'draft' ? 'saved as draft' : 'submitted'}`,
       });
       
-      navigate('/app/expenses');
+      navigate(R.expensesLegacy);
     } catch (error) {
       console.error("Error creating expense:", error);
       toast({
@@ -139,7 +140,7 @@ export default function ExpensesNewPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/app/expenses')}
+            onClick={() => navigate(R.expensesLegacy)}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>

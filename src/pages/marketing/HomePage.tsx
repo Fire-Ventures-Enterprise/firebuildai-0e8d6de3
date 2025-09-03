@@ -11,6 +11,7 @@ import { MobileAppSection } from "@/components/marketing/MobileAppSection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
+import { R } from "@/routes/routeMap";
 
 export const HomePage = () => {
   return (
@@ -47,12 +48,12 @@ export const HomePage = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link to="/login">
+              <Link to={R.login}>
                 <Button variant="ghost" className="hidden sm:inline-flex">
                   Login
                 </Button>
               </Link>
-              <Link to="/signup">
+              <Link to={R.signup}>
                 <Button>
                   Get Started Free
                 </Button>
@@ -116,31 +117,45 @@ export const HomePage = () => {
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
-                <li><Link to="/tutorials" className="hover:text-foreground transition-colors">Tutorials</Link></li>
-                <li><Link to="/download" className="hover:text-foreground transition-colors">Download</Link></li>
-                <li><Link to="/api-docs" className="hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">API</Link></li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-foreground transition-colors text-left"
+                  >
+                    Features
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-foreground transition-colors text-left"
+                  >
+                    Pricing
+                  </button>
+                </li>
+                <li><Link to={R.tutorials} className="hover:text-foreground transition-colors">Tutorials</Link></li>
+                <li><Link to={R.download} className="hover:text-foreground transition-colors">Download</Link></li>
+                <li><Link to={R.api} className="hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">API</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/about" className="hover:text-foreground transition-colors">About</Link></li>
-                <li><Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
-                <li><Link to="/careers" className="hover:text-foreground transition-colors">Careers</Link></li>
-                <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
+                <li><Link to={R.about} className="hover:text-foreground transition-colors">About</Link></li>
+                <li><Link to={R.blog} className="hover:text-foreground transition-colors">Blog</Link></li>
+                <li><Link to={R.careers} className="hover:text-foreground transition-colors">Careers</Link></li>
+                <li><Link to={R.contact} className="hover:text-foreground transition-colors">Contact</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Support</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/help-center" className="hover:text-foreground transition-colors">Help Center</Link></li>
-                <li><Link to="/docs" className="hover:text-foreground transition-colors">Documentation</Link></li>
-                <li><Link to="/status" className="hover:text-foreground transition-colors">Status</Link></li>
-                <li><Link to="/terms" className="hover:text-foreground transition-colors">Terms & Privacy</Link></li>
+                <li><Link to={R.helpCenter} className="hover:text-foreground transition-colors">Help Center</Link></li>
+                <li><Link to={R.documentation} className="hover:text-foreground transition-colors">Documentation</Link></li>
+                <li><Link to={R.status} className="hover:text-foreground transition-colors">Status</Link></li>
+                <li><Link to={R.terms} className="hover:text-foreground transition-colors">Terms & Privacy</Link></li>
               </ul>
             </div>
           </div>

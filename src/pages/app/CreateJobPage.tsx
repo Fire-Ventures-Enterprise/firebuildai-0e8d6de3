@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Briefcase, Calendar, DollarSign, MapPin, User } from 'lucide-react';
+import { R } from '@/routes/routeMap';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +58,7 @@ export default function CreateJobPage() {
         description: 'Job created successfully',
       });
 
-      navigate('/app/jobs');
+      navigate(R.jobs);
     } catch (error) {
       console.error('Error creating job:', error);
       toast({
@@ -76,7 +77,7 @@ export default function CreateJobPage() {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate('/app/jobs')}
+            onClick={() => navigate(R.jobs)}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -222,7 +223,7 @@ export default function CreateJobPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/app/jobs')}
+                  onClick={() => navigate(R.jobs)}
                 >
                   Cancel
                 </Button>

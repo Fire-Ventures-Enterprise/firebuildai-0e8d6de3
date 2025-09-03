@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { R } from '@/routes/routeMap';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +27,7 @@ export const ResetPasswordPage = () => {
           description: "Please request a new password reset link",
           variant: "destructive",
         });
-        navigate('/forgot-password');
+        navigate(R.forgotPassword);
       }
     });
   }, [navigate]);
@@ -69,7 +70,7 @@ export const ResetPasswordPage = () => {
       
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        navigate('/login');
+        navigate(R.login);
       }, 2000);
     } catch (error: any) {
       toast({

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { R } from "@/routes/routeMap";
 
 export const HeroSection = () => {
   return (
@@ -39,7 +40,7 @@ export const HeroSection = () => {
           
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-            <Link to="/app/dashboard">
+            <Link to={R.dashboard}>
               <Button size="lg" className="group text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

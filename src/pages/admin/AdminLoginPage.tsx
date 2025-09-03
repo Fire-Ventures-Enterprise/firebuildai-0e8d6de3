@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { R } from '@/routes/routeMap';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Loader2, AlertCircle } from 'lucide-react';
@@ -45,7 +46,7 @@ export const AdminLoginPage = () => {
         description: `Logged in as ${adminData.role}`,
       });
 
-      navigate('/secure-admin-2024-fb-portal');
+      navigate(R.adminDashboard);
     } catch (error) {
       toast({
         title: "Login Failed",

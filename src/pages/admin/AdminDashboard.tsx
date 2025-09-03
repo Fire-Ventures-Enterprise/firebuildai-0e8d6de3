@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { R } from '@/routes/routeMap';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +29,7 @@ export const AdminDashboard = () => {
 
   const checkAdminAccess = async () => {
     if (!user) {
-      navigate('/login');
+      navigate(R.login);
       return;
     }
 
@@ -50,11 +51,11 @@ export const AdminDashboard = () => {
           description: "You don't have admin privileges",
           variant: "destructive",
         });
-        navigate('/');
+        navigate(R.home);
       }
     } catch (error) {
       console.error('Error checking admin access:', error);
-      navigate('/');
+      navigate(R.home);
     } finally {
       setLoading(false);
     }
@@ -87,14 +88,14 @@ export const AdminDashboard = () => {
                 <Badge variant="secondary">{adminRole}</Badge>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={() => navigate('/')}>
+                <Button variant="outline" onClick={() => navigate(R.home)}>
                   Back to Main Site
                 </Button>
                 <Button 
                   variant="ghost" 
                   onClick={async () => {
                     await supabase.auth.signOut();
-                    navigate('/login');
+                    navigate(R.login);
                   }}
                 >
                   Sign Out

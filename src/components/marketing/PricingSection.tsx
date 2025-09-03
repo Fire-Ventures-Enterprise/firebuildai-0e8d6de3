@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { R } from "@/routes/routeMap";
 
 const plans = [
   {
@@ -110,8 +111,8 @@ export const PricingSection = () => {
                   )}
                 </div>
 
-                <Link to="/app/dashboard">
-                  <Button 
+                <Link to={R.dashboard}>
+                  <Button
                     className={`w-full ${
                       plan.popular ? '' : 'variant-outline'
                     }`}

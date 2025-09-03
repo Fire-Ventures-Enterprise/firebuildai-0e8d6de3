@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Plus, Trash2 } from 'lucide-react';
+import { R } from '@/routes/routeMap';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -131,7 +132,7 @@ export default function CreatePurchaseOrderPage() {
         description: 'Purchase order created successfully',
       });
 
-      navigate('/app/purchase-orders');
+      navigate(R.purchaseOrders);
     } catch (error) {
       console.error('Error creating purchase order:', error);
       toast({
@@ -152,7 +153,7 @@ export default function CreatePurchaseOrderPage() {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate('/app/purchase-orders')}
+            onClick={() => navigate(R.purchaseOrders)}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -339,7 +340,7 @@ export default function CreatePurchaseOrderPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate('/app/purchase-orders')}
+                onClick={() => navigate(R.purchaseOrders)}
               >
                 Cancel
               </Button>
