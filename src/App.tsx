@@ -12,7 +12,15 @@ import { HomePage } from "./pages/marketing/HomePage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
 import AboutPage from "./pages/marketing/AboutPage";
 
-// Public pages  
+// Feature pages
+import { ProfessionalEstimatesPage } from "./pages/features/ProfessionalEstimatesPage";
+import { InvoicePaymentsPage } from "./pages/features/InvoicePaymentsPage";
+import { JobSchedulingPage } from "./pages/features/JobSchedulingPage";
+import { CrewManagementPage } from "./pages/features/CrewManagementPage";
+import { AnalyticsPage as FeaturesAnalyticsPage } from "./pages/features/AnalyticsPage";
+import { MobileAppPage } from "./pages/features/MobileAppPage";
+
+// Public pages
 import HelpPage from "./pages/HelpPage";
 
 // Auth pages
