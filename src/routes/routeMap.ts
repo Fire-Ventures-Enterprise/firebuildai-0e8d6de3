@@ -8,6 +8,8 @@ export const R = {
   home: "/",
   login: "/login",
   signup: "/signup",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
   tutorials: "/tutorials",
   download: "/download",
   help: "/help",
@@ -21,6 +23,15 @@ export const R = {
   status: "/status",
   terms: "/terms",
   privacy: "/privacy",
+  pricing: "/pricing",
+
+  // Feature Marketing Pages
+  featuresEstimates: "/features/estimates",
+  featuresScheduling: "/features/scheduling",
+  featuresInvoicing: "/features/invoicing",
+  featuresCrew: "/features/crew",
+  featuresAnalytics: "/features/analytics",
+  featuresMobile: "/features/mobile",
 
   // Main App Routes
   dashboard: "/app/dashboard",
@@ -28,16 +39,17 @@ export const R = {
   // Company & Admin
   company: "/app/company",
   settings: "/app/settings",
-  admin: "/admin",
+  admin: "/secure-admin-2024-fb-portal",
   adminLogin: "/admin/login",
-  adminDashboard: "/admin/dashboard",
-  adminConsultations: "/admin/consultations",
+  adminDashboard: "/secure-admin-2024-fb-portal",
+  adminConsultations: "/secure-admin-2024-fb-portal/consultations",
   upgrade: "/app/upgrade",
+  upgradePlain: "/upgrade",
   
   // Client Management
   clients: "/app/client-portal",
   clientReports: "/app/client-reports",
-  clientMessages: "/app/client-portal", // Same as clients for now
+  clientMessages: "/app/client-portal",
   
   // Team & Fleet Management
   teams: "/app/teams",
@@ -70,6 +82,7 @@ export const R = {
   
   expenses: "/app/finance/expenses",
   expenseNew: "/app/finance/expenses/new",
+  expensesLegacy: "/app/expenses", // Legacy route
   vendors: "/app/finance/vendors",
   vendorNew: "/app/finance/vendors/new",
   vendorDetail: (id: string) => `/app/finance/vendors/${id}`,

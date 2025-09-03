@@ -3,6 +3,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Clock, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { R } from '@/routes/routeMap';
 
 export const TrialBanner = () => {
   const { profile, isTrialActive, daysRemaining } = useAuth();
@@ -44,7 +45,7 @@ export const TrialBanner = () => {
             )}
           </AlertDescription>
         </div>
-        <Link to="/upgrade">
+        <Link to={R.upgrade}>
           <Button 
             size="sm" 
             variant={isDanger ? 'destructive' : isWarning ? 'default' : 'outline'}

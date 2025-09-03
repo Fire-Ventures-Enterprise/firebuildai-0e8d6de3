@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { checkTrialStatus, UserProfile } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
+import { R } from '@/routes/routeMap';
 
 interface AuthContextType {
   user: User | null;
@@ -65,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (status === 'expired' && !data.is_subscribed) {
           console.log('Trial expired, redirecting to upgrade');
           toast.error('Your free trial has expired. Please upgrade to continue.');
-          navigate('/upgrade');
+          navigate(R.upgrade);
         }
       }
 
@@ -164,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             error.message?.toLowerCase().includes('user already registered')) {
           toast.error('You already have an account. Please sign in instead.');
           // Redirect to login page after a short delay
-          setTimeout(() => navigate('/login'), 1500);
+          setTimeout(() => navigate(R.login), 1500);
           throw new Error('User already exists');
         }
         throw error;
@@ -197,14 +198,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Check if profile already exists
           if (profileError.code === '23505') { // Duplicate key error
             toast.info('Welcome back! Redirecting to dashboard...');
-            navigate('/app/dashboard');
+            navigate(R.dashboard);
             return;
           }
           throw profileError;
         }
 
         toast.success('Welcome to FireBuild! Your 30-day free trial has started.');
-        navigate('/app/dashboard');
+        navigate(R.dashboard);
       }
     } catch (error: any) {
       if (error.message !== 'User already exists') {
@@ -228,7 +229,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (data.user) {
       toast.success('Welcome back!');
-      navigate('/app/dashboard');
+      navigate(R.dashboard);
     }
   };
 
@@ -242,7 +243,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setProfile(null);
       toast.success('Signed out successfully');
-      navigate('/');
+      navigate(R.home);
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign out');
       throw error;

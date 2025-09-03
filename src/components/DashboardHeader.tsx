@@ -2,10 +2,11 @@ import { Bell, Search, User, Settings, HardHat, ExternalLink, Shield, Sun, Moon 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "next-themes";
+import { R } from "@/routes/routeMap";
 
 export const DashboardHeader = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -55,7 +56,7 @@ export const DashboardHeader = () => {
         {/* Actions */}
         <div className="flex items-center gap-3">
           {isAdmin && (
-            <Link to="/admin">
+            <Link to={R.admin}>
               <Button variant="ghost" size="sm" className="gap-2 text-destructive">
                 <Shield className="w-4 h-4" />
                 <span className="hidden sm:inline">Admin</span>
@@ -63,7 +64,7 @@ export const DashboardHeader = () => {
             </Link>
           )}
           
-          <Link to="/">
+          <Link to={R.home}>
             <Button variant="ghost" size="sm" className="gap-2">
               <ExternalLink className="w-4 h-4" />
               <span className="hidden sm:inline">View Site</span>

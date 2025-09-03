@@ -24,6 +24,21 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-unused-vars": "off",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: 'JSXAttribute[name.name="href"][value.value="#"]',
+          message: "Avoid using href='#'. Use proper navigation with Link or Button components."
+        },
+        {
+          selector: 'JSXAttribute[name.name="href"][value.value="javascript:void(0)"]',
+          message: "Avoid using href='javascript:void(0)'. Use Button component instead."
+        },
+        {
+          selector: 'JSXAttribute[name.name="onClick"][value.expression.body.body.length=0]',
+          message: "Empty onClick handlers are not allowed. Implement proper functionality or remove."
+        }
+      ],
     },
   }
 );
