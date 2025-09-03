@@ -87,6 +87,14 @@ const App = () => (
             <Route path="/download" element={<DownloadAppPage />} />
             <Route path="/tutorials" element={<TutorialsPage />} />
             
+            {/* Feature Pages */}
+            <Route path="/features/estimates" element={<ProfessionalEstimatesPage />} />
+            <Route path="/features/invoicing" element={<InvoicePaymentsPage />} />
+            <Route path="/features/scheduling" element={<JobSchedulingPage />} />
+            <Route path="/features/crew" element={<CrewManagementPage />} />
+            <Route path="/features/analytics" element={<FeaturesAnalyticsPage />} />
+            <Route path="/features/mobile" element={<MobileAppPage />} />
+            
             {/* Auth Routes */}
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
