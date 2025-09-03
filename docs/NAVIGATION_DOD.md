@@ -1,5 +1,20 @@
 # Navigation Hardening - Definition of Done Checklist
 
+## 🎯 Definition of Done
+
+1. **Zero broken links in public crawl** - Linkinator passes with 0 failures
+2. **All nav/tabs/buttons route or trigger intended action** - No dead clicks
+3. **Sidebar active state correct across pages** - Visual feedback for current location
+4. **Mobile menu keyboard-accessible; closes on Esc and nav** - Full accessibility support
+5. **Legacy routes 301 to new locations** - SEO-friendly redirects
+6. **Playwright + linkinator pass in CI** - Automated validation
+7. **Short Loom showing:** sidebar, mobile nav, quick actions, a detail → breadcrumb trail, a portal link
+
+## 🚀 Nice-to-Haves (Quick Wins)
+
+- **Recently visited menu** - Stores last 5 routes in localStorage for quick navigation
+- **Persist sidebar collapse state** - Remembers user preference across reloads
+
 ## ✅ Completed Items
 
 ### 1. Route Centralization

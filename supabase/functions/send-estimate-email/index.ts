@@ -262,7 +262,7 @@ serve(async (req) => {
     const brandedEmailProps = {
       company: {
         name: companyName,
-        logoUrl: `${siteUrl}/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png`,
+        logoUrl: `${siteUrl}/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png`,
         siteUrl: siteUrl,
         address: companyAddress,
         phone: companyPhone,

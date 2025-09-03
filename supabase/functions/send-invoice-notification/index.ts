@@ -141,7 +141,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; border-radius: 0 0 10px 10px;">
               <p style="margin: 0; font-size: 12px;">
-                This is an automated notification from ${companyName} • FireBuildAI.com
+                This is an automated notification from ${companyName} • FireBuild.ai
               </p>
             </div>
           </div>
@@ -203,7 +203,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; border-radius: 0 0 10px 10px;">
               <p style="margin: 0; font-size: 12px;">
-                This is an automated notification from ${companyName} • FireBuildAI.com
+                This is an automated notification from ${companyName} • FireBuild.ai
               </p>
             </div>
           </div>
@@ -251,7 +251,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; border-radius: 0 0 10px 10px;">
               <p style="margin: 0; font-size: 12px;">
-                This is an automated notification from ${companyName} • FireBuildAI.com
+                This is an automated notification from ${companyName} • FireBuild.ai
               </p>
             </div>
           </div>
@@ -260,7 +260,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "FireBuildAI.com <onboarding@resend.dev>",
+      from: "FireBuild.ai <onboarding@resend.dev>",
       to: emailTo,
       subject: subject,
       html: htmlContent,

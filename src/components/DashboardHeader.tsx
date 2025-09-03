@@ -32,8 +32,8 @@ export const DashboardHeader = () => {
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
           <img 
-            src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
-            alt="FireBuildAI.com" 
+            src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
+            alt="FireBuild.ai"
             className="w-14 h-14 object-contain"
           />
           <div>

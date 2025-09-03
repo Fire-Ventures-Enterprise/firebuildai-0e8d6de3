@@ -37,8 +37,8 @@ export default function MobilePairLanding() {
       <div className="max-w-lg space-y-6 text-center">
         <div className="flex justify-center">
           <img 
-            src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
-            alt="FireBuildAI.com" 
+            src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
+            alt="FireBuild.ai"
             className="h-12 opacity-90" 
           />
         </div>

@@ -76,11 +76,11 @@ export function MobileMenu() {
         <SheetHeader className="p-6 border-b">
           <SheetTitle className="flex items-center gap-2">
             <img 
-              src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
-              alt="FireBuildAI.com" 
+              src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
+              alt="FireBuild.ai" 
               className="h-8 w-8"
             />
-            <span>FireBuildAI</span>
+            <span>FireBuild.ai</span>
           </SheetTitle>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-80px)]">
