@@ -32,7 +32,7 @@ export const MobileAppPage = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth/signup">
+              <Link to="/signup">
                 <Button size="lg" className="bg-pink-600 hover:bg-pink-700">
                   Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

@@ -11,6 +11,7 @@ import { AppLayout } from "./layouts/AppLayout";
 import { HomePage } from "./pages/marketing/HomePage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
 import AboutPage from "./pages/marketing/AboutPage";
+import { PricingPage } from "./pages/PricingPage";
 
 // Feature pages
 import { ProfessionalEstimatesPage } from "./pages/features/ProfessionalEstimatesPage";
@@ -86,6 +87,7 @@ const App = () => (
             <Route path="/help" element={<HelpPage />} />
             <Route path="/download" element={<DownloadAppPage />} />
             <Route path="/tutorials" element={<TutorialsPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
             
             {/* Feature Pages */}
             <Route path="/features/estimates" element={<ProfessionalEstimatesPage />} />

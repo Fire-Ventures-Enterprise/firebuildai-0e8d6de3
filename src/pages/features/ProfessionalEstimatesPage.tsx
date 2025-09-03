@@ -82,7 +82,7 @@ export const ProfessionalEstimatesPage = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/auth/signup">
+                <Link to="/signup">
                   <Button size="lg" className="w-full sm:w-auto">
                     Start Free Trial
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -209,7 +209,7 @@ export const ProfessionalEstimatesPage = () => {
             No credit card required for your 30-day free trial.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth/signup">
+            <Link to="/signup">
               <Button size="lg" className="min-w-[200px]">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />

@@ -82,7 +82,7 @@ export const InvoicePaymentsPage = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/auth/signup">
+                <Link to="/signup">
                   <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700">
                     Start Free Trial
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -248,7 +248,7 @@ export const InvoicePaymentsPage = () => {
             Start your 30-day free trial with no credit card required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth/signup">
+            <Link to="/signup">
               <Button size="lg" className="min-w-[200px] bg-green-600 hover:bg-green-700">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />
