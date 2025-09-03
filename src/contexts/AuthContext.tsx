@@ -157,7 +157,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check if the error is because user already exists
+        if (error.message?.toLowerCase().includes('already registered') || 
+            error.message?.toLowerCase().includes('already exists') ||
+            error.message?.toLowerCase().includes('user already registered')) {
+          toast.error('You already have an account. Please sign in instead.');
+          // Redirect to login page after a short delay
+          setTimeout(() => navigate('/login'), 1500);
+          throw new Error('User already exists');
+        }
+        throw error;
+      }
 
       if (data.user) {
         // Create profile with trial information
@@ -182,13 +193,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             data_retention_until: dataRetentionDate.toISOString(),
           });
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          // Check if profile already exists
+          if (profileError.code === '23505') { // Duplicate key error
+            toast.info('Welcome back! Redirecting to dashboard...');
+            navigate('/app/dashboard');
+            return;
+          }
+          throw profileError;
+        }
 
         toast.success('Welcome to FireBuild! Your 30-day free trial has started.');
         navigate('/app/dashboard');
       }
     } catch (error: any) {
-      toast.error(error.message || 'Failed to sign up');
+      if (error.message !== 'User already exists') {
+        toast.error(error.message || 'Failed to sign up');
+      }
       throw error;
     }
   };
