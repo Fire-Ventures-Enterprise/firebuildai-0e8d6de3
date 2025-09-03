@@ -151,7 +151,7 @@ export const EnhancedInvoicePreview = ({ open, onOpenChange, invoice }: Enhanced
         </div>
 
         {/* Invoice Content */}
-        <div className="p-8 bg-white">
+        <div id="invoice-sheet" className="invoice-surface p-8">
           {/* Header */}
           <div className="grid grid-cols-2 gap-8 mb-8">
             <div>
