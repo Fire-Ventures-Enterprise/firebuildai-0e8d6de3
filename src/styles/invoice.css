@@ -1,26 +1,27 @@
 /* Invoice-specific styles that respect theme */
 .invoice-surface { 
   background: hsl(var(--card)) !important; 
-  color: hsl(var(--card-foreground)) !important; 
+  color: hsl(var(--foreground)) !important; 
 }
 
 .invoice-surface * { 
-  color: inherit !important; 
+  color: hsl(var(--foreground)) !important; 
 }
 
 .invoice-surface .text-muted-foreground,
 .invoice-surface .text-muted,
 .invoice-surface .muted { 
   color: hsl(var(--muted-foreground)) !important; 
+  opacity: 0.7;
 }
 
 .invoice-surface table {
-  color: hsl(var(--card-foreground)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .invoice-surface th,
 .invoice-surface td {
-  color: hsl(var(--card-foreground)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .invoice-surface h1,
@@ -28,12 +29,16 @@
 .invoice-surface h3,
 .invoice-surface h4,
 .invoice-surface h5,
-.invoice-surface h6,
+.invoice-surface h6 {
+  color: hsl(var(--foreground)) !important;
+  font-weight: 600;
+}
+
 .invoice-surface p,
 .invoice-surface span,
 .invoice-surface div,
 .invoice-surface label {
-  color: hsl(var(--card-foreground)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Print-specific styles - always white background */
