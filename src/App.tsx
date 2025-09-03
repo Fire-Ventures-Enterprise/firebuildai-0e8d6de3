@@ -27,6 +27,8 @@ import HelpPage from "./pages/HelpPage";
 // Auth pages
 import { SignUpPage } from "./pages/auth/SignUpPage";
 import { LoginPage } from "./pages/auth/LoginPage";
+import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 
 // App pages
 import { DashboardPage } from "./pages/app/DashboardPage";
@@ -100,6 +102,8 @@ const App = () => (
             {/* Auth Routes */}
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             
             {/* Portal Routes - Public */}
             <Route path="/open/estimate/:token" element={<EstimateOpenPage />} />
