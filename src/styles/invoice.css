@@ -1,65 +1,101 @@
-/* Invoice-specific styles with proper contrast */
-.invoice-surface { 
-  background: #ffffff !important; 
-  color: #000000 !important; 
+/* =========================
+   Invoice: force light mode
+   ========================= */
+#invoice-sheet.invoice-surface {
+  background: #ffffff !important;
+  color: #000000 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.invoice-surface * { 
-  color: #000000 !important; 
-}
-
-.invoice-surface .text-muted-foreground,
-.invoice-surface .text-muted,
-.invoice-surface .muted { 
-  color: #6b7280 !important; 
-}
-
-.invoice-surface table {
+/* Hard-override any inherited text color (incl. Tailwind text-white) */
+#invoice-sheet.invoice-surface *,
+#invoice-sheet.invoice-surface [class*="text-white"],
+#invoice-sheet.invoice-surface [style*="color: rgb(255, 255, 255)"] {
   color: #000000 !important;
 }
 
-.invoice-surface th,
-.invoice-surface td {
-  color: #000000 !important;
+/* Muted labels */
+#invoice-sheet.invoice-surface .text-muted-foreground,
+#invoice-sheet.invoice-surface .text-muted,
+#invoice-sheet.invoice-surface .muted {
+  color: #6b7280 !important; /* slate-500 */
 }
 
-.invoice-surface h1,
-.invoice-surface h2,
-.invoice-surface h3,
-.invoice-surface h4,
-.invoice-surface h5,
-.invoice-surface h6 {
+/* Links */
+#invoice-sheet.invoice-surface a {
+  color: #111827 !important; /* slate-900 */
+  text-decoration: underline;
+}
+
+/* Icons */
+#invoice-sheet.invoice-surface svg {
+  stroke: #000000 !important;
+  fill: currentColor !important;
+}
+
+/* Tables */
+#invoice-sheet.invoice-surface table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #000000 !important;
+}
+#invoice-sheet.invoice-surface th,
+#invoice-sheet.invoice-surface td {
+  color: #000000 !important;
+  border: 1px solid #e5e7eb !important; /* slate-200 */
+  padding: 6px;
+  vertical-align: top;
+}
+#invoice-sheet.invoice-surface thead th {
+  background: #f3f4f6 !important; /* slate-100 */
+  font-weight: 600;
+}
+
+/* Headings */
+#invoice-sheet.invoice-surface h1,
+#invoice-sheet.invoice-surface h2,
+#invoice-sheet.invoice-surface h3,
+#invoice-sheet.invoice-surface h4,
+#invoice-sheet.invoice-surface h5,
+#invoice-sheet.invoice-surface h6 {
   color: #000000 !important;
   font-weight: 600;
 }
 
-.invoice-surface p,
-.invoice-surface span,
-.invoice-surface div,
-.invoice-surface label {
+/* Paragraphs & common elements */
+#invoice-sheet.invoice-surface p,
+#invoice-sheet.invoice-surface span,
+#invoice-sheet.invoice-surface div,
+#invoice-sheet.invoice-surface label,
+#invoice-sheet.invoice-surface li,
+#invoice-sheet.invoice-surface dt,
+#invoice-sheet.invoice-surface dd {
   color: #000000 !important;
 }
 
-/* Print-specific styles - always white background */
-@media print { 
-  html, body { 
-    background: #ffffff !important; 
-  } 
-  
-  .no-print { 
-    display: none !important; 
-  }
-  
-  .invoice-surface {
+/* Horizontal rules */
+#invoice-sheet.invoice-surface hr {
+  border: 0;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+/* Print (always white background, black text) */
+@media print {
+  html, body {
     background: #ffffff !important;
     color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
   }
-  
-  .invoice-surface * {
+  .no-print { display: none !important; }
+
+  #invoice-sheet.invoice-surface,
+  #invoice-sheet.invoice-surface * {
+    background: transparent !important;
     color: #000000 !important;
   }
-  
-  .invoice-surface .text-muted-foreground {
-    color: #4b5563 !important;
+  #invoice-sheet.invoice-surface thead th {
+    background: #f3f4f6 !important;
   }
 }
