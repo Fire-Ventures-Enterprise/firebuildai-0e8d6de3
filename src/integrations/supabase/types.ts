@@ -511,6 +511,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_events: {
+        Row: {
+          created_at: string | null
+          event: string
+          id: number
+          meta: Json | null
+          provider_id: string | null
+          subject: string | null
+          to_email: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event: string
+          id?: number
+          meta?: Json | null
+          provider_id?: string | null
+          subject?: string | null
+          to_email?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event?: string
+          id?: number
+          meta?: Json | null
+          provider_id?: string | null
+          subject?: string | null
+          to_email?: string | null
+        }
+        Relationships: []
+      }
       email_leads: {
         Row: {
           accepted_terms: boolean
@@ -541,6 +571,108 @@ export type Database = {
           marketing_consent?: boolean | null
           source_page?: string | null
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      email_outbox: {
+        Row: {
+          bcc: string[] | null
+          cc: string[] | null
+          created_at: string | null
+          error: string | null
+          id: string
+          next_retry_at: string | null
+          payload: Json
+          provider_id: string | null
+          ref_id: string | null
+          retry_count: number | null
+          sent_at: string | null
+          status: string
+          subject: string
+          template: string
+          to_email: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          bcc?: string[] | null
+          cc?: string[] | null
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          next_retry_at?: string | null
+          payload: Json
+          provider_id?: string | null
+          ref_id?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          template: string
+          to_email: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          bcc?: string[] | null
+          cc?: string[] | null
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          next_retry_at?: string | null
+          payload?: Json
+          provider_id?: string | null
+          ref_id?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          template?: string
+          to_email?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      email_rate_limits: {
+        Row: {
+          count: number | null
+          email: string
+          window_start: string
+        }
+        Insert: {
+          count?: number | null
+          email: string
+          window_start: string
+        }
+        Update: {
+          count?: number | null
+          email?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      email_suppressions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          meta: Json | null
+          reason: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          meta?: Json | null
+          reason: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          meta?: Json | null
+          reason?: string
         }
         Relationships: []
       }
@@ -2888,6 +3020,10 @@ export type Database = {
         Args: { invoice_id_param: string; override_phrase?: string }
         Returns: boolean
       }
+      check_email_rate_limit: {
+        Args: { p_email: string; p_limit?: number; p_window_minutes?: number }
+        Returns: boolean
+      }
       check_trial_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -3092,6 +3228,10 @@ export type Database = {
         Args: { check_user_id?: string }
         Returns: boolean
       }
+      is_email_suppressed: {
+        Args: { p_email: string }
+        Returns: boolean
+      }
       log_security_event: {
         Args: {
           p_event_description: string
@@ -3112,6 +3252,10 @@ export type Database = {
           p_window_secs?: number
         }
         Returns: boolean
+      }
+      process_email_bounce: {
+        Args: { p_email: string; p_provider_id: string; p_reason: string }
+        Returns: undefined
       }
       record_invoice_card_payment: {
         Args: {
