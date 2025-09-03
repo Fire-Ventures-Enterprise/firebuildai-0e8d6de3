@@ -59,7 +59,7 @@ export default function DownloadAppPage() {
             <Link to={R.home} className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
-                alt="FireBuildAI" 
+                alt="FireBuildAI.com" 
                 className="h-8" 
               />
               <span className="text-xl font-bold">FireBuild</span>

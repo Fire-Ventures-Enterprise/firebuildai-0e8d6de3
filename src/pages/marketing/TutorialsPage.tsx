@@ -83,8 +83,8 @@ export default function TutorialsPage() {
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
-              <img src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" alt="FireBuildAI" className="h-8 w-8" />
-              <span className="font-bold text-xl">FireBuildAI</span>
+              <img src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" alt="FireBuildAI.com" className="h-8 w-8" />
+              <span className="font-bold text-xl">FireBuildAI.com</span>
             </Link>
             <div className="flex items-center gap-4">
               <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Home</Link>

@@ -77,7 +77,7 @@ export function MobileMenu() {
           <SheetTitle className="flex items-center gap-2">
             <img 
               src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
-              alt="FireBuildAI" 
+              alt="FireBuildAI.com" 
               className="h-8 w-8"
             />
             <span>FireBuildAI</span>

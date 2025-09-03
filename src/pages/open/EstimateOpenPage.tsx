@@ -19,7 +19,7 @@ export default function EstimateOpenPage() {
         <div className="flex justify-center">
           <img 
             src="/lovable-uploads/c78f53fd-e549-485e-a133-aad2f54a5823.png" 
-            alt="FireBuildAI" 
+            alt="FireBuildAI.com" 
             className="h-12 opacity-90"
           />
         </div>
