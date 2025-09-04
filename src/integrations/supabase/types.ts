@@ -44,6 +44,48 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_events: {
+        Row: {
+          created_at: string | null
+          ends_at: string
+          id: string
+          location: string | null
+          source: string
+          source_id: string
+          starts_at: string
+          team_id: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          ends_at: string
+          id?: string
+          location?: string | null
+          source: string
+          source_id: string
+          starts_at: string
+          team_id?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          ends_at?: string
+          id?: string
+          location?: string | null
+          source?: string
+          source_id?: string
+          starts_at?: string
+          team_id?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       change_orders: {
         Row: {
           amount: number
@@ -1455,6 +1497,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invoice_scheduling: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          invoice_id: string
+          notes: string | null
+          starts_at: string
+          status: string
+          team_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          invoice_id: string
+          notes?: string | null
+          starts_at: string
+          status?: string
+          team_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          invoice_id?: string
+          notes?: string | null
+          starts_at?: string
+          status?: string
+          team_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       invoice_signatures: {
         Row: {
@@ -3272,6 +3350,10 @@ export type Database = {
       }
       seed_expense_categories_for_user: {
         Args: { p_user_id: string }
+        Returns: undefined
+      }
+      sync_invoice_schedule_to_calendar: {
+        Args: { p_invoice_id: string }
         Returns: undefined
       }
       track_device_session: {

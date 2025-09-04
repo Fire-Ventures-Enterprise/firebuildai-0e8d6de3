@@ -35,6 +35,7 @@ import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
+import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanyPage from "./pages/app/CompanyPage";
 import TeamsPage from "./pages/app/TeamsPage";
@@ -148,6 +149,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <InvoicesPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/invoices/:id" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <InvoiceDetailPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
