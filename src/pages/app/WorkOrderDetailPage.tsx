@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { 
+  getWorkOrder, 
+  getWorkOrderItems, 
+  getWorkOrderReport, 
+  updateWorkOrderStatus,
+  createWorkOrderToken 
+} from "@/services/workOrders";
+import { CreateCrewLinkButton } from "@/components/workorders/CreateCrewLinkButton";
+import { WorkOrderPrintSheet } from "@/components/workorders/WorkOrderPrintSheet";
 import { 
   Clipboard, 
   Calendar, 
@@ -70,62 +79,32 @@ export default function WorkOrderDetailPage() {
   async function loadWorkOrder() {
     setLoading(true);
     try {
-      // For now, using direct RPC calls since types aren't updated
-      const { data: woData, error: woError } = await supabase
-        .rpc('get_work_order_by_token' as any, { p_token: 'temp' }) // This will be replaced
-        .single();
+      const [wo, woItems, woReport] = await Promise.all([
+        getWorkOrder(id!),
+        getWorkOrderItems(id!),
+        getWorkOrderReport(id!)
+      ]);
 
-      if (woError) {
-        console.error('Error loading work order:', woError);
+      if (!wo) {
         toast({
           title: "Error",
-          description: "Failed to load work order",
+          description: "Work order not found",
           variant: "destructive"
         });
         navigate('/app/invoices');
         return;
       }
 
-      // Temporarily mock data for UI development
-      const mockWorkOrder: WorkOrder = {
-        id: id!,
-        user_id: 'mock',
-        invoice_id: 'mock',
-        title: 'Work Order #001',
-        service_address: '123 Main St, City, State 12345',
-        starts_at: new Date().toISOString(),
-        ends_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        status: 'issued',
-        instructions: 'Complete all tasks as specified',
-        created_by: 'mock',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
-      const mockItems: WorkOrderItem[] = [
-        {
-          id: '1',
-          work_order_id: id!,
-          kind: 'task',
-          description: 'Install new faucet in kitchen',
-          quantity: 1,
-          sort_order: 1
-        },
-        {
-          id: '2',
-          work_order_id: id!,
-          kind: 'material',
-          description: 'Kitchen faucet - Chrome finish',
-          quantity: 1,
-          unit: 'unit',
-          sort_order: 2
-        }
-      ];
-
-      setWorkOrder(mockWorkOrder);
-      setItems(mockItems);
+      setWorkOrder(wo as any);
+      setItems(woItems as any);
+      setReport(woReport);
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load work order",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

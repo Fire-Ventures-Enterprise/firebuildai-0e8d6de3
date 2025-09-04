@@ -1278,6 +1278,54 @@ export type Database = {
           },
         ]
       }
+      invoice_adjustments: {
+        Row: {
+          created_at: string | null
+          id: string
+          invoice_id: string
+          items: Json
+          source: string
+          source_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          invoice_id: string
+          items: Json
+          source?: string
+          source_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          invoice_id?: string
+          items?: Json
+          source?: string
+          source_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_adjustments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_adjustments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_enhanced"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_attachments: {
         Row: {
           id: string
@@ -3165,6 +3213,272 @@ export type Database = {
         }
         Relationships: []
       }
+      work_order_assignees: {
+        Row: {
+          id: string
+          user_id: string
+          work_order_id: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          work_order_id: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          work_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_order_assignees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_order_assignees_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_order_items: {
+        Row: {
+          description: string
+          id: string
+          internal_notes: string | null
+          kind: string
+          quantity: number | null
+          required_by: string | null
+          sort_order: number | null
+          source_invoice_item_id: string | null
+          unit: string | null
+          work_order_id: string
+        }
+        Insert: {
+          description: string
+          id?: string
+          internal_notes?: string | null
+          kind?: string
+          quantity?: number | null
+          required_by?: string | null
+          sort_order?: number | null
+          source_invoice_item_id?: string | null
+          unit?: string | null
+          work_order_id: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          internal_notes?: string | null
+          kind?: string
+          quantity?: number | null
+          required_by?: string | null
+          sort_order?: number | null
+          source_invoice_item_id?: string | null
+          unit?: string | null
+          work_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_order_items_source_invoice_item_id_fkey"
+            columns: ["source_invoice_item_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_items_enhanced"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_order_items_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_order_reports: {
+        Row: {
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          id: string
+          labor_hours: number | null
+          materials_used: Json | null
+          notes: string | null
+          photos: Json | null
+          signatures: Json | null
+          updated_at: string | null
+          work_order_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          id?: string
+          labor_hours?: number | null
+          materials_used?: Json | null
+          notes?: string | null
+          photos?: Json | null
+          signatures?: Json | null
+          updated_at?: string | null
+          work_order_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          id?: string
+          labor_hours?: number | null
+          materials_used?: Json | null
+          notes?: string | null
+          photos?: Json | null
+          signatures?: Json | null
+          updated_at?: string | null
+          work_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_order_reports_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_order_reports_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: true
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_order_tokens: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          token_hash: string
+          work_order_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          token_hash: string
+          work_order_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          token_hash?: string
+          work_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_order_tokens_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_orders: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          ends_at: string
+          id: string
+          instructions: string | null
+          invoice_id: string | null
+          job_id: string | null
+          schedule_id: string | null
+          service_address: string | null
+          starts_at: string
+          status: string
+          team_id: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          ends_at: string
+          id?: string
+          instructions?: string | null
+          invoice_id?: string | null
+          job_id?: string | null
+          schedule_id?: string | null
+          service_address?: string | null
+          starts_at: string
+          status?: string
+          team_id?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          ends_at?: string
+          id?: string
+          instructions?: string | null
+          invoice_id?: string | null
+          job_id?: string | null
+          schedule_id?: string | null
+          service_address?: string | null
+          starts_at?: string
+          status?: string
+          team_id?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_orders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: true
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: true
+            referencedRelation: "invoices_enhanced"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       invoices_due_view: {
@@ -3244,6 +3558,14 @@ export type Database = {
       cleanup_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      create_work_order_from_invoice: {
+        Args: { p_invoice_id: string }
+        Returns: string
+      }
+      create_work_order_token: {
+        Args: { p_ttl_hours?: number; p_work_order_id: string }
+        Returns: string
       }
       generate_po_number: {
         Args: Record<PropertyKey, never>
@@ -3429,6 +3751,10 @@ export type Database = {
           updated_at: string
         }[]
       }
+      get_work_order_by_token: {
+        Args: { p_token: string }
+        Returns: Json
+      }
       is_admin: {
         Args: { check_user_id?: string }
         Returns: boolean
@@ -3478,6 +3804,28 @@ export type Database = {
       seed_expense_categories_for_user: {
         Args: { p_user_id: string }
         Returns: undefined
+      }
+      submit_work_order_report: {
+        Args: {
+          p_labor_hours: number
+          p_materials_used: Json
+          p_notes: string
+          p_photos: Json
+          p_signatures: Json
+          p_token: string
+        }
+        Returns: boolean
+      }
+      submit_work_order_report_by_token: {
+        Args: {
+          p_labor_hours: number
+          p_materials_used: Json
+          p_notes: string
+          p_photos: Json
+          p_signatures: Json
+          p_token: string
+        }
+        Returns: boolean
       }
       sync_invoice_schedule_to_calendar: {
         Args: { p_invoice_id: string }

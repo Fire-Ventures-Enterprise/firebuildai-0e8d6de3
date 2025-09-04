@@ -91,20 +91,12 @@ export async function updateWorkOrderStatus(id: string, status: WorkOrder['statu
 }
 
 export async function createWorkOrderToken(workOrderId: string): Promise<string> {
-  const token = crypto.randomUUID();
-  const expiresAt = new Date();
-  expiresAt.setHours(expiresAt.getHours() + 48); // 48 hour expiry
-
-  const { error } = await supabase
-    .from('work_order_tokens' as any)
-    .insert({
-      work_order_id: workOrderId,
-      token_hash: token, // In production, this should be hashed
-      expires_at: expiresAt.toISOString()
-    });
-
+  const { data, error } = await supabase.rpc('create_work_order_token' as any, { 
+    p_work_order_id: workOrderId 
+  });
+  
   if (error) throw error;
-  return token;
+  return data as string; // plaintext token
 }
 
 export async function getWorkOrderByToken(token: string): Promise<any> {
@@ -126,7 +118,7 @@ export async function submitWorkOrderReport(
     signatures?: any[];
   }
 ): Promise<boolean> {
-  const { data, error } = await supabase.rpc('submit_work_order_report' as any, {
+  const { data, error } = await supabase.rpc('submit_work_order_report_by_token' as any, {
     p_token: token,
     p_notes: report.notes || null,
     p_labor_hours: report.labor_hours || 0,
