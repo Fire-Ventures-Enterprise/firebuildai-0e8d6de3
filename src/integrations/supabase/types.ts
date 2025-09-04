@@ -44,15 +44,58 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_event_attendees: {
+        Row: {
+          created_at: string | null
+          email: string
+          event_id: string
+          id: string
+          name: string | null
+          response_status: string | null
+          role: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          event_id: string
+          id?: string
+          name?: string | null
+          response_status?: string | null
+          role?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          event_id?: string
+          id?: string
+          name?: string | null
+          response_status?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "calendar_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_events: {
         Row: {
           created_at: string | null
           ends_at: string
+          external_calendar_id: string | null
+          external_event_id: string | null
+          external_provider: string | null
           id: string
           location: string | null
           source: string
           source_id: string
           starts_at: string
+          sync_error: string | null
+          sync_state: string | null
           team_id: string | null
           title: string
           updated_at: string | null
@@ -61,11 +104,16 @@ export type Database = {
         Insert: {
           created_at?: string | null
           ends_at: string
+          external_calendar_id?: string | null
+          external_event_id?: string | null
+          external_provider?: string | null
           id?: string
           location?: string | null
           source: string
           source_id: string
           starts_at: string
+          sync_error?: string | null
+          sync_state?: string | null
           team_id?: string | null
           title: string
           updated_at?: string | null
@@ -74,11 +122,16 @@ export type Database = {
         Update: {
           created_at?: string | null
           ends_at?: string
+          external_calendar_id?: string | null
+          external_event_id?: string | null
+          external_provider?: string | null
           id?: string
           location?: string | null
           source?: string
           source_id?: string
           starts_at?: string
+          sync_error?: string | null
+          sync_state?: string | null
           team_id?: string | null
           title?: string
           updated_at?: string | null
@@ -1147,6 +1200,80 @@ export type Database = {
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_accounts: {
+        Row: {
+          access_token: string | null
+          created_at: string | null
+          email: string
+          id: string
+          refresh_token: string
+          scope: string[] | null
+          token_expiry: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          refresh_token: string
+          scope?: string[] | null
+          token_expiry?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          refresh_token?: string
+          scope?: string[] | null
+          token_expiry?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      google_calendars: {
+        Row: {
+          account_id: string
+          calendar_id: string
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          is_selected: boolean | null
+          summary: string | null
+        }
+        Insert: {
+          account_id: string
+          calendar_id: string
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          is_selected?: boolean | null
+          summary?: string | null
+        }
+        Update: {
+          account_id?: string
+          calendar_id?: string
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          is_selected?: boolean | null
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_calendars_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "google_accounts"
             referencedColumns: ["id"]
           },
         ]
