@@ -66,22 +66,46 @@ This project uses GitHub Actions for CI/CD with automatic deployments to product
   - Security audits
   - Build verification
 
-## Required GitHub Secrets
+## Required GitHub Secrets & Environments
 
-### Core Secrets
-- `SUPABASE_ACCESS_TOKEN` - For Supabase CLI
+### GitHub Environments
+Configure two environments in Settings → Environments:
+1. **production** - For main branch deployments
+2. **preview** - For PR preview deployments
+
+### Core Infrastructure Secrets (Both Environments)
+- `SUPABASE_ACCESS_TOKEN` - Supabase CLI access token
 - `SUPABASE_PROJECT_REF` - Supabase project reference
-- `VITE_SUPABASE_URL` - Supabase API URL
+- `VITE_SUPABASE_URL` - Supabase API URL  
 - `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
-- `VITE_STRIPE_PUBLISHABLE_KEY` - Stripe public key
 
-### Hosting Provider Secrets
+### Payment Provider Secrets
+- `VITE_STRIPE_PUBLISHABLE_KEY` - Stripe publishable key (browser)
+- `STRIPE_SECRET_KEY` - Stripe secret key (edge functions)
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook secret
+- `VITE_PAYPAL_CLIENT_ID` - PayPal client ID (optional)
+- `PAYPAL_CLIENT_SECRET` - PayPal secret (optional)
+- `PAYPAL_WEBHOOK_ID` - PayPal webhook ID (optional)
+
+### Email Service Secrets
+- `RESEND_API_KEY` - Resend API key (or alternatives below)
+- `POSTMARK_API_TOKEN` - Postmark token (alternative)
+- `SENDGRID_API_KEY` - SendGrid key (alternative)
+- `EMAIL_FROM` - Default from address
+- `EMAIL_REPLY_TO` - Reply-to address
+
+### Testing Secrets (For Playwright E2E)
+- `APP_URL` - Application URL for testing
+- `TEST_EMAIL` - Test user email
+- `TEST_PASSWORD` - Test user password
+
+### Hosting Provider Configuration
 
 #### For Vercel
 - `VERCEL_TOKEN` - Vercel API token
 - `VERCEL_ORG_ID` - Organization ID
 - `VERCEL_PROJECT_ID_APP` - App project ID
-- `VERCEL_PROJECT_ID_MARKETING` - Marketing project ID
+- `VERCEL_PROJECT_ID_MARKETING` - Marketing project ID  
 - `VERCEL_PROJECT_ID_ADMIN` - Admin project ID
 
 #### For Netlify

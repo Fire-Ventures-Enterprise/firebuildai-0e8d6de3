@@ -19,6 +19,7 @@ jobs:
       admin: ${{ steps.filter.outputs.admin }}
       functions: ${{ steps.filter.outputs.functions }}
       deployment-id: ${{ steps.deployment.outputs.id }}
+      git-sha: ${{ steps.sha.outputs.short }}
     steps:
       - uses: actions/checkout@v4
       
@@ -46,13 +47,17 @@ jobs:
       - name: Generate deployment ID
         id: deployment
         run: echo "id=$(date +%Y%m%d-%H%M%S)-${{ github.sha }}" >> $GITHUB_OUTPUT
+      
+      - name: Get short SHA
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
   deploy-app:
     needs: detect-changes
     if: needs.detect-changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     environment:
-      name: production-app
+      name: production
       url: https://app.firebuildai.com
     steps:
       - uses: actions/checkout@v4
@@ -72,7 +77,9 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+          VITE_PAYPAL_CLIENT_ID: ${{ secrets.VITE_PAYPAL_CLIENT_ID }}
           VITE_DEPLOYMENT_ID: ${{ needs.detect-changes.outputs.deployment-id }}
+          VITE_GIT_SHA: ${{ needs.detect-changes.outputs.git-sha }}
       
       - name: Deploy to Vercel
         if: vars.DEPLOY_PROVIDER == 'vercel'
@@ -91,6 +98,16 @@ jobs:
           auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           deploy-message: "Deploy from GitHub Actions - ${{ needs.detect-changes.outputs.deployment-id }}"
           production-deploy: true
+      
+      - name: Health Check
+        run: |
+          sleep 30
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://app.firebuildai.com/health || echo "000")
+          if [ "$response" != "200" ] && [ "$response" != "404" ]; then
+            echo "Health check failed with status $response"
+            exit 1
+          fi
+          echo "Health check passed with status $response"
       
       - name: Comment deployment status
         uses: actions/github-script@v7
@@ -111,7 +128,7 @@ jobs:
     if: needs.detect-changes.outputs.marketing == 'true'
     runs-on: ubuntu-latest
     environment:
-      name: production-marketing
+      name: production
       url: https://www.firebuildai.com
     steps:
       - uses: actions/checkout@v4
@@ -130,6 +147,7 @@ jobs:
         env:
           VITE_MARKETING_MODE: true
           VITE_DEPLOYMENT_ID: ${{ needs.detect-changes.outputs.deployment-id }}
+          VITE_GIT_SHA: ${{ needs.detect-changes.outputs.git-sha }}
       
       - name: Deploy to Vercel
         if: vars.DEPLOY_PROVIDER == 'vercel'
@@ -148,13 +166,28 @@ jobs:
           auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           deploy-message: "Deploy from GitHub Actions - ${{ needs.detect-changes.outputs.deployment-id }}"
           production-deploy: true
+      
+      - name: Health Check
+        run: |
+          sleep 30
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://www.firebuildai.com || echo "000")
+          if [ "$response" != "200" ] && [ "$response" != "404" ]; then
+            echo "Health check failed with status $response"
+            exit 1
+          fi
+          echo "Health check passed with status $response"
+      
+      - name: Run Linkinator Check
+        continue-on-error: true
+        run: |
+          npx linkinator https://www.firebuildai.com --recurse --skip "linkedin.com|twitter.com|x.com" || true
 
   deploy-admin:
     needs: detect-changes
     if: needs.detect-changes.outputs.admin == 'true'
     runs-on: ubuntu-latest
     environment:
-      name: production-admin
+      name: production
       url: https://admin.firebuildai.com
     steps:
       - uses: actions/checkout@v4
@@ -175,6 +208,7 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_DEPLOYMENT_ID: ${{ needs.detect-changes.outputs.deployment-id }}
+          VITE_GIT_SHA: ${{ needs.detect-changes.outputs.git-sha }}
       
       - name: Deploy to Vercel
         if: vars.DEPLOY_PROVIDER == 'vercel'
@@ -193,13 +227,23 @@ jobs:
           auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           deploy-message: "Deploy from GitHub Actions - ${{ needs.detect-changes.outputs.deployment-id }}"
           production-deploy: true
+      
+      - name: Health Check
+        run: |
+          sleep 30
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://admin.firebuildai.com/health || echo "000")
+          if [ "$response" != "200" ] && [ "$response" != "404" ]; then
+            echo "Health check failed with status $response"
+            exit 1
+          fi
+          echo "Health check passed with status $response"
 
   deploy-supabase-functions:
     needs: detect-changes
     if: needs.detect-changes.outputs.functions == 'true'
     runs-on: ubuntu-latest
     environment:
-      name: production-functions
+      name: production
     steps:
       - uses: actions/checkout@v4
       
@@ -211,7 +255,20 @@ jobs:
       - name: Deploy Functions
         run: |
           supabase link --project-ref ${{ env.SUPABASE_PROJECT_REF }}
-          supabase functions deploy --verify-jwt
+          supabase functions deploy --project-ref ${{ env.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      
+      - name: Set Function Secrets
+        run: |
+          supabase secrets set --project-ref ${{ env.SUPABASE_PROJECT_REF }} \
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} \
+            STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }} \
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }} \
+            PAYPAL_CLIENT_ID=${{ secrets.PAYPAL_CLIENT_ID }} \
+            PAYPAL_CLIENT_SECRET=${{ secrets.PAYPAL_CLIENT_SECRET }} \
+            EMAIL_FROM=${{ secrets.EMAIL_FROM }} \
+            EMAIL_REPLY_TO=${{ secrets.EMAIL_REPLY_TO }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       

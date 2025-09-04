@@ -15,9 +15,9 @@ export const DeploymentInfo = () => {
   useEffect(() => {
     // Get deployment info from environment variables or build-time injection
     const deploymentId = import.meta.env.VITE_DEPLOYMENT_ID || 'local-dev';
-    const commitSha = import.meta.env.VITE_COMMIT_SHA || 'unknown';
+    const commitSha = import.meta.env.VITE_GIT_SHA || import.meta.env.VITE_COMMIT_SHA || 'unknown';
     const buildTime = import.meta.env.VITE_BUILD_TIME || new Date().toISOString();
-    const appMode = import.meta.env.VITE_APP_MODE || 'app';
+    const appMode = import.meta.env.VITE_APP_MODE || import.meta.env.VITE_ADMIN_MODE ? 'admin' : import.meta.env.VITE_MARKETING_MODE ? 'marketing' : 'app';
 
     setDeploymentInfo({
       id: deploymentId,

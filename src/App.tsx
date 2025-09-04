@@ -372,6 +372,10 @@ const App = () => (
             <Route path="/admin/*" element={<Navigate to="/" replace />} />
             <Route path="/admin/login" element={<Navigate to="/" replace />} />
             
+            {/* Health Check Endpoints */}
+            <Route path="/health" element={<div>OK</div>} />
+            <Route path="/app/health" element={<div>OK</div>} />
+            
             {/* 404 */}
         {/* Mobile Pairing Landing */}
         <Route path="/get/mobile" element={<MobilePairLanding />} />

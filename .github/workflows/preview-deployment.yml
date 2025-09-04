@@ -43,6 +43,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.app == 'true'
     runs-on: ubuntu-latest
+    environment:
+      name: preview
     steps:
       - uses: actions/checkout@v4
       
@@ -98,6 +100,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.marketing == 'true'
     runs-on: ubuntu-latest
+    environment:
+      name: preview
     steps:
       - uses: actions/checkout@v4
       
@@ -151,6 +155,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.admin == 'true'
     runs-on: ubuntu-latest
+    environment:
+      name: preview
     steps:
       - uses: actions/checkout@v4
       
