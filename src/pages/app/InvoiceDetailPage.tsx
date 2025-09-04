@@ -248,6 +248,19 @@ export default function InvoiceDetailPage() {
               <Badge className={getStatusColor(invoice.status)}>
                 {invoice.status}
               </Badge>
+              {workOrder && (
+                <Badge 
+                  variant={
+                    workOrder.status === 'completed' ? 'success' : 
+                    workOrder.status === 'in_progress' ? 'default' : 
+                    workOrder.status === 'cancelled' ? 'destructive' : 
+                    'secondary'
+                  }
+                  className="ml-2"
+                >
+                  WO: {workOrder.status.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                </Badge>
+              )}
             </h1>
             <p className="text-muted-foreground mt-1">
               {invoice.customerName} • ${invoice.total.toFixed(2)}
@@ -434,8 +447,14 @@ export default function InvoiceDetailPage() {
                 <h3 className="font-semibold mb-3">Work Order</h3>
                 {!workOrder ? (
                   <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">No work order yet.</p>
-                    <Button size="sm" onClick={handleGenerateWorkOrder}>
+                    <p className="text-sm text-muted-foreground">
+                      {hasSchedule ? "No work order yet." : "Schedule required before creating work order."}
+                    </p>
+                    <Button 
+                      size="sm" 
+                      onClick={handleGenerateWorkOrder}
+                      disabled={!hasSchedule}
+                    >
                       Generate Work Order
                     </Button>
                   </div>
@@ -443,10 +462,14 @@ export default function InvoiceDetailPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Badge 
-                        variant={workOrder.status === 'in_progress' ? 'default' : 'secondary'}
-                        className={workOrder.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
+                        variant={
+                          workOrder.status === 'completed' ? 'success' : 
+                          workOrder.status === 'in_progress' ? 'default' : 
+                          workOrder.status === 'cancelled' ? 'destructive' : 
+                          'secondary'
+                        }
                       >
-                        {workOrder.status.replace('_', ' ').charAt(0).toUpperCase() + workOrder.status.slice(1).replace('_', ' ')}
+                        {workOrder.status.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
                       </Badge>
                       <Button variant="link" onClick={() => navigate(R.workOrderDetail(workOrder.id))}>
                         View Work Order →
@@ -479,7 +502,11 @@ export default function InvoiceDetailPage() {
           
           {/* Crew Link Modal */}
           {showCrewLinkModal && workOrder && (
-            <CreateCrewLinkButton workOrderId={workOrder.id} />
+            <CreateCrewLinkButton 
+              workOrderId={workOrder.id} 
+              trigger={showCrewLinkModal}
+              onClose={() => setShowCrewLinkModal(false)}
+            />
           )}
         </TabsContent>
 

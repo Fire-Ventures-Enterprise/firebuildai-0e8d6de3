@@ -69,6 +69,8 @@ export default function WorkOrderDetailPage() {
   const [items, setItems] = useState<WorkOrderItem[]>([]);
   const [report, setReport] = useState<any>(null);
   const [copyingLink, setCopyingLink] = useState(false);
+  const [showCrewLinkModal, setShowCrewLinkModal] = useState(false);
+  const [showPrintSheet, setShowPrintSheet] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -184,7 +186,11 @@ export default function WorkOrderDetailPage() {
   }
 
   function handlePrint() {
-    window.print();
+    setShowPrintSheet(true);
+    setTimeout(() => {
+      window.print();
+      setShowPrintSheet(false);
+    }, 100);
   }
 
   function openInCalendar() {
@@ -249,18 +255,13 @@ export default function WorkOrderDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              onClick={generateCrewLink}
-              disabled={copyingLink}
-            >
-              {copyingLink ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Copy className="w-4 h-4 mr-2" />
-              )}
-              Copy Crew Link
-            </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowCrewLinkModal(true)}
+          >
+            <Copy className="w-4 h-4 mr-2" />
+            Create Crew Link / QR
+          </Button>
             <Button variant="outline" onClick={openInCalendar}>
               <Calendar className="w-4 h-4 mr-2" />
               View in Calendar
@@ -404,6 +405,26 @@ export default function WorkOrderDetailPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Crew Link Modal */}
+      {showCrewLinkModal && workOrder && (
+        <CreateCrewLinkButton 
+          workOrderId={workOrder.id} 
+          trigger={showCrewLinkModal}
+          onClose={() => setShowCrewLinkModal(false)}
+        />
+      )}
+
+      {/* Work Order Print Sheet (hidden, for printing) */}
+      {showPrintSheet && workOrder && (
+        <div className="hidden print:block">
+          <WorkOrderPrintSheet 
+            workOrder={workOrder} 
+            items={items}
+            crewUrl={`${window.location.origin}/portal/work-order/[token]`}
+          />
+        </div>
+      )}
     </div>
   );
 }
