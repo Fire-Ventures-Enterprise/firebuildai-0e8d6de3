@@ -1,7 +1,5 @@
 import { DollarSign, Briefcase, Users, Star, MapPin, Building } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { DashboardHeader } from "@/components/DashboardHeader";
-import { DraggableSidebar } from "@/components/DraggableSidebar";
 import { MetricsCard } from "@/components/MetricsCard";
 import { QuickActionsCard } from "@/components/QuickActionsCard";
 import { RecentActivityCard } from "@/components/RecentActivityCard";
@@ -170,15 +168,5 @@ export const Dashboard = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-hero">
-      <DashboardHeader />
-      <div className="flex">
-        <DraggableSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-        <main className="flex-1 p-6">
-          {renderContent()}
-        </main>
-      </div>
-    </div>
-  );
+  return renderContent();
 };

@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   Home, FileText, Users, Briefcase, DollarSign, BarChart3, Settings,
   Truck, Receipt, ShoppingCart, TrendingUp, Building2, UserCheck,
-  FileBarChart, HelpCircle, ChevronDown
+  FileBarChart, HelpCircle, ChevronDown, ClipboardList
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { R } from "@/routes/routeMap";
@@ -75,6 +75,7 @@ const navigationGroups: NavigationGroup[] = [
     color: "text-purple-600",
     items: [
       { id: "jobs", label: "Jobs", icon: Briefcase, path: R.jobs, testId: "nav-jobs" },
+      { id: "work-orders", label: "Work Orders", icon: ClipboardList, path: R.workOrders, testId: "nav-work-orders", badge: "NEW" },
       { id: "scheduling", label: "Scheduling", icon: FileText, path: R.scheduling, testId: "nav-scheduling" },
       { id: "fleet", label: "Fleet", icon: Truck, path: R.fleet, testId: "nav-fleet" },
       { id: "teams", label: "Teams", icon: UserCheck, path: R.teams, testId: "nav-teams" },
@@ -120,12 +121,20 @@ export function DesktopSidebar() {
   // Determine which groups should be open based on current path
   const getOpenGroups = () => {
     const currentPath = location.pathname;
-    return navigationGroups
+    const defaultOpen = ['operations', 'finance']; // Always show Operations and Finance by default
+    const activeGroups = navigationGroups
       .filter(group => group.items.some(item => currentPath.startsWith(item.path)))
       .map(group => group.id);
+    return [...new Set([...defaultOpen, ...activeGroups])];
   };
 
-  const [openGroups, setOpenGroups] = useState<string[]>(getOpenGroups);
+  const [openGroups, setOpenGroups] = useState<string[]>(() => {
+    const groups = getOpenGroups();
+    // Ensure operations and finance are always in the open groups
+    if (!groups.includes('operations')) groups.push('operations');
+    if (!groups.includes('finance')) groups.push('finance');
+    return groups;
+  });
 
   const toggleGroup = (groupId: string) => {
     setOpenGroups(prev => 
