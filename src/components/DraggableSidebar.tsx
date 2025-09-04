@@ -14,7 +14,7 @@ import {
   GripVertical,
   Truck,
   Package,
-  Wrench,
+  ClipboardList,
   HelpCircle,
   Receipt,
   ShoppingCart,
@@ -88,8 +88,8 @@ const navigationGroups: NavigationGroup[] = [
     color: "text-purple-600",
     items: [
       { id: "jobs", label: "Jobs", icon: Briefcase, path: R.jobs, testId: "nav-jobs" },
+      { id: "work-orders", label: "Work Orders", icon: ClipboardList, path: R.workOrders, testId: "nav-work-orders", badge: "NEW" },
       { id: "scheduling", label: "Scheduling", icon: Calendar, path: R.scheduling, testId: "nav-scheduling" },
-      { id: "work-orders", label: "Work Orders", icon: Wrench, path: R.workOrders, testId: "nav-work-orders" },
       { id: "fleet", label: "Fleet", icon: Truck, path: R.fleet, testId: "nav-fleet" },
       { id: "teams", label: "Teams", icon: UserCheck, path: R.teams, testId: "nav-teams" },
     ],
