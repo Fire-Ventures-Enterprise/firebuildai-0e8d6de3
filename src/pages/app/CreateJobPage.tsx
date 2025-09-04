@@ -45,9 +45,16 @@ export default function CreateJobPage() {
       const { error } = await supabase
         .from('jobs')
         .insert({
-          ...formData,
+          title: formData.title,
+          description: formData.description,
+          location: formData.location,
+          customer_id: formData.customer_id || null, // Send null instead of empty string
+          status: formData.status,
+          priority: formData.priority,
           user_id: user.id,
           budget: parseFloat(formData.budget) || 0,
+          start_date: formData.start_date,
+          end_date: formData.end_date,
           progress: 0,
         });
 
