@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./layouts/AppLayout";
+import WorkOrderDetailPage from "./pages/app/WorkOrderDetailPage";
+import WorkOrderPortalPage from "./pages/portal/WorkOrderPortalPage";
 import { R } from "./routes/routeMap";
 
 // Marketing pages
@@ -237,6 +239,16 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <ContractorTrackingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/work-orders/:id" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    {React.createElement(React.lazy(() => import("./pages/app/WorkOrderDetailPage")))}
+                  </Suspense>
                 </AppLayout>
               </ProtectedRoute>
             } />

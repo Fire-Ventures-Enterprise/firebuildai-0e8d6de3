@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { R } from "@/routes/routeMap";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
-import { Calendar, Clock, Trash2, ExternalLink, CheckCircle, XCircle } from "lucide-react";
+import { Calendar, Clock, Trash2, ExternalLink, CheckCircle, XCircle, Clipboard, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -145,6 +145,43 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
     navigate(`${R.scheduling}?date=${date}&focus=invoice:${invoice.id}`);
   }
 
+  async function handleGenerateWorkOrder() {
+    if (!hasSchedule) {
+      toast({
+        title: "Schedule Required",
+        description: "Please save a schedule before generating a work order",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.rpc('create_work_order_from_invoice', {
+        p_invoice_id: invoice.id
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Work order created successfully"
+      });
+      
+      // Navigate to the work order detail page
+      navigate(`/app/work-orders/${data}`);
+    } catch (error: any) {
+      console.error('Error creating work order:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create work order",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  }
+
   const statusVariants = {
     scheduled: { color: "default", icon: <Clock className="w-3 h-3" /> },
     rescheduled: { color: "warning", icon: <Clock className="w-3 h-3" /> },
@@ -267,15 +304,29 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
             )}
             
             {hasSchedule && (
-              <Button 
-                variant="ghost" 
-                onClick={removeSchedule} 
-                disabled={saving}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Remove Schedule
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={handleGenerateWorkOrder}
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Clipboard className="w-4 h-4 mr-2" />
+                  )}
+                  Generate Work Order
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={removeSchedule} 
+                  disabled={saving}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remove Schedule
+                </Button>
+              </>
             )}
           </div>
         </CardContent>
