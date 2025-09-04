@@ -132,12 +132,14 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Auto-open groups that contain the current path
+  // Auto-open groups that contain the current path or important sections
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const currentPath = location.pathname;
-    return navigationGroups
+    const defaultOpen = ['operations']; // Always show Operations by default
+    const activeGroups = navigationGroups
       .filter(group => group.items.some(item => item.path === currentPath))
       .map(group => group.id);
+    return [...new Set([...defaultOpen, ...activeGroups])];
   });
 
   const handleNavigation = (item: NavigationItem) => {
