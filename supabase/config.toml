@@ -144,3 +144,18 @@ verify_jwt = true
 
 [functions.email-webhook]
 verify_jwt = false
+
+[functions.google-oauth-start]
+verify_jwt = true
+
+[functions.google-oauth-callback]
+verify_jwt = false
+
+[functions.google-list-calendars]
+verify_jwt = true
+
+[functions.google-upsert-event]
+verify_jwt = true
+
+[functions.google-delete-event]
+verify_jwt = true

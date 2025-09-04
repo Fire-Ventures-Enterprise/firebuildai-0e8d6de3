@@ -21,9 +21,11 @@ import {
   Send,
   Camera,
   File,
-  UserPlus
+  UserPlus,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
 
 export default function CompanyPage() {
   const { toast } = useToast();
@@ -69,12 +71,13 @@ export default function CompanyPage() {
         </div>
 
         <Tabs defaultValue="info" className="space-y-4">
-          <TabsList className="grid w-full max-w-3xl grid-cols-5">
+          <TabsList className="grid w-full max-w-4xl grid-cols-6">
             <TabsTrigger value="info">Info</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="contracts">Contracts</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
             <TabsTrigger value="chat">Chat</TabsTrigger>
+            <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
 
           <TabsContent value="info">
@@ -474,6 +477,25 @@ export default function CompanyPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="integrations">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Integrations
+                  </CardTitle>
+                  <CardDescription>
+                    Connect external services to enhance your workflow
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <GoogleCalendarSettings />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
