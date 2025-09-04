@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -246,12 +247,12 @@ const App = () => (
             <Route path="/app/work-orders/:id" element={
               <ProtectedRoute>
                 <AppLayout>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    {React.createElement(React.lazy(() => import("./pages/app/WorkOrderDetailPage")))}
-                  </Suspense>
+                  <WorkOrderDetailPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
+            
+            <Route path="/portal/work-order/:token" element={<WorkOrderPortalPage />} />
             
             <Route path="/app/finance/expenses" element={
               <ProtectedRoute>

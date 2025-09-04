@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 export interface WorkOrder {
   id: string;
@@ -43,17 +43,17 @@ export async function createWorkOrderFromInvoice(invoiceId: string): Promise<str
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  const { data, error } = await supabase.rpc('create_work_order_from_invoice', {
+  const { data, error } = await supabase.rpc('create_work_order_from_invoice' as any, {
     p_invoice_id: invoiceId
   });
 
   if (error) throw error;
-  return data;
+  return data as string;
 }
 
 export async function getWorkOrder(id: string): Promise<WorkOrder | null> {
   const { data, error } = await supabase
-    .from('work_orders')
+    .from('work_orders' as any)
     .select('*')
     .eq('id', id)
     .single();
@@ -63,12 +63,12 @@ export async function getWorkOrder(id: string): Promise<WorkOrder | null> {
     return null;
   }
 
-  return data;
+  return data as WorkOrder;
 }
 
 export async function getWorkOrderItems(workOrderId: string): Promise<WorkOrderItem[]> {
   const { data, error } = await supabase
-    .from('work_order_items')
+    .from('work_order_items' as any)
     .select('*')
     .eq('work_order_id', workOrderId)
     .order('sort_order');
@@ -78,12 +78,12 @@ export async function getWorkOrderItems(workOrderId: string): Promise<WorkOrderI
     return [];
   }
 
-  return data || [];
+  return (data || []) as WorkOrderItem[];
 }
 
 export async function updateWorkOrderStatus(id: string, status: WorkOrder['status']): Promise<void> {
   const { error } = await supabase
-    .from('work_orders')
+    .from('work_orders' as any)
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', id);
 
@@ -96,7 +96,7 @@ export async function createWorkOrderToken(workOrderId: string): Promise<string>
   expiresAt.setHours(expiresAt.getHours() + 48); // 48 hour expiry
 
   const { error } = await supabase
-    .from('work_order_tokens')
+    .from('work_order_tokens' as any)
     .insert({
       work_order_id: workOrderId,
       token_hash: token, // In production, this should be hashed
@@ -108,7 +108,7 @@ export async function createWorkOrderToken(workOrderId: string): Promise<string>
 }
 
 export async function getWorkOrderByToken(token: string): Promise<any> {
-  const { data, error } = await supabase.rpc('get_work_order_by_token', {
+  const { data, error } = await supabase.rpc('get_work_order_by_token' as any, {
     p_token: token
   });
 
@@ -126,7 +126,7 @@ export async function submitWorkOrderReport(
     signatures?: any[];
   }
 ): Promise<boolean> {
-  const { data, error } = await supabase.rpc('submit_work_order_report', {
+  const { data, error } = await supabase.rpc('submit_work_order_report' as any, {
     p_token: token,
     p_notes: report.notes || null,
     p_labor_hours: report.labor_hours || 0,
@@ -136,12 +136,12 @@ export async function submitWorkOrderReport(
   });
 
   if (error) throw error;
-  return data;
+  return data as boolean;
 }
 
 export async function getWorkOrderReport(workOrderId: string): Promise<WorkOrderReport | null> {
   const { data, error } = await supabase
-    .from('work_order_reports')
+    .from('work_order_reports' as any)
     .select('*')
     .eq('work_order_id', workOrderId)
     .single();
@@ -150,5 +150,5 @@ export async function getWorkOrderReport(workOrderId: string): Promise<WorkOrder
     console.error('Error fetching work order report:', error);
   }
 
-  return data;
+  return data as WorkOrderReport;
 }

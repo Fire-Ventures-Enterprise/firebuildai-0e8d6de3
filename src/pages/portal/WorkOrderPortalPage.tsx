@@ -71,7 +71,7 @@ export default function WorkOrderPortalPage() {
   async function loadWorkOrder() {
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc('get_work_order_by_token', {
+      const { data, error } = await supabase.rpc('get_work_order_by_token' as any, {
         p_token: token
       });
 
@@ -79,7 +79,7 @@ export default function WorkOrderPortalPage() {
         console.error('Error loading work order:', error);
         setWorkOrder(null);
       } else {
-        setWorkOrder(data);
+        setWorkOrder(data as WorkOrderData);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -126,7 +126,7 @@ export default function WorkOrderPortalPage() {
       }
 
       // Submit report
-      const { data, error } = await supabase.rpc('submit_work_order_report', {
+      const { data, error } = await supabase.rpc('submit_work_order_report' as any, {
         p_token: token,
         p_notes: notes || null,
         p_labor_hours: laborHours ? parseFloat(laborHours) : 0,

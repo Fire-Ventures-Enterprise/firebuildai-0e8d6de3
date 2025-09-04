@@ -72,7 +72,7 @@ export default function WorkOrderDetailPage() {
     try {
       // For now, using direct RPC calls since types aren't updated
       const { data: woData, error: woError } = await supabase
-        .rpc('get_work_order_by_token', { p_token: 'temp' }) // This will be replaced
+        .rpc('get_work_order_by_token' as any, { p_token: 'temp' }) // This will be replaced
         .single();
 
       if (woError) {

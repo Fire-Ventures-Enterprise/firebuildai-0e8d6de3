@@ -157,7 +157,7 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
 
     setSaving(true);
     try {
-      const { data, error } = await supabase.rpc('create_work_order_from_invoice', {
+      const { data, error } = await supabase.rpc('create_work_order_from_invoice' as any, {
         p_invoice_id: invoice.id
       });
       
