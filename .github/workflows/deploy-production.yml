@@ -1,0 +1,265 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+      marketing: ${{ steps.filter.outputs.marketing }}
+      admin: ${{ steps.filter.outputs.admin }}
+      functions: ${{ steps.filter.outputs.functions }}
+      deployment-id: ${{ steps.deployment.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'src/**'
+              - 'package.json'
+              - 'vite.config.ts'
+              - 'tailwind.config.ts'
+              - 'index.html'
+            marketing:
+              - 'src/pages/marketing/**'
+              - 'src/pages/Index.tsx'
+              - 'src/pages/features/**'
+            admin:
+              - 'src/pages/admin/**'
+              - 'src/components/admin/**'
+            functions:
+              - 'supabase/functions/**'
+              - 'supabase/config.toml'
+      
+      - name: Generate deployment ID
+        id: deployment
+        run: echo "id=$(date +%Y%m%d-%H%M%S)-${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  deploy-app:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production-app
+      url: https://app.firebuildai.com
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+          VITE_DEPLOYMENT_ID: ${{ needs.detect-changes.outputs.deployment-id }}
+      
+      - name: Deploy to Vercel
+        if: vars.DEPLOY_PROVIDER == 'vercel'
+        run: |
+          npm i -g vercel
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_APP }}
+      
+      - name: Deploy to Netlify
+        if: vars.DEPLOY_PROVIDER == 'netlify'
+        uses: netlify/actions/deploy@v1
+        with:
+          site-id: ${{ secrets.NETLIFY_SITE_ID_APP }}
+          auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions - ${{ needs.detect-changes.outputs.deployment-id }}"
+          production-deploy: true
+      
+      - name: Comment deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'success',
+              target_url: 'https://app.firebuildai.com',
+              description: 'App deployed successfully',
+              context: 'deploy/app'
+            })
+
+  deploy-marketing:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.marketing == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production-marketing
+      url: https://www.firebuildai.com
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build marketing site
+        run: npm run build
+        env:
+          VITE_MARKETING_MODE: true
+          VITE_DEPLOYMENT_ID: ${{ needs.detect-changes.outputs.deployment-id }}
+      
+      - name: Deploy to Vercel
+        if: vars.DEPLOY_PROVIDER == 'vercel'
+        run: |
+          npm i -g vercel
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_MARKETING }}
+      
+      - name: Deploy to Netlify
+        if: vars.DEPLOY_PROVIDER == 'netlify'
+        uses: netlify/actions/deploy@v1
+        with:
+          site-id: ${{ secrets.NETLIFY_SITE_ID_MARKETING }}
+          auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions - ${{ needs.detect-changes.outputs.deployment-id }}"
+          production-deploy: true
+
+  deploy-admin:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.admin == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production-admin
+      url: https://admin.firebuildai.com
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build admin portal
+        run: npm run build
+        env:
+          VITE_ADMIN_MODE: true
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_DEPLOYMENT_ID: ${{ needs.detect-changes.outputs.deployment-id }}
+      
+      - name: Deploy to Vercel
+        if: vars.DEPLOY_PROVIDER == 'vercel'
+        run: |
+          npm i -g vercel
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ADMIN }}
+      
+      - name: Deploy to Netlify
+        if: vars.DEPLOY_PROVIDER == 'netlify'
+        uses: netlify/actions/deploy@v1
+        with:
+          site-id: ${{ secrets.NETLIFY_SITE_ID_ADMIN }}
+          auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions - ${{ needs.detect-changes.outputs.deployment-id }}"
+          production-deploy: true
+
+  deploy-supabase-functions:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.functions == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production-functions
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Deploy Functions
+        run: |
+          supabase link --project-ref ${{ env.SUPABASE_PROJECT_REF }}
+          supabase functions deploy --verify-jwt
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      
+      - name: Comment deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'success',
+              description: 'Supabase functions deployed',
+              context: 'deploy/functions'
+            })
+
+  update-deployment-status:
+    needs: [deploy-app, deploy-marketing, deploy-admin, deploy-supabase-functions]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update deployment record
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployments = {
+              app: '${{ needs.deploy-app.result }}',
+              marketing: '${{ needs.deploy-marketing.result }}',
+              admin: '${{ needs.deploy-admin.result }}',
+              functions: '${{ needs.deploy-supabase-functions.result }}'
+            };
+            
+            const successCount = Object.values(deployments).filter(d => d === 'success').length;
+            const failureCount = Object.values(deployments).filter(d => d === 'failure').length;
+            
+            let state = 'success';
+            let description = `Deployed ${successCount} component(s)`;
+            
+            if (failureCount > 0) {
+              state = 'failure';
+              description = `${failureCount} deployment(s) failed`;
+            }
+            
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: state,
+              description: description,
+              context: 'deploy/overall'
+            })

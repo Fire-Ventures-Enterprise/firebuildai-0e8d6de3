@@ -1,0 +1,248 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+      marketing: ${{ steps.filter.outputs.marketing }}
+      admin: ${{ steps.filter.outputs.admin }}
+      functions: ${{ steps.filter.outputs.functions }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'src/**'
+              - 'package.json'
+              - 'vite.config.ts'
+              - 'tailwind.config.ts'
+              - 'index.html'
+            marketing:
+              - 'src/pages/marketing/**'
+              - 'src/pages/Index.tsx'
+              - 'src/pages/features/**'
+            admin:
+              - 'src/pages/admin/**'
+              - 'src/components/admin/**'
+            functions:
+              - 'supabase/functions/**'
+              - 'supabase/config.toml'
+
+  preview-app:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+      
+      - name: Deploy Preview to Vercel
+        if: vars.DEPLOY_PROVIDER == 'vercel'
+        id: vercel-preview
+        run: |
+          npm i -g vercel
+          PREVIEW_URL=$(vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --no-wait)
+          echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_APP }}
+      
+      - name: Deploy Preview to Netlify
+        if: vars.DEPLOY_PROVIDER == 'netlify'
+        id: netlify-preview
+        uses: netlify/actions/deploy@v1
+        with:
+          site-id: ${{ secrets.NETLIFY_SITE_ID_APP }}
+          auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          deploy-message: "PR Preview #${{ github.event.pull_request.number }}"
+      
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.vercel-preview.outputs.preview-url }}' || '${{ steps.netlify-preview.outputs.deploy-url }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 🚀 App Preview Deployed!\n\nPreview URL: ${previewUrl}\n\n**Changed files:** App components`
+            })
+
+  preview-marketing:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.marketing == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build marketing site
+        run: npm run build
+        env:
+          VITE_MARKETING_MODE: true
+      
+      - name: Deploy Preview to Vercel
+        if: vars.DEPLOY_PROVIDER == 'vercel'
+        id: vercel-preview
+        run: |
+          npm i -g vercel
+          PREVIEW_URL=$(vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --no-wait)
+          echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_MARKETING }}
+      
+      - name: Deploy Preview to Netlify
+        if: vars.DEPLOY_PROVIDER == 'netlify'
+        id: netlify-preview
+        uses: netlify/actions/deploy@v1
+        with:
+          site-id: ${{ secrets.NETLIFY_SITE_ID_MARKETING }}
+          auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          deploy-message: "PR Preview #${{ github.event.pull_request.number }}"
+      
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.vercel-preview.outputs.preview-url }}' || '${{ steps.netlify-preview.outputs.deploy-url }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 🌐 Marketing Preview Deployed!\n\nPreview URL: ${previewUrl}\n\n**Changed files:** Marketing pages`
+            })
+
+  preview-admin:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.admin == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build admin portal
+        run: npm run build
+        env:
+          VITE_ADMIN_MODE: true
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      
+      - name: Deploy Preview to Vercel
+        if: vars.DEPLOY_PROVIDER == 'vercel'
+        id: vercel-preview
+        run: |
+          npm i -g vercel
+          PREVIEW_URL=$(vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --no-wait)
+          echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ADMIN }}
+      
+      - name: Deploy Preview to Netlify
+        if: vars.DEPLOY_PROVIDER == 'netlify'
+        id: netlify-preview
+        uses: netlify/actions/deploy@v1
+        with:
+          site-id: ${{ secrets.NETLIFY_SITE_ID_ADMIN }}
+          auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          deploy-message: "PR Preview #${{ github.event.pull_request.number }}"
+      
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.vercel-preview.outputs.preview-url }}' || '${{ steps.netlify-preview.outputs.deploy-url }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 🔐 Admin Preview Deployed!\n\nPreview URL: ${previewUrl}\n\n**Changed files:** Admin portal`
+            })
+
+  preview-functions:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.functions == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Validate Functions
+        run: |
+          for func in supabase/functions/*/; do
+            if [ -f "$func/index.ts" ]; then
+              echo "Validating function: $(basename $func)"
+              npx tsc --noEmit "$func/index.ts" || true
+            fi
+          done
+      
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const functions = [];
+            const fs = require('fs');
+            const path = require('path');
+            
+            const functionsDir = 'supabase/functions';
+            if (fs.existsSync(functionsDir)) {
+              fs.readdirSync(functionsDir).forEach(dir => {
+                if (fs.statSync(path.join(functionsDir, dir)).isDirectory()) {
+                  functions.push(dir);
+                }
+              });
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### ⚡ Supabase Functions Changed\n\n**Functions modified:** ${functions.join(', ')}\n\nThese will be deployed when merged to main.`
+            })

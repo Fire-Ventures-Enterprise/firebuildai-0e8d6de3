@@ -10,6 +10,7 @@ import { AppLayout } from "./layouts/AppLayout";
 import WorkOrderDetailPage from "./pages/app/WorkOrderDetailPage";
 import WorkOrdersListPage from "./pages/app/WorkOrdersListPage";
 import WorkOrderPortalPage from "./pages/portal/WorkOrderPortalPage";
+import { DeploymentInfo } from "./components/DeploymentInfo";
 import { R } from "./routes/routeMap";
 
 // Marketing pages
