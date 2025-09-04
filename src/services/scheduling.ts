@@ -1,20 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
-import { InvoiceScheduleInput } from "@/types/scheduling";
+import { InvoiceScheduleInput, InvoiceSchedule } from "@/types/scheduling";
 
-export async function getInvoiceSchedule(invoiceId: string) {
+export async function getInvoiceSchedule(invoiceId: string): Promise<InvoiceSchedule | null> {
   const { data, error } = await supabase
     .from("invoice_scheduling")
     .select("*")
     .eq("invoice_id", invoiceId)
     .maybeSingle();
   
-  if (error) throw error;
-  return data;
+  if (error) {
+    console.error('Error fetching invoice schedule:', error);
+    throw error;
+  }
+  
+  return data as InvoiceSchedule | null;
 }
 
-export async function upsertInvoiceSchedule(payload: InvoiceScheduleInput) {
-  // Ensure required fields are present
-  const scheduleData = {
+export async function upsertInvoiceSchedule(payload: InvoiceScheduleInput): Promise<void> {
+  const dbPayload = {
     invoice_id: payload.invoice_id,
     starts_at: payload.starts_at,
     ends_at: payload.ends_at,
@@ -22,36 +25,44 @@ export async function upsertInvoiceSchedule(payload: InvoiceScheduleInput) {
     status: payload.status || 'scheduled',
     notes: payload.notes || null
   };
-
+  
   const { error } = await supabase
     .from("invoice_scheduling")
-    .upsert(scheduleData, { onConflict: "invoice_id" });
+    .upsert(dbPayload, { onConflict: "invoice_id" });
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error upserting invoice schedule:', error);
+    throw error;
+  }
 
   // Sync to calendar using the database function
   const { error: syncError } = await supabase.rpc("sync_invoice_schedule_to_calendar", { 
     p_invoice_id: payload.invoice_id 
   });
   
-  if (syncError) throw syncError;
+  if (syncError) {
+    console.error('Error syncing to calendar:', syncError);
+    // Don't throw here - schedule is saved even if sync fails
+  }
 }
 
-export async function deleteInvoiceSchedule(invoiceId: string) {
+export async function deleteInvoiceSchedule(invoiceId: string): Promise<void> {
   const { error } = await supabase
     .from("invoice_scheduling")
     .delete()
     .eq("invoice_id", invoiceId);
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error deleting invoice schedule:', error);
+    throw error;
+  }
   
-  // This will also delete the calendar event via the sync function
+  // Remove from calendar
   const { error: syncError } = await supabase.rpc("sync_invoice_schedule_to_calendar", { 
     p_invoice_id: invoiceId 
   });
   
-  if (syncError) throw syncError;
+  if (syncError) {
+    console.error('Error removing from calendar:', syncError);
+  }
 }
-
-// Note: Teams functionality is not currently implemented in the database
-// This can be added later when teams/crew management is built

@@ -5,16 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getInvoiceSchedule, upsertInvoiceSchedule, deleteInvoiceSchedule } from "@/services/scheduling";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { R } from "@/routes/routeMap";
-import { CalendarIcon, Clock, MapPin, FileText, Trash } from "lucide-react";
+import { EnhancedInvoice } from "@/types/enhanced-invoice";
+import { Calendar, Clock, Trash2, ExternalLink, CheckCircle, XCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Team {
+  id: string;
+  name: string;
+}
 
 interface InvoiceSchedulingTabProps {
-  invoice: any;
+  invoice: EnhancedInvoice;
 }
 
 export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
@@ -25,99 +32,133 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
   const [teamId, setTeamId] = useState<string | undefined>();
   const [status, setStatus] = useState<"scheduled" | "rescheduled" | "completed" | "cancelled">("scheduled");
   const [notes, setNotes] = useState("");
-  const [hasExistingSchedule, setHasExistingSchedule] = useState(false);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [hasSchedule, setHasSchedule] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    loadSchedule();
+    loadData();
   }, [invoice.id]);
 
-  const loadSchedule = async () => {
+  async function loadData() {
+    setLoading(true);
     try {
-      setLoading(true);
-      const schedule = await getInvoiceSchedule(invoice.id);
+      // TODO: Load teams when the teams table is available
+      // For now, teams functionality is disabled
+      
+      // Load existing schedule
+      const schedule = await getInvoiceSchedule(invoice.id!);
       if (schedule) {
+        setHasSchedule(true);
         setStartsAt(new Date(schedule.starts_at).toISOString().slice(0, 16));
         setEndsAt(new Date(schedule.ends_at).toISOString().slice(0, 16));
-        setTeamId(schedule.team_id ?? undefined);
-        setStatus(schedule.status as any);
-        setNotes(schedule.notes ?? "");
-        setHasExistingSchedule(true);
+        setTeamId(schedule.team_id || undefined);
+        setStatus(schedule.status);
+        setNotes(schedule.notes || "");
       }
     } catch (error) {
-      console.error("Error loading schedule:", error);
-      toast.error("Failed to load schedule");
+      console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleSave = async () => {
+  async function save() {
     if (!startsAt || !endsAt) {
-      toast.error("Start and end times are required");
+      toast({
+        title: "Error",
+        description: "Start and end times are required",
+        variant: "destructive"
+      });
       return;
     }
 
-    const startDate = new Date(startsAt);
-    const endDate = new Date(endsAt);
-
-    if (endDate <= startDate) {
-      toast.error("End time must be after start time");
+    if (new Date(startsAt) >= new Date(endsAt)) {
+      toast({
+        title: "Error",
+        description: "End time must be after start time",
+        variant: "destructive"
+      });
       return;
     }
 
+    setSaving(true);
     try {
-      setSaving(true);
       await upsertInvoiceSchedule({
-        invoice_id: invoice.id,
-        starts_at: startDate.toISOString(),
-        ends_at: endDate.toISOString(),
-        team_id: teamId ?? null,
+        invoice_id: invoice.id!,
+        starts_at: new Date(startsAt).toISOString(),
+        ends_at: new Date(endsAt).toISOString(),
+        team_id: teamId || null,
         status,
         notes
       });
-      toast.success("Schedule saved & synced to calendar");
-      setHasExistingSchedule(true);
+      
+      setHasSchedule(true);
+      toast({
+        title: "Success",
+        description: "Schedule saved and synced to calendar"
+      });
     } catch (error) {
-      console.error("Error saving schedule:", error);
-      toast.error("Failed to save schedule");
+      console.error('Error saving schedule:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save schedule",
+        variant: "destructive"
+      });
     } finally {
       setSaving(false);
     }
-  };
+  }
 
-  const handleDelete = async () => {
+  async function removeSchedule() {
+    if (!confirm("Are you sure you want to remove this schedule?")) return;
+    
+    setSaving(true);
     try {
-      setSaving(true);
-      await deleteInvoiceSchedule(invoice.id);
-      toast.success("Schedule removed");
-      // Reset form
+      await deleteInvoiceSchedule(invoice.id!);
+      setHasSchedule(false);
       setStartsAt("");
       setEndsAt("");
       setTeamId(undefined);
       setStatus("scheduled");
       setNotes("");
-      setHasExistingSchedule(false);
+      
+      toast({
+        title: "Success",
+        description: "Schedule removed from calendar"
+      });
     } catch (error) {
-      console.error("Error deleting schedule:", error);
-      toast.error("Failed to remove schedule");
+      console.error('Error deleting schedule:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove schedule",
+        variant: "destructive"
+      });
     } finally {
       setSaving(false);
     }
-  };
+  }
 
-  const openCalendar = () => {
-    const dateParam = startsAt ? startsAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
-    navigate(`${R.scheduling}?date=${dateParam}&focus=invoice:${invoice.id}`);
+  function openCalendar() {
+    const date = startsAt ? startsAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    navigate(`${R.scheduling}?date=${date}&focus=invoice:${invoice.id}`);
+  }
+
+  const statusVariants = {
+    scheduled: { color: "default", icon: <Clock className="w-3 h-3" /> },
+    rescheduled: { color: "warning", icon: <Clock className="w-3 h-3" /> },
+    completed: { color: "success", icon: <CheckCircle className="w-3 h-3" /> },
+    cancelled: { color: "destructive", icon: <XCircle className="w-3 h-3" /> }
   };
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-20 w-full" />
-      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-sm text-muted-foreground">Loading schedule...</div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -125,30 +166,40 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5" />
-            Schedule Work
-          </CardTitle>
-          <CardDescription>
-            Set the scheduled date and time for this invoice. This will sync with your calendar.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Schedule Work</CardTitle>
+              <CardDescription>
+                Set when this invoice work will be performed
+              </CardDescription>
+            </div>
+            {hasSchedule && (
+              <Badge variant={statusVariants[status].color as any}>
+                <span className="flex items-center gap-1">
+                  {statusVariants[status].icon}
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </span>
+              </Badge>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="start-time">Start Date & Time</Label>
+              <Label htmlFor="start">Start Date & Time</Label>
               <Input
-                id="start-time"
+                id="start"
                 type="datetime-local"
                 value={startsAt}
                 onChange={(e) => setStartsAt(e.target.value)}
                 className="w-full"
               />
             </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="end-time">End Date & Time</Label>
+              <Label htmlFor="end">End Date & Time</Label>
               <Input
-                id="end-time"
+                id="end"
                 type="datetime-local"
                 value={endsAt}
                 onChange={(e) => setEndsAt(e.target.value)}
@@ -157,6 +208,25 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
             </div>
           </div>
 
+          {teams.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="team">Assign Team/Crew</Label>
+              <Select value={teamId} onValueChange={setTeamId}>
+                <SelectTrigger id="team">
+                  <SelectValue placeholder="Select team (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No team assigned</SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
             <Select value={status} onValueChange={(v: any) => setStatus(v)}>
@@ -164,30 +234,10 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="scheduled">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-blue-500" />
-                    Scheduled
-                  </div>
-                </SelectItem>
-                <SelectItem value="rescheduled">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-yellow-500" />
-                    Rescheduled
-                  </div>
-                </SelectItem>
-                <SelectItem value="completed">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-green-500" />
-                    Completed
-                  </div>
-                </SelectItem>
-                <SelectItem value="cancelled">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-red-500" />
-                    Cancelled
-                  </div>
-                </SelectItem>
+                <SelectItem value="scheduled">Scheduled</SelectItem>
+                <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -198,74 +248,64 @@ export function InvoiceSchedulingTab({ invoice }: InvoiceSchedulingTabProps) {
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add any special instructions or notes about this scheduled work..."
+              placeholder="Add any scheduling notes or special instructions..."
               rows={3}
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? "Saving..." : hasExistingSchedule ? "Update Schedule" : "Save & Sync"}
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={save} disabled={saving}>
+              <Calendar className="w-4 h-4 mr-2" />
+              {hasSchedule ? 'Update Schedule' : 'Save & Sync'}
             </Button>
-            <Button variant="outline" onClick={openCalendar} disabled={!startsAt}>
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              View in Calendar
-            </Button>
-            {hasExistingSchedule && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="icon" disabled={saving}>
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Remove Schedule?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will remove the schedule from this invoice and delete the calendar event. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Remove Schedule</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+            
+            {startsAt && (
+              <Button variant="outline" onClick={openCalendar}>
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View in Calendar
+              </Button>
+            )}
+            
+            {hasSchedule && (
+              <Button 
+                variant="ghost" 
+                onClick={removeSchedule} 
+                disabled={saving}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Remove Schedule
+              </Button>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Schedule Info Card */}
-      {hasExistingSchedule && (
+      {startsAt && endsAt && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Schedule Information</CardTitle>
+            <CardTitle className="text-base">Preview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-3 text-sm">
+            <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Location:</span>
-                <span>{invoice.serviceAddress || invoice.customerAddress || "Not specified"}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Invoice:</span>
-                <span>{invoice.invoiceNumber}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Duration:</span>
+                <Calendar className="w-4 h-4 text-muted-foreground" />
                 <span>
-                  {startsAt && endsAt && (() => {
-                    const start = new Date(startsAt);
-                    const end = new Date(endsAt);
-                    const diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-                    return `${diff.toFixed(1)} hours`;
-                  })()}
+                  {format(new Date(startsAt), "PPP 'at' p")} — {format(new Date(endsAt), "p")}
                 </span>
               </div>
+              {teamId && teams.find(t => t.id === teamId) && (
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Team:</span>
+                  <span>{teams.find(t => t.id === teamId)?.name}</span>
+                </div>
+              )}
+              {notes && (
+                <div className="pt-2">
+                  <span className="text-muted-foreground">Notes:</span>
+                  <p className="mt-1 text-muted-foreground">{notes}</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

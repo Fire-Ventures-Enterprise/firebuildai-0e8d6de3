@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const InvoiceScheduleSchema = z.object({
   invoice_id: z.string().uuid(),
-  starts_at: z.string(), // ISO string
-  ends_at: z.string(),   // ISO string
+  starts_at: z.string(), // ISO
+  ends_at: z.string(),   // ISO
   team_id: z.string().uuid().nullable().optional(),
-  status: z.enum(['scheduled', 'rescheduled', 'completed', 'cancelled']).default('scheduled'),
+  status: z.enum(['scheduled','rescheduled','completed','cancelled']).default('scheduled'),
   notes: z.string().max(4000).optional()
 });
 
