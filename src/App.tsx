@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./layouts/AppLayout";
 import WorkOrderDetailPage from "./pages/app/WorkOrderDetailPage";
+import WorkOrdersListPage from "./pages/app/WorkOrdersListPage";
 import WorkOrderPortalPage from "./pages/portal/WorkOrderPortalPage";
 import { R } from "./routes/routeMap";
 
@@ -240,6 +241,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <ContractorTrackingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/work-orders" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <WorkOrdersListPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

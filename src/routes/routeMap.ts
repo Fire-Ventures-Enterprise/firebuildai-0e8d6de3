@@ -89,6 +89,10 @@ export const R = {
   
   financialAnalytics: "/app/financial-analytics",
   
+  // Work Orders
+  workOrders: "/app/work-orders",
+  workOrderDetail: (id: string) => `/app/work-orders/${id}`,
+  
   // Analytics Routes
   analyticsHub: "/app/analytics",
   jobPerformance: "/app/job-performance",
@@ -97,6 +101,7 @@ export const R = {
   // Portal Routes (External/Public)
   portalEstimate: (token: string) => `/portal/estimate/${token}`,
   portalInvoice: (token: string) => `/portal/invoice/${token}`,
+  portalWorkOrder: (token: string) => `/portal/work-order/${token}`,
   estimateOpen: (id: string) => `/open/estimate/${id}`,
   
   // Mobile & Pairing

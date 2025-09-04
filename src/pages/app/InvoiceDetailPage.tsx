@@ -5,13 +5,19 @@ import { InvoiceSchedulingTab } from "@/components/sales/InvoiceSchedulingTab";
 import { EnhancedInvoicePreview } from "@/components/invoicing/EnhancedInvoicePreview";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign } from "lucide-react";
+import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign, Wrench, ChevronDown, Link, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SendEmailDialog } from "@/components/shared/SendEmailDialog";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { CreateCrewLinkButton } from "@/components/workorders/CreateCrewLinkButton";
+import { WorkOrderPrintSheet } from "@/components/workorders/WorkOrderPrintSheet";
+import { createWorkOrderFromInvoice, getWorkOrder, getWorkOrderItems } from "@/services/workOrders";
+import { R } from "@/routes/routeMap";
+import { getInvoiceSchedule } from "@/services/scheduling";
 
 export default function InvoiceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,12 +26,73 @@ export default function InvoiceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [workOrder, setWorkOrder] = useState<any>(null);
+  const [hasSchedule, setHasSchedule] = useState(false);
+  const [showCrewLinkModal, setShowCrewLinkModal] = useState(false);
+  const [showPrintSheet, setShowPrintSheet] = useState(false);
+  const [workOrderItems, setWorkOrderItems] = useState<any[]>([]);
 
   useEffect(() => {
     if (id) {
       fetchInvoice(id);
+      fetchWorkOrder(id);
+      checkSchedule(id);
     }
   }, [id]);
+
+  const fetchWorkOrder = async (invoiceId: string) => {
+    try {
+      const { data: woData, error: woError } = await supabase
+        .from("work_orders")
+        .select("*")
+        .eq("invoice_id", invoiceId)
+        .maybeSingle();
+
+      if (woData) {
+        setWorkOrder(woData);
+        const items = await getWorkOrderItems(woData.id);
+        setWorkOrderItems(items);
+      }
+    } catch (error) {
+      console.error("Error fetching work order:", error);
+    }
+  };
+
+  const checkSchedule = async (invoiceId: string) => {
+    try {
+      const schedule = await getInvoiceSchedule(invoiceId);
+      setHasSchedule(!!schedule);
+    } catch (error) {
+      console.error("Error checking schedule:", error);
+    }
+  };
+
+  const handleGenerateWorkOrder = async () => {
+    if (!id) return;
+    
+    if (!hasSchedule) {
+      toast.error("Please set a Start/End time in Scheduling before creating a Work Order.");
+      return;
+    }
+
+    try {
+      const woId = await createWorkOrderFromInvoice(id);
+      toast.success("Work order created successfully");
+      navigate(R.workOrderDetail(woId));
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create work order");
+    }
+  };
+
+  const handlePrintWorkOrder = () => {
+    if (workOrder && workOrderItems) {
+      setShowPrintSheet(true);
+      setTimeout(() => {
+        window.print();
+        setShowPrintSheet(false);
+      }, 100);
+    }
+  };
 
   const fetchInvoice = async (invoiceId: string) => {
     try {
@@ -196,6 +263,46 @@ export default function InvoiceDetailPage() {
             <Send className="h-4 w-4 mr-2" />
             Send Invoice
           </Button>
+          
+          {/* Work Order Actions */}
+          <div className="flex gap-2">
+            {!workOrder ? (
+              <Button 
+                onClick={handleGenerateWorkOrder}
+                variant="default"
+              >
+                <Wrench className="h-4 w-4 mr-2" />
+                Generate Work Order
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  onClick={() => navigate(R.workOrderDetail(workOrder.id))}
+                  variant="default"
+                >
+                  <Wrench className="h-4 w-4 mr-2" />
+                  Open Work Order
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setShowCrewLinkModal(true)}>
+                      <Link className="mr-2 h-4 w-4" />
+                      Create Crew Link / QR
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handlePrintWorkOrder}>
+                      <Printer className="mr-2 h-4 w-4" />
+                      Print Work Order
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -322,6 +429,33 @@ export default function InvoiceDetailPage() {
                 </div>
               </div>
 
+              {/* Work Order Section */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold mb-3">Work Order</h3>
+                {!workOrder ? (
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">No work order yet.</p>
+                    <Button size="sm" onClick={handleGenerateWorkOrder}>
+                      Generate Work Order
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Badge 
+                        variant={workOrder.status === 'in_progress' ? 'default' : 'secondary'}
+                        className={workOrder.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
+                      >
+                        {workOrder.status.replace('_', ' ').charAt(0).toUpperCase() + workOrder.status.slice(1).replace('_', ' ')}
+                      </Badge>
+                      <Button variant="link" onClick={() => navigate(R.workOrderDetail(workOrder.id))}>
+                        View Work Order →
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Notes */}
               {invoice.notes && (
                 <div>
@@ -331,6 +465,22 @@ export default function InvoiceDetailPage() {
               )}
             </div>
           </Card>
+          
+          {/* Work Order Print Sheet (hidden, for printing) */}
+          {showPrintSheet && workOrder && (
+            <div className="hidden print:block">
+              <WorkOrderPrintSheet 
+                workOrder={workOrder} 
+                items={workOrderItems}
+                crewUrl={`${window.location.origin}/portal/work-order/[token]`}
+              />
+            </div>
+          )}
+          
+          {/* Crew Link Modal */}
+          {showCrewLinkModal && workOrder && (
+            <CreateCrewLinkButton workOrderId={workOrder.id} />
+          )}
         </TabsContent>
 
         <TabsContent value="scheduling" className="mt-6">

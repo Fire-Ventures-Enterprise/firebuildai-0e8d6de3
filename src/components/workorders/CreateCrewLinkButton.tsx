@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import QRCode from "qrcode";
@@ -6,11 +6,17 @@ import { createWorkOrderToken } from "@/services/workOrders";
 import { toast } from "sonner";
 import { Link, QrCode } from "lucide-react";
 
-export function CreateCrewLinkButton({ workOrderId }: { workOrderId: string }) {
+export function CreateCrewLinkButton({ workOrderId, trigger = false, onClose }: { workOrderId: string; trigger?: boolean; onClose?: () => void }) {
   const [open, setOpen] = useState(false);
   const [link, setLink] = useState<string>();
   const [qr, setQr] = useState<string>();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (trigger) {
+      createLink();
+    }
+  }, [trigger]);
 
   async function createLink() {
     setLoading(true);
@@ -27,12 +33,21 @@ export function CreateCrewLinkButton({ workOrderId }: { workOrderId: string }) {
     }
   }
 
+  const handleClose = (value: boolean) => {
+    setOpen(value);
+    if (!value && onClose) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      <Button onClick={createLink} disabled={loading} variant="outline">
-        <Link className="mr-2 h-4 w-4" />
-        Create Crew Link
-      </Button>
+      {!trigger && (
+        <Button onClick={createLink} disabled={loading} variant="outline">
+          <Link className="mr-2 h-4 w-4" />
+          Create Crew Link
+        </Button>
+      )}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
