@@ -132,10 +132,13 @@ export const DraggableSidebar = ({ activeTab, onTabChange }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Debug log to check if component is updating
+  console.log('DraggableSidebar rendering, Operations items:', navigationGroups.find(g => g.id === 'operations')?.items.map(i => i.label));
+  
   // Auto-open groups that contain the current path or important sections
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const currentPath = location.pathname;
-    const defaultOpen = ['operations']; // Always show Operations by default
+    const defaultOpen = ['operations', 'finance']; // Always show Operations and Finance by default
     const activeGroups = navigationGroups
       .filter(group => group.items.some(item => item.path === currentPath))
       .map(group => group.id);
