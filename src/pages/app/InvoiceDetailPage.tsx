@@ -283,6 +283,7 @@ export default function InvoiceDetailPage() {
               <Button 
                 onClick={handleGenerateWorkOrder}
                 variant="default"
+                data-testid="btn-generate-wo"
               >
                 <Wrench className="h-4 w-4 mr-2" />
                 Generate Work Order
@@ -292,13 +293,14 @@ export default function InvoiceDetailPage() {
                 <Button 
                   onClick={() => navigate(R.workOrderDetail(workOrder.id))}
                   variant="default"
+                  data-testid="btn-open-wo"
                 >
                   <Wrench className="h-4 w-4 mr-2" />
                   Open Work Order
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" data-testid="btn-wo-more">
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -489,25 +491,6 @@ export default function InvoiceDetailPage() {
             </div>
           </Card>
           
-          {/* Work Order Print Sheet (hidden, for printing) */}
-          {showPrintSheet && workOrder && (
-            <div className="hidden print:block">
-              <WorkOrderPrintSheet 
-                workOrder={workOrder} 
-                items={workOrderItems}
-                crewUrl={`${window.location.origin}/portal/work-order/[token]`}
-              />
-            </div>
-          )}
-          
-          {/* Crew Link Modal */}
-          {showCrewLinkModal && workOrder && (
-            <CreateCrewLinkButton 
-              workOrderId={workOrder.id} 
-              trigger={showCrewLinkModal}
-              onClose={() => setShowCrewLinkModal(false)}
-            />
-          )}
         </TabsContent>
 
         <TabsContent value="scheduling" className="mt-6">
@@ -556,6 +539,23 @@ export default function InvoiceDetailPage() {
             email: 'billing@firebuildai.com'
           }}
           onSent={handleEmailSent}
+        />
+      )}
+      
+      {/* Work Order Modals */}
+      {showCrewLinkModal && workOrder && (
+        <CreateCrewLinkButton 
+          workOrderId={workOrder.id}
+          trigger={false}
+          onClose={() => setShowCrewLinkModal(false)}
+        />
+      )}
+      
+      {showPrintSheet && workOrder && workOrderItems && (
+        <WorkOrderPrintSheet
+          workOrder={workOrder}
+          items={workOrderItems}
+          crewUrl=""
         />
       )}
     </div>

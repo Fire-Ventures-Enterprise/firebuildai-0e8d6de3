@@ -99,6 +99,11 @@ export const R = {
   teamPerformance: "/app/team-performance",
   
   // Portal Routes (External/Public)
+  portal: {
+    estimate: (token: string) => `/portal/estimate/${token}`,
+    invoice: (token: string) => `/portal/invoice/${token}`,
+    workOrder: (token: string) => `/portal/work-order/${token}`,
+  },
   portalEstimate: (token: string) => `/portal/estimate/${token}`,
   portalInvoice: (token: string) => `/portal/invoice/${token}`,
   portalWorkOrder: (token: string) => `/portal/work-order/${token}`,

@@ -231,7 +231,7 @@ export default function WorkOrderDetailPage() {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-6 space-y-6">
+    <div className="container max-w-6xl mx-auto p-6 space-y-6" data-testid="wo-detail">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>

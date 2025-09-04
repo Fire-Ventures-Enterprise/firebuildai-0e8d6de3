@@ -110,7 +110,7 @@ export default function WorkOrdersListPage() {
   };
 
   return (
-    <div className="container max-w-7xl mx-auto py-6 space-y-6">
+    <div className="container max-w-7xl mx-auto py-6 space-y-6" data-testid="wo-list">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Work Orders</h1>
@@ -176,6 +176,7 @@ export default function WorkOrdersListPage() {
                     key={wo.id}
                     className="cursor-pointer hover:bg-accent"
                     onClick={() => navigate(R.workOrderDetail(wo.id))}
+                    data-testid="wo-row"
                   >
                     <TableCell className="font-medium">{wo.title}</TableCell>
                     <TableCell>{wo.invoice_number || "—"}</TableCell>
