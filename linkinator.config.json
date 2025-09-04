@@ -1,30 +1,30 @@
 {
   "name": "linkinator-config",
   "scripts": {
-    "link-check": "linkinator https://yourapp.lovable.app --recurse --skip '.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|pdf)$' --skip 'mailto:' --skip 'tel:' --skip 'javascript:' --timeout 30000",
-    "link-check:marketing": "linkinator https://yourapp.lovable.app --recurse --skip '.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|pdf)$' --skip 'mailto:' --skip 'tel:' --skip 'javascript:' --skip '/app/' --timeout 30000",
-    "link-check:portal": "linkinator https://yourapp.lovable.app/portal/estimate/test-token --skip '.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|pdf)$' --timeout 30000"
+    "link-check": "linkinator https://app.firebuildai.com --recurse --skip '.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|pdf)$' --skip 'mailto:' --skip 'tel:' --skip 'javascript:' --timeout 30000",
+    "link-check:marketing": "linkinator https://firebuildai.com --recurse --skip '.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|pdf)$' --skip 'mailto:' --skip 'tel:' --skip 'javascript:' --skip '/app/' --timeout 30000",
+    "link-check:portal": "linkinator https://app.firebuildai.com/portal/estimate/test-token --skip '.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|pdf)$' --timeout 30000"
   },
   "targets": [
     {
-      "url": "https://yourapp.lovable.app",
+      "url": "https://firebuildai.com",
       "name": "Marketing Site",
       "recurse": true,
       "excludePatterns": ["/app/", "/admin/", "/secure-"]
     },
     {
-      "url": "https://yourapp.lovable.app/app/dashboard",
+      "url": "https://app.firebuildai.com/app/dashboard",
       "name": "App Dashboard",
       "recurse": false,
       "auth": "required"
     },
     {
-      "url": "https://yourapp.lovable.app/portal/estimate/test-token",
+      "url": "https://app.firebuildai.com/portal/estimate/test-token",
       "name": "Estimate Portal",
       "recurse": false
     },
     {
-      "url": "https://yourapp.lovable.app/portal/invoice/test-token",
+      "url": "https://app.firebuildai.com/portal/invoice/test-token",
       "name": "Invoice Portal",
       "recurse": false
     }
