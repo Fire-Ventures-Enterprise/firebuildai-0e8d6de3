@@ -5,16 +5,19 @@ import { InvoiceSchedulingTab } from "@/components/sales/InvoiceSchedulingTab";
 import { EnhancedInvoicePreview } from "@/components/invoicing/EnhancedInvoicePreview";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign, Wrench, ChevronDown, Link, Printer } from "lucide-react";
+import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign, Wrench, ChevronDown, Link, Printer, AlertTriangle, ExternalLink, QrCode } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SendEmailDialog } from "@/components/shared/SendEmailDialog";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { CreateCrewLinkButton } from "@/components/workorders/CreateCrewLinkButton";
 import { WorkOrderPrintSheet } from "@/components/workorders/WorkOrderPrintSheet";
+import { InvoiceWorkOrderActions } from "@/components/invoicing/InvoiceWorkOrderActions";
+import { InvoiceAdjustmentsBanner } from "@/components/invoicing/InvoiceAdjustmentsBanner";
 import { createWorkOrderFromInvoice, getWorkOrder, getWorkOrderItems } from "@/services/workOrders";
 import { R } from "@/routes/routeMap";
 import { getInvoiceSchedule } from "@/services/scheduling";
@@ -31,12 +34,15 @@ export default function InvoiceDetailPage() {
   const [showCrewLinkModal, setShowCrewLinkModal] = useState(false);
   const [showPrintSheet, setShowPrintSheet] = useState(false);
   const [workOrderItems, setWorkOrderItems] = useState<any[]>([]);
+  const [adjustments, setAdjustments] = useState<any[]>([]);
+  const [crewToken, setCrewToken] = useState<string>("");
 
   useEffect(() => {
     if (id) {
       fetchInvoice(id);
       fetchWorkOrder(id);
       checkSchedule(id);
+      fetchAdjustments(id);
     }
   }, [id]);
 
@@ -52,9 +58,33 @@ export default function InvoiceDetailPage() {
         setWorkOrder(woData);
         const items = await getWorkOrderItems(woData.id);
         setWorkOrderItems(items);
+        
+        // Generate crew token for the work order
+        const { data: tokenData } = await supabase.rpc('create_work_order_token', {
+          p_work_order_id: woData.id
+        });
+        if (tokenData) {
+          setCrewToken(tokenData);
+        }
       }
     } catch (error) {
       console.error("Error fetching work order:", error);
+    }
+  };
+
+  const fetchAdjustments = async (invoiceId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("invoice_adjustments")
+        .select("*")
+        .eq("invoice_id", invoiceId)
+        .eq("status", "draft");
+
+      if (data) {
+        setAdjustments(data);
+      }
+    } catch (error) {
+      console.error("Error fetching adjustments:", error);
     }
   };
 
@@ -92,6 +122,61 @@ export default function InvoiceDetailPage() {
         setShowPrintSheet(false);
       }, 100);
     }
+  };
+
+  const handleApproveAdjustments = async (adjustmentId: string) => {
+    try {
+      const { error } = await supabase.rpc('approve_invoice_adjustments', {
+        p_adjustment_id: adjustmentId
+      });
+      
+      if (error) throw error;
+      
+      toast.success("Adjustments approved successfully");
+      fetchAdjustments(id!);
+      fetchInvoice(id!);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to approve adjustments");
+    }
+  };
+
+  const handleRejectAdjustments = async (adjustmentId: string) => {
+    try {
+      const { error } = await supabase.rpc('reject_invoice_adjustments', {
+        p_adjustment_id: adjustmentId
+      });
+      
+      if (error) throw error;
+      
+      toast.success("Adjustments rejected");
+      fetchAdjustments(id!);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to reject adjustments");
+    }
+  };
+  
+  const getWorkOrderStatus = () => {
+    if (!workOrder) return null;
+    
+    const statusColors = {
+      issued: "secondary",
+      in_progress: "default",
+      completed: "success",
+      cancelled: "destructive"
+    };
+    
+    const statusLabels = {
+      issued: "WO: Open",
+      in_progress: "WO: In Progress",
+      completed: "WO: Complete",
+      cancelled: "WO: Cancelled"
+    };
+    
+    return (
+      <Badge variant={statusColors[workOrder.status as keyof typeof statusColors] as any}>
+        {statusLabels[workOrder.status as keyof typeof statusLabels]}
+      </Badge>
+    );
   };
 
   const fetchInvoice = async (invoiceId: string) => {
@@ -232,6 +317,15 @@ export default function InvoiceDetailPage() {
 
   return (
     <div className="space-y-6">
+      {/* Invoice Adjustments Banner */}
+      {adjustments.length > 0 && (
+        <InvoiceAdjustmentsBanner
+          adjustments={adjustments}
+          onApprove={handleApproveAdjustments}
+          onReject={handleRejectAdjustments}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -248,19 +342,6 @@ export default function InvoiceDetailPage() {
               <Badge className={getStatusColor(invoice.status)}>
                 {invoice.status}
               </Badge>
-              {workOrder && (
-                <Badge 
-                  variant={
-                    workOrder.status === 'completed' ? 'success' : 
-                    workOrder.status === 'in_progress' ? 'default' : 
-                    workOrder.status === 'cancelled' ? 'destructive' : 
-                    'secondary'
-                  }
-                  className="ml-2"
-                >
-                  WO: {workOrder.status.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
-                </Badge>
-              )}
             </h1>
             <p className="text-muted-foreground mt-1">
               {invoice.customerName} • ${invoice.total.toFixed(2)}
@@ -278,46 +359,16 @@ export default function InvoiceDetailPage() {
           </Button>
           
           {/* Work Order Actions */}
-          <div className="flex gap-2">
-            {!workOrder ? (
-              <Button 
-                onClick={handleGenerateWorkOrder}
-                variant="default"
-                data-testid="btn-generate-wo"
-              >
-                <Wrench className="h-4 w-4 mr-2" />
-                Generate Work Order
-              </Button>
-            ) : (
-              <>
-                <Button 
-                  onClick={() => navigate(R.workOrderDetail(workOrder.id))}
-                  variant="default"
-                  data-testid="btn-open-wo"
-                >
-                  <Wrench className="h-4 w-4 mr-2" />
-                  Open Work Order
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" data-testid="btn-wo-more">
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setShowCrewLinkModal(true)}>
-                      <Link className="mr-2 h-4 w-4" />
-                      Create Crew Link / QR
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handlePrintWorkOrder}>
-                      <Printer className="mr-2 h-4 w-4" />
-                      Print Work Order
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            )}
-          </div>
+          <InvoiceWorkOrderActions
+            invoice={invoice}
+            workOrder={workOrder}
+            hasSchedule={hasSchedule}
+            onGenerateWorkOrder={handleGenerateWorkOrder}
+            onRefresh={() => {
+              fetchWorkOrder(id!);
+              fetchAdjustments(id!);
+            }}
+          />
         </div>
       </div>
 
