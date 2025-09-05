@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, FileText, DollarSign, Clock, Send, CheckCircle, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, FileText, DollarSign, Clock, Send, CheckCircle, Eye, Edit, Trash2, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import EstimateForm from '@/components/estimates/EstimateForm';
 import EstimatePreview from '@/components/estimates/EstimatePreview';
+import { ServiceLibraryDrawer } from '@/components/service-library/ServiceLibraryDrawer';
 import { formatCurrency } from '@/lib/utils';
 
 interface Estimate {
@@ -39,6 +40,8 @@ export const EstimatesPage = () => {
   const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showServiceLibrary, setShowServiceLibrary] = useState(false);
+  const [currentEstimateId, setCurrentEstimateId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
@@ -325,6 +328,17 @@ export const EstimatesPage = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => {
+                        setCurrentEstimateId(estimate.id);
+                        setShowServiceLibrary(true);
+                      }}
+                      title="Service Library"
+                    >
+                      <Package className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
                         setSelectedEstimate(estimate);
                         setShowPreview(true);
                       }}
@@ -408,6 +422,26 @@ export const EstimatesPage = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Service Library Drawer */}
+      {currentEstimateId && (
+        <ServiceLibraryDrawer
+          open={showServiceLibrary}
+          onClose={() => {
+            setShowServiceLibrary(false);
+            setCurrentEstimateId(null);
+          }}
+          onTasksCreated={(tasks) => {
+            fetchEstimates();
+            toast({
+              title: "Success",
+              description: `Generated ${tasks.length} tasks and schedule from service library`,
+            });
+          }}
+          targetId={currentEstimateId}
+          targetType="estimate"
+        />
+      )}
     </div>
   );
 };

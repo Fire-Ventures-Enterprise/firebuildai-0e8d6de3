@@ -10,6 +10,9 @@ export interface Template {
   is_active: boolean;
   options_schema?: any;
   params_schema?: any;
+  industry?: string;
+  display_order?: number;
+  icon?: string;
   created_at: string;
   updated_at: string;
 }
