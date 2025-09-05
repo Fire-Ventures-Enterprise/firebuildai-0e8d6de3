@@ -4,7 +4,8 @@ import { EnhancedInvoiceForm } from "@/components/invoicing/EnhancedInvoiceForm"
 import { SimpleInvoiceTable } from "@/components/invoicing/SimpleInvoiceTable";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, FileText, Clock, DollarSign, CheckCircle, Send, Mail } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Plus, FileText, Clock, DollarSign, CheckCircle, Send, Mail, FileCheck } from "lucide-react";
 import { Invoice, InvoiceStatus } from "@/types/invoice";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +19,7 @@ export const InvoicesPage = () => {
   const [selectedInvoice, setSelectedInvoice] = useState<EnhancedInvoice | null>(null);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'paid'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'draft' | 'accepted' | 'paid'>('all');
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -369,14 +370,36 @@ export const InvoicesPage = () => {
     totalInvoices: invoices.length,
     pending: invoices.filter(i => i.status === 'sent' || i.status === 'viewed' || i.status === 'draft').length,
     paid: invoices.filter(i => i.status === 'paid').length,
+    draft: invoices.filter(i => i.status === 'draft').length,
+    accepted: invoices.filter(i => 
+      i.status !== 'draft' && 
+      i.status !== 'paid' && 
+      i.depositAmount > 0 && 
+      i.paidAmount >= i.depositAmount
+    ).length,
   };
 
-  // Filter invoices based on status
-  const filteredInvoices = statusFilter === 'all' 
-    ? invoices 
-    : statusFilter === 'pending' 
-    ? invoices.filter(i => i.status === 'sent' || i.status === 'viewed' || i.status === 'draft')
-    : invoices.filter(i => i.status === 'paid');
+  // Filter invoices based on active tab
+  const getFilteredInvoices = () => {
+    switch(activeTab) {
+      case 'draft':
+        return invoices.filter(i => i.status === 'draft');
+      case 'accepted':
+        // Accepted means deposit is paid and ready for scheduling
+        return invoices.filter(i => 
+          i.status !== 'draft' && 
+          i.status !== 'paid' && 
+          i.depositAmount > 0 && 
+          i.paidAmount >= i.depositAmount
+        );
+      case 'paid':
+        return invoices.filter(i => i.status === 'paid');
+      default:
+        return invoices;
+    }
+  };
+
+  const filteredInvoices = getFilteredInvoices();
 
   return (
     <div className="space-y-6">
@@ -447,43 +470,62 @@ export const InvoicesPage = () => {
         </Card>
       </div>
 
-      {/* Filter Indicator */}
-      {statusFilter !== 'all' && (
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            Showing {statusFilter === 'pending' ? 'pending' : 'paid'} invoices
-          </span>
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => setStatusFilter('all')}
-          >
-            Clear filter
-          </Button>
-        </div>
-      )}
+      {/* Tabs for filtering invoices */}
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            All ({stats.totalInvoices})
+          </TabsTrigger>
+          <TabsTrigger value="draft" className="flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            Draft ({stats.draft})
+          </TabsTrigger>
+          <TabsTrigger value="accepted" className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            Accepted ({stats.accepted})
+          </TabsTrigger>
+          <TabsTrigger value="paid" className="flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            Paid ({stats.paid})
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Invoices List */}
-      {filteredInvoices.length > 0 ? (
-        <SimpleInvoiceTable 
-          invoices={filteredInvoices} 
-          onEdit={handleEditInvoice}
-          onDelete={handleDeleteInvoice}
-          onRefresh={fetchInvoices}
-        />
-      ) : (
-        <Card className="p-12">
-          <div className="text-center">
-            <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No invoices yet</h3>
-            <p className="text-muted-foreground mb-4">Create your first invoice to get started</p>
-            <Button onClick={handleCreateInvoice}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Invoice
-            </Button>
-          </div>
-        </Card>
-      )}
+        <TabsContent value={activeTab} className="mt-4">
+          {filteredInvoices.length > 0 ? (
+            <SimpleInvoiceTable 
+              invoices={filteredInvoices} 
+              onEdit={handleEditInvoice}
+              onDelete={handleDeleteInvoice}
+              onRefresh={fetchInvoices}
+            />
+          ) : (
+            <Card className="p-12">
+              <div className="text-center">
+                <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  {activeTab === 'draft' && 'No draft invoices'}
+                  {activeTab === 'accepted' && 'No accepted invoices'}
+                  {activeTab === 'paid' && 'No paid invoices'}
+                  {activeTab === 'all' && 'No invoices yet'}
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  {activeTab === 'draft' && 'Draft invoices will appear here'}
+                  {activeTab === 'accepted' && 'Invoices with paid deposits ready for scheduling will appear here'}
+                  {activeTab === 'paid' && 'Fully paid invoices will appear here'}
+                  {activeTab === 'all' && 'Create your first invoice to get started'}
+                </p>
+                {activeTab === 'all' && (
+                  <Button onClick={handleCreateInvoice}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Invoice
+                  </Button>
+                )}
+              </div>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* Invoice Form Modal */}
       {showForm && (
