@@ -2588,6 +2588,100 @@ export type Database = {
         }
         Relationships: []
       }
+      preset_metrics: {
+        Row: {
+          created_at: string
+          default_value: number | null
+          id: string
+          label: string
+          max_value: number | null
+          metric_key: string
+          min_value: number | null
+          required: boolean | null
+          sort_order: number | null
+          template_id: string
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          default_value?: number | null
+          id?: string
+          label: string
+          max_value?: number | null
+          metric_key: string
+          min_value?: number | null
+          required?: boolean | null
+          sort_order?: number | null
+          template_id: string
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          default_value?: number | null
+          id?: string
+          label?: string
+          max_value?: number | null
+          metric_key?: string
+          min_value?: number | null
+          required?: boolean | null
+          sort_order?: number | null
+          template_id?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preset_metrics_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      preset_options: {
+        Row: {
+          created_at: string
+          default_value: Json | null
+          id: string
+          label: string
+          option_key: string
+          option_type: string
+          options: Json | null
+          sort_order: number | null
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_value?: Json | null
+          id?: string
+          label: string
+          option_key: string
+          option_type?: string
+          options?: Json | null
+          sort_order?: number | null
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          default_value?: Json | null
+          id?: string
+          label?: string
+          option_key?: string
+          option_type?: string
+          options?: Json | null
+          sort_order?: number | null
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preset_options_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -3444,7 +3538,10 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          display_order: number | null
+          icon: string | null
           id: string
+          industry: string | null
           is_active: boolean | null
           name: string
           options_schema: Json | null
@@ -3457,7 +3554,10 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          display_order?: number | null
+          icon?: string | null
           id?: string
+          industry?: string | null
           is_active?: boolean | null
           name: string
           options_schema?: Json | null
@@ -3470,7 +3570,10 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          display_order?: number | null
+          icon?: string | null
           id?: string
+          industry?: string | null
           is_active?: boolean | null
           name?: string
           options_schema?: Json | null
