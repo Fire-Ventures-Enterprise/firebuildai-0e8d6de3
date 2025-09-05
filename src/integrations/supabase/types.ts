@@ -44,6 +44,68 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_milestones: {
+        Row: {
+          amount: number | null
+          created_at: string
+          depends_on_task_codes: string[] | null
+          due_date: string | null
+          estimate_id: string | null
+          id: string
+          invoice_id: string | null
+          name: string
+          paid_date: string | null
+          percentage: number
+          sort_order: number | null
+          status: string | null
+          template_id: string | null
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          depends_on_task_codes?: string[] | null
+          due_date?: string | null
+          estimate_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          name: string
+          paid_date?: string | null
+          percentage: number
+          sort_order?: number | null
+          status?: string | null
+          template_id?: string | null
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          depends_on_task_codes?: string[] | null
+          due_date?: string | null
+          estimate_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          name?: string
+          paid_date?: string | null
+          percentage?: number
+          sort_order?: number | null
+          status?: string | null
+          template_id?: string | null
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_milestones_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_event_attendees: {
         Row: {
           created_at: string | null
@@ -2577,6 +2639,130 @@ export type Database = {
         }
         Relationships: []
       }
+      project_task_items: {
+        Row: {
+          created_at: string
+          estimate_item_id: string | null
+          id: string
+          invoice_item_id: string | null
+          project_task_id: string
+        }
+        Insert: {
+          created_at?: string
+          estimate_item_id?: string | null
+          id?: string
+          invoice_item_id?: string | null
+          project_task_id: string
+        }
+        Update: {
+          created_at?: string
+          estimate_item_id?: string | null
+          id?: string
+          invoice_item_id?: string | null
+          project_task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_task_items_project_task_id_fkey"
+            columns: ["project_task_id"]
+            isOneToOne: false
+            referencedRelation: "project_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_tasks: {
+        Row: {
+          actual_end: string | null
+          actual_start: string | null
+          code: string
+          created_at: string
+          crew_assigned: string[] | null
+          depends_on_codes: string[] | null
+          duration_days: number | null
+          estimate_id: string | null
+          id: string
+          invoice_id: string | null
+          label: string
+          notes: string | null
+          purchase_order_id: string | null
+          quantity: number | null
+          rate_per_unit: number | null
+          scheduled_end: string | null
+          scheduled_start: string | null
+          status: string | null
+          template_id: string | null
+          total_amount: number | null
+          trade: string
+          unit_of_measure: string | null
+          updated_at: string
+          vendor_id: string | null
+          work_order_id: string | null
+        }
+        Insert: {
+          actual_end?: string | null
+          actual_start?: string | null
+          code: string
+          created_at?: string
+          crew_assigned?: string[] | null
+          depends_on_codes?: string[] | null
+          duration_days?: number | null
+          estimate_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          label: string
+          notes?: string | null
+          purchase_order_id?: string | null
+          quantity?: number | null
+          rate_per_unit?: number | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          status?: string | null
+          template_id?: string | null
+          total_amount?: number | null
+          trade: string
+          unit_of_measure?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+          work_order_id?: string | null
+        }
+        Update: {
+          actual_end?: string | null
+          actual_start?: string | null
+          code?: string
+          created_at?: string
+          crew_assigned?: string[] | null
+          depends_on_codes?: string[] | null
+          duration_days?: number | null
+          estimate_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          label?: string
+          notes?: string | null
+          purchase_order_id?: string | null
+          quantity?: number | null
+          rate_per_unit?: number | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          status?: string | null
+          template_id?: string | null
+          total_amount?: number | null
+          trade?: string
+          unit_of_measure?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+          work_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       proposals: {
         Row: {
           content: string | null
@@ -3150,6 +3336,148 @@ export type Database = {
           role?: string | null
           specialty?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      template_dependencies: {
+        Row: {
+          created_at: string
+          depends_on_code: string
+          id: string
+          template_task_id: string
+        }
+        Insert: {
+          created_at?: string
+          depends_on_code: string
+          id?: string
+          template_task_id: string
+        }
+        Update: {
+          created_at?: string
+          depends_on_code?: string
+          id?: string
+          template_task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_dependencies_template_task_id_fkey"
+            columns: ["template_task_id"]
+            isOneToOne: false
+            referencedRelation: "template_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_tasks: {
+        Row: {
+          code: string
+          created_at: string
+          crew_role: string | null
+          default_qty_formula: string | null
+          duration_days: number | null
+          enabled_condition: string | null
+          id: string
+          is_lead_time: boolean | null
+          label: string
+          options_json: Json | null
+          rate_per_unit: number | null
+          requires_inspection: boolean | null
+          requires_permit: boolean | null
+          sort_order: number | null
+          template_id: string
+          trade: string
+          unit_of_measure: string | null
+          vendor_category: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          crew_role?: string | null
+          default_qty_formula?: string | null
+          duration_days?: number | null
+          enabled_condition?: string | null
+          id?: string
+          is_lead_time?: boolean | null
+          label: string
+          options_json?: Json | null
+          rate_per_unit?: number | null
+          requires_inspection?: boolean | null
+          requires_permit?: boolean | null
+          sort_order?: number | null
+          template_id: string
+          trade: string
+          unit_of_measure?: string | null
+          vendor_category?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          crew_role?: string | null
+          default_qty_formula?: string | null
+          duration_days?: number | null
+          enabled_condition?: string | null
+          id?: string
+          is_lead_time?: boolean | null
+          label?: string
+          options_json?: Json | null
+          rate_per_unit?: number | null
+          requires_inspection?: boolean | null
+          requires_permit?: boolean | null
+          sort_order?: number | null
+          template_id?: string
+          trade?: string
+          unit_of_measure?: string | null
+          vendor_category?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      templates: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          options_schema: Json | null
+          params_schema: Json | null
+          updated_at: string
+          user_id: string
+          version: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          options_schema?: Json | null
+          params_schema?: Json | null
+          updated_at?: string
+          user_id: string
+          version?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          options_schema?: Json | null
+          params_schema?: Json | null
+          updated_at?: string
+          user_id?: string
+          version?: string | null
         }
         Relationships: []
       }
