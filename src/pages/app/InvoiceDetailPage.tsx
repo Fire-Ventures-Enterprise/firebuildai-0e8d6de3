@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { InvoiceSchedulingTab } from "@/components/sales/InvoiceSchedulingTab";
 import { EnhancedInvoicePreview } from "@/components/invoicing/EnhancedInvoicePreview";
@@ -26,6 +26,7 @@ import { getInvoiceSchedule } from "@/services/scheduling";
 export default function InvoiceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [invoice, setInvoice] = useState<EnhancedInvoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
@@ -39,6 +40,7 @@ export default function InvoiceDetailPage() {
   const [crewToken, setCrewToken] = useState<string>("");
   const [showSchedulingModal, setShowSchedulingModal] = useState(false);
   const [hasDepositPayment, setHasDepositPayment] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     if (id) {
@@ -49,6 +51,15 @@ export default function InvoiceDetailPage() {
       checkDepositPayment(id);
     }
   }, [id]);
+  
+  // Check for schedule query parameter
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('schedule') === '1' && hasDepositPayment && !hasSchedule) {
+      setShowSchedulingModal(true);
+      setActiveTab('scheduling');
+    }
+  }, [location.search, hasDepositPayment, hasSchedule]);
 
   // Subscribe to payment updates
   useEffect(() => {
@@ -425,7 +436,7 @@ export default function InvoiceDetailPage() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">
             <FileText className="h-4 w-4 mr-2" />
@@ -434,6 +445,9 @@ export default function InvoiceDetailPage() {
           <TabsTrigger value="scheduling">
             <Calendar className="h-4 w-4 mr-2" />
             Scheduling
+            {hasDepositPayment && !hasSchedule && (
+              <Badge variant="destructive" className="ml-2">Setup Required</Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="payments">
             <DollarSign className="h-4 w-4 mr-2" />
