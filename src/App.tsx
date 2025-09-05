@@ -56,6 +56,7 @@ import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
 import VendorsPage from "./pages/app/VendorsPage";
 import ExpensesNewPage from "./pages/app/ExpensesNewPage";
+import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
 
@@ -194,6 +195,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <SchedulingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/workflow" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <WorkflowCalendarPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

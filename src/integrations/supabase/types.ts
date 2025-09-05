@@ -106,6 +106,36 @@ export type Database = {
           },
         ]
       }
+      blackout_windows: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          location_id: string | null
+          reason: string | null
+          start_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+          start_date: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+          start_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       calendar_event_attendees: {
         Row: {
           created_at: string | null
@@ -403,7 +433,10 @@ export type Database = {
           company_name: string | null
           country: string | null
           created_at: string
+          default_work_hours: Json | null
           email: string | null
+          enable_capacity_planning: boolean | null
+          frozen_zone_days: number | null
           id: string
           logo_url: string | null
           payment_settings: Json | null
@@ -420,7 +453,10 @@ export type Database = {
           company_name?: string | null
           country?: string | null
           created_at?: string
+          default_work_hours?: Json | null
           email?: string | null
+          enable_capacity_planning?: boolean | null
+          frozen_zone_days?: number | null
           id?: string
           logo_url?: string | null
           payment_settings?: Json | null
@@ -437,7 +473,10 @@ export type Database = {
           company_name?: string | null
           country?: string | null
           created_at?: string
+          default_work_hours?: Json | null
           email?: string | null
+          enable_capacity_planning?: boolean | null
+          frozen_zone_days?: number | null
           id?: string
           logo_url?: string | null
           payment_settings?: Json | null
@@ -447,6 +486,63 @@ export type Database = {
           updated_at?: string
           user_id?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      company_holidays: {
+        Row: {
+          created_at: string
+          holiday_date: string
+          id: string
+          name: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          holiday_date: string
+          id?: string
+          name?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          holiday_date?: string
+          id?: string
+          name?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      company_working_hours: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_working_day: boolean | null
+          start_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_working_day?: boolean | null
+          start_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_working_day?: boolean | null
+          start_time?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2785,6 +2881,7 @@ export type Database = {
           scheduled_end: string | null
           scheduled_start: string | null
           status: string | null
+          team_id: string | null
           template_id: string | null
           total_amount: number | null
           trade: string
@@ -2812,6 +2909,7 @@ export type Database = {
           scheduled_end?: string | null
           scheduled_start?: string | null
           status?: string | null
+          team_id?: string | null
           template_id?: string | null
           total_amount?: number | null
           trade: string
@@ -2839,6 +2937,7 @@ export type Database = {
           scheduled_end?: string | null
           scheduled_start?: string | null
           status?: string | null
+          team_id?: string | null
           template_id?: string | null
           total_amount?: number | null
           trade?: string
@@ -2848,6 +2947,13 @@ export type Database = {
           work_order_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "project_tasks_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "project_tasks_template_id_fkey"
             columns: ["template_id"]
@@ -3394,6 +3500,44 @@ export type Database = {
         }
         Relationships: []
       }
+      team_capacity: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          team_id: string
+          total_slots: number
+          updated_at: string
+          used_slots: number
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          team_id: string
+          total_slots?: number
+          updated_at?: string
+          used_slots?: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          team_id?: string
+          total_slots?: number
+          updated_at?: string
+          used_slots?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_capacity_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           active: boolean | null
@@ -3429,6 +3573,51 @@ export type Database = {
           phone?: string | null
           role?: string | null
           specialty?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          color: string | null
+          created_at: string
+          default_capacity: number | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          lead_name: string | null
+          name: string
+          phone: string | null
+          trade: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          default_capacity?: number | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          lead_name?: string | null
+          name: string
+          phone?: string | null
+          trade?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          default_capacity?: number | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          lead_name?: string | null
+          name?: string
+          phone?: string | null
+          trade?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
