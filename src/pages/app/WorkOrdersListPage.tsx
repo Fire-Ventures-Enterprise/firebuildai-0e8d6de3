@@ -169,13 +169,6 @@ export default function WorkOrdersListPage() {
           <h1 className="text-3xl font-bold text-foreground">Work Orders</h1>
           <p className="text-muted-foreground">Manage field work assignments</p>
         </div>
-        <Button 
-          onClick={() => setShowGenerateModal(true)}
-          data-testid="btn-wo-generate-from-invoice"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Generate from Invoice
-        </Button>
       </div>
 
       <Card>

@@ -33,11 +33,11 @@ export const DashboardHeader = () => {
         <div className="flex items-center gap-3">
           <img 
             src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
-            alt="FireBuild.ai"
+            alt="FireBuildAI"
             className="w-14 h-14 object-contain"
           />
           <div>
-            <h1 className="text-xl font-bold text-foreground">FireBuild.ai</h1>
+            <h1 className="text-xl font-bold text-foreground">FireBuildAI</h1>
             <p className="text-xs text-muted-foreground">Build Better Business</p>
           </div>
         </div>
