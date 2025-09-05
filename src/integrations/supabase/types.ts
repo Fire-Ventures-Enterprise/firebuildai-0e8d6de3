@@ -4155,6 +4155,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      approve_invoice_adjustments: {
+        Args: { p_adjustment_id: string }
+        Returns: undefined
+      }
       can_edit_invoice: {
         Args: { invoice_id_param: string; override_phrase?: string }
         Returns: boolean
@@ -4415,6 +4419,14 @@ export type Database = {
           p_provider: string
           p_reference: string
         }
+        Returns: undefined
+      }
+      regenerate_wo_token: {
+        Args: { p_wo_id: string }
+        Returns: string
+      }
+      reject_invoice_adjustments: {
+        Args: { p_adjustment_id: string }
         Returns: undefined
       }
       revoke_device_session: {
