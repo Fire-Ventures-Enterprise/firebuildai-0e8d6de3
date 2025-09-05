@@ -13,6 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { useSearchParams } from "react-router-dom";
 
+// Force refresh - Invoice page with status tabs
+
 export const InvoicesPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [invoices, setInvoices] = useState<EnhancedInvoice[]>([]);
@@ -381,6 +383,7 @@ export const InvoicesPage = () => {
 
   // Filter invoices based on active tab
   const getFilteredInvoices = () => {
+    console.log('Active tab:', activeTab); // Debug log
     switch(activeTab) {
       case 'draft':
         return invoices.filter(i => i.status === 'draft');
