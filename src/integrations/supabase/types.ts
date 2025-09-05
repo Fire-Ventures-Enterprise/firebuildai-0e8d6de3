@@ -1009,10 +1009,12 @@ export type Database = {
           accepted_by_name: string | null
           accepted_ip: string | null
           contract_attached: boolean | null
+          converted_invoice_id: string | null
           converted_to_invoice: boolean | null
           created_at: string
           customer_id: string
           deposit_amount: number | null
+          deposit_due: number | null
           deposit_percentage: number | null
           estimate_number: string
           expiration_date: string | null
@@ -1053,10 +1055,12 @@ export type Database = {
           accepted_by_name?: string | null
           accepted_ip?: string | null
           contract_attached?: boolean | null
+          converted_invoice_id?: string | null
           converted_to_invoice?: boolean | null
           created_at?: string
           customer_id: string
           deposit_amount?: number | null
+          deposit_due?: number | null
           deposit_percentage?: number | null
           estimate_number: string
           expiration_date?: string | null
@@ -1097,10 +1101,12 @@ export type Database = {
           accepted_by_name?: string | null
           accepted_ip?: string | null
           contract_attached?: boolean | null
+          converted_invoice_id?: string | null
           converted_to_invoice?: boolean | null
           created_at?: string
           customer_id?: string
           deposit_amount?: number | null
+          deposit_due?: number | null
           deposit_percentage?: number | null
           estimate_number?: string
           expiration_date?: string | null
@@ -1135,7 +1141,22 @@ export type Database = {
           user_id?: string
           viewed_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "estimates_converted_invoice_id_fkey"
+            columns: ["converted_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estimates_converted_invoice_id_fkey"
+            columns: ["converted_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_enhanced"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       expense_categories: {
         Row: {
@@ -1747,6 +1768,7 @@ export type Database = {
           notes: string | null
           payment_date: string
           payment_method: string
+          payment_type: string | null
           status: string
           transaction_id: string | null
           updated_at: string
@@ -1759,6 +1781,7 @@ export type Database = {
           notes?: string | null
           payment_date?: string
           payment_method: string
+          payment_type?: string | null
           status?: string
           transaction_id?: string | null
           updated_at?: string
@@ -1771,6 +1794,7 @@ export type Database = {
           notes?: string | null
           payment_date?: string
           payment_method?: string
+          payment_type?: string | null
           status?: string
           transaction_id?: string | null
           updated_at?: string
@@ -2030,12 +2054,14 @@ export type Database = {
           customer_province: string | null
           days_to_payment: number | null
           deposit_amount: number | null
+          deposit_paid_at: string | null
           deposit_request: number | null
           deposit_type: string | null
           discount: number | null
           discount_amount: number | null
           discount_type: string | null
           due_date: string | null
+          estimate_id: string | null
           gross_profit: number | null
           id: string
           invoice_number: string
@@ -2052,6 +2078,7 @@ export type Database = {
           profit_margin: number | null
           public_token: string | null
           public_token_hash: string | null
+          scheduling_status: string | null
           sent_at: string | null
           sent_by: string | null
           sent_count: number | null
@@ -2088,12 +2115,14 @@ export type Database = {
           customer_province?: string | null
           days_to_payment?: number | null
           deposit_amount?: number | null
+          deposit_paid_at?: string | null
           deposit_request?: number | null
           deposit_type?: string | null
           discount?: number | null
           discount_amount?: number | null
           discount_type?: string | null
           due_date?: string | null
+          estimate_id?: string | null
           gross_profit?: number | null
           id?: string
           invoice_number: string
@@ -2110,6 +2139,7 @@ export type Database = {
           profit_margin?: number | null
           public_token?: string | null
           public_token_hash?: string | null
+          scheduling_status?: string | null
           sent_at?: string | null
           sent_by?: string | null
           sent_count?: number | null
@@ -2146,12 +2176,14 @@ export type Database = {
           customer_province?: string | null
           days_to_payment?: number | null
           deposit_amount?: number | null
+          deposit_paid_at?: string | null
           deposit_request?: number | null
           deposit_type?: string | null
           discount?: number | null
           discount_amount?: number | null
           discount_type?: string | null
           due_date?: string | null
+          estimate_id?: string | null
           gross_profit?: number | null
           id?: string
           invoice_number?: string
@@ -2168,6 +2200,7 @@ export type Database = {
           profit_margin?: number | null
           public_token?: string | null
           public_token_hash?: string | null
+          scheduling_status?: string | null
           sent_at?: string | null
           sent_by?: string | null
           sent_count?: number | null
@@ -2191,6 +2224,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_enhanced_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "estimates"
             referencedColumns: ["id"]
           },
         ]
@@ -4019,6 +4059,8 @@ export type Database = {
           invoice_id: string | null
           job_id: string | null
           schedule_id: string | null
+          scheduled_end: string | null
+          scheduled_start: string | null
           service_address: string | null
           starts_at: string
           status: string
@@ -4036,6 +4078,8 @@ export type Database = {
           invoice_id?: string | null
           job_id?: string | null
           schedule_id?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
           service_address?: string | null
           starts_at: string
           status?: string
@@ -4053,6 +4097,8 @@ export type Database = {
           invoice_id?: string | null
           job_id?: string | null
           schedule_id?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
           service_address?: string | null
           starts_at?: string
           status?: string
@@ -4182,6 +4228,10 @@ export type Database = {
       cleanup_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      convert_estimate_to_invoice: {
+        Args: { p_estimate_id: string }
+        Returns: string
       }
       create_work_order_from_invoice: {
         Args: { p_invoice_id: string }
@@ -4370,6 +4420,7 @@ export type Database = {
           notes: string | null
           payment_date: string
           payment_method: string
+          payment_type: string | null
           status: string
           transaction_id: string | null
           updated_at: string
@@ -4407,6 +4458,10 @@ export type Database = {
           p_window_secs?: number
         }
         Returns: boolean
+      }
+      process_deposit_payment: {
+        Args: { p_amount: number; p_invoice_id: string; p_payment_ref: string }
+        Returns: undefined
       }
       process_email_bounce: {
         Args: { p_email: string; p_provider_id: string; p_reason: string }
