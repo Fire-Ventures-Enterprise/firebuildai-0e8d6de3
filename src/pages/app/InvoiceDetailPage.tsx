@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { InvoiceSchedulingTab } from "@/components/sales/InvoiceSchedulingTab";
 import { EnhancedInvoicePreview } from "@/components/invoicing/EnhancedInvoicePreview";
+import { InvoiceSchedulingModal } from "@/components/invoicing/InvoiceSchedulingModal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign, Wrench, ChevronDown, Link, Printer, AlertTriangle, ExternalLink, QrCode } from "lucide-react";
@@ -36,6 +37,8 @@ export default function InvoiceDetailPage() {
   const [workOrderItems, setWorkOrderItems] = useState<any[]>([]);
   const [adjustments, setAdjustments] = useState<any[]>([]);
   const [crewToken, setCrewToken] = useState<string>("");
+  const [showSchedulingModal, setShowSchedulingModal] = useState(false);
+  const [hasDepositPayment, setHasDepositPayment] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -43,8 +46,57 @@ export default function InvoiceDetailPage() {
       fetchWorkOrder(id);
       checkSchedule(id);
       fetchAdjustments(id);
+      checkDepositPayment(id);
     }
   }, [id]);
+
+  // Subscribe to payment updates
+  useEffect(() => {
+    if (!id) return;
+
+    const subscription = supabase
+      .channel(`invoice-payments-${id}`)
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'invoice_payments',
+          filter: `invoice_id=eq.${id}`
+        },
+        (payload) => {
+          // Check if this is a deposit payment
+          if (payload.new && !hasSchedule) {
+            checkDepositPayment(id);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [id, hasSchedule]);
+
+  const checkDepositPayment = async (invoiceId: string) => {
+    try {
+      const { data: invoice } = await supabase
+        .from("invoices_enhanced")
+        .select("deposit_amount, paid_amount")
+        .eq("id", invoiceId)
+        .single();
+
+      if (invoice && invoice.deposit_amount > 0 && invoice.paid_amount >= invoice.deposit_amount) {
+        setHasDepositPayment(true);
+        
+        // If no schedule exists and deposit is paid, show scheduling modal
+        if (!hasSchedule) {
+          setShowSchedulingModal(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking deposit payment:", error);
+    }
+  };
 
   const fetchWorkOrder = async (invoiceId: string) => {
     try {
@@ -641,6 +693,19 @@ export default function InvoiceDetailPage() {
           workOrder={workOrder}
           items={workOrderItems}
           crewUrl=""
+        />
+      )}
+
+      {/* Scheduling Modal (shows after deposit payment) */}
+      {invoice && (
+        <InvoiceSchedulingModal
+          open={showSchedulingModal}
+          onOpenChange={setShowSchedulingModal}
+          invoice={invoice}
+          onScheduleComplete={() => {
+            setHasSchedule(true);
+            fetchInvoice(id!);
+          }}
         />
       )}
     </div>

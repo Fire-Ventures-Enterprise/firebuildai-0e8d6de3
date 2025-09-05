@@ -42,8 +42,9 @@ serve(async (req) => {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       
-      // Extract invoice_id from metadata
+      // Extract invoice_id and payment type from metadata
       const invoice_id = session.metadata?.invoice_id;
+      const payment_type = session.metadata?.payment_type;
       
       if (invoice_id) {
         // Get payment intent details
@@ -54,7 +55,7 @@ serve(async (req) => {
           amount = pi.amount_received || amount;
         }
 
-        console.log(`Recording payment for invoice ${invoice_id}: ${amount} cents`);
+        console.log(`Recording payment for invoice ${invoice_id}: ${amount} cents (type: ${payment_type})`);
 
         // Use the SQL function to record payment and update invoice
         const { error } = await supabase.rpc("record_invoice_card_payment", {
@@ -70,6 +71,20 @@ serve(async (req) => {
         }
 
         console.log(`Payment recorded successfully for invoice ${invoice_id}`);
+
+        // Check if this is a deposit payment and invoice needs scheduling
+        if (payment_type === 'deposit') {
+          const { data: invoice } = await supabase
+            .from("invoices_enhanced")
+            .select("id, deposit_amount, paid_amount")
+            .eq("id", invoice_id)
+            .single();
+
+          if (invoice && invoice.deposit_amount > 0) {
+            console.log(`Deposit payment received for invoice ${invoice_id}. Scheduling can now be set.`);
+            // The client-side will detect this payment and prompt for scheduling
+          }
+        }
       }
     }
 
