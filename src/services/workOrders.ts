@@ -43,11 +43,19 @@ export async function createWorkOrderFromInvoice(invoiceId: string): Promise<str
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  const { data, error } = await supabase.rpc('create_work_order_from_invoice' as any, {
+  const { data, error } = await supabase.rpc('create_work_order_from_invoice', {
     p_invoice_id: invoiceId
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error creating work order:', error);
+    throw error;
+  }
+  
+  if (!data) {
+    throw new Error('No work order ID returned');
+  }
+  
   return data as string;
 }
 
