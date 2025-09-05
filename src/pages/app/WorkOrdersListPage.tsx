@@ -73,8 +73,8 @@ export default function WorkOrdersListPage() {
         .from("work_orders")
         .select(`
           *,
-          invoices_enhanced!invoice_id(id, invoice_number, customer_name),
-          teams:team_id(name)
+          invoices_enhanced(id, invoice_number, customer_name),
+          teams(name)
         `)
         .order("starts_at", { ascending: false });
 
