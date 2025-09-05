@@ -53,22 +53,31 @@ export async function createWorkOrderFromInvoice(invoiceId: string): Promise<str
 
 export async function getWorkOrder(id: string): Promise<WorkOrder | null> {
   const { data, error } = await supabase
-    .from('work_orders' as any)
+    .from('work_orders')
     .select('*')
     .eq('id', id)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching work order:', error);
     return null;
   }
 
-  return data as WorkOrder;
+  if (!data) return null;
+
+  return {
+    ...data,
+    schedule_id: data.schedule_id || undefined,
+    service_address: data.service_address || undefined,
+    team_id: data.team_id || undefined,
+    instructions: data.instructions || undefined,
+    status: data.status as WorkOrder['status']
+  };
 }
 
 export async function getWorkOrderItems(workOrderId: string): Promise<WorkOrderItem[]> {
   const { data, error } = await supabase
-    .from('work_order_items' as any)
+    .from('work_order_items')
     .select('*')
     .eq('work_order_id', workOrderId)
     .order('sort_order');
@@ -78,12 +87,17 @@ export async function getWorkOrderItems(workOrderId: string): Promise<WorkOrderI
     return [];
   }
 
-  return (data || []) as WorkOrderItem[];
+  return (data || []).map(item => ({
+    ...item,
+    source_invoice_item_id: item.source_invoice_item_id || undefined,
+    unit: item.unit || undefined,
+    kind: item.kind as WorkOrderItem['kind']
+  }));
 }
 
 export async function updateWorkOrderStatus(id: string, status: WorkOrder['status']): Promise<void> {
   const { error } = await supabase
-    .from('work_orders' as any)
+    .from('work_orders')
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', id);
 
@@ -91,7 +105,7 @@ export async function updateWorkOrderStatus(id: string, status: WorkOrder['statu
 }
 
 export async function createWorkOrderToken(workOrderId: string): Promise<string> {
-  const { data, error } = await supabase.rpc('create_work_order_token' as any, { 
+  const { data, error } = await supabase.rpc('create_work_order_token', { 
     p_work_order_id: workOrderId 
   });
   
@@ -100,7 +114,7 @@ export async function createWorkOrderToken(workOrderId: string): Promise<string>
 }
 
 export async function getWorkOrderByToken(token: string): Promise<any> {
-  const { data, error } = await supabase.rpc('get_work_order_by_token' as any, {
+  const { data, error } = await supabase.rpc('get_work_order_by_token', {
     p_token: token
   });
 
@@ -118,7 +132,7 @@ export async function submitWorkOrderReport(
     signatures?: any[];
   }
 ): Promise<boolean> {
-  const { data, error } = await supabase.rpc('submit_work_order_report_by_token' as any, {
+  const { data, error } = await supabase.rpc('submit_work_order_report_by_token', {
     p_token: token,
     p_notes: report.notes || null,
     p_labor_hours: report.labor_hours || 0,
@@ -133,14 +147,26 @@ export async function submitWorkOrderReport(
 
 export async function getWorkOrderReport(workOrderId: string): Promise<WorkOrderReport | null> {
   const { data, error } = await supabase
-    .from('work_order_reports' as any)
+    .from('work_order_reports')
     .select('*')
     .eq('work_order_id', workOrderId)
-    .single();
+    .maybeSingle();
 
-  if (error && error.code !== 'PGRST116') {
+  if (error) {
     console.error('Error fetching work order report:', error);
+    return null;
   }
 
-  return data as WorkOrderReport;
+  if (!data) return null;
+
+  return {
+    id: data.id,
+    work_order_id: data.work_order_id,
+    completed_at: data.completed_at || undefined,
+    notes: data.notes || undefined,
+    labor_hours: data.labor_hours || 0,
+    materials_used: (data.materials_used as any[]) || [],
+    photos: (data.photos as any[]) || [],
+    signatures: (data.signatures as any[]) || []
+  };
 }
