@@ -497,37 +497,71 @@ export default function InvoiceDetailPage() {
 
               {/* Work Order Section */}
               <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Work Order</h3>
-                {!workOrder ? (
-                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      {hasSchedule ? "No work order yet." : "Schedule required before creating work order."}
-                    </p>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold">Work Orders</h3>
+                  {!workOrder && (
                     <Button 
-                      size="sm" 
+                      size="sm"
+                      variant="default"
                       onClick={handleGenerateWorkOrder}
                       disabled={!hasSchedule}
+                      className="bg-primary hover:bg-primary/90"
                     >
-                      Generate Work Order
+                      <Wrench className="h-4 w-4 mr-2" />
+                      Create Work Order
                     </Button>
+                  )}
+                </div>
+                
+                {!workOrder ? (
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      {hasSchedule ? 
+                        "Create a work order to dispatch this job to your field crew. All invoice items will be included in the work order." : 
+                        "Please set a schedule (Start/End time) in the Scheduling tab before creating a work order."}
+                    </p>
+                    {hasSchedule && (
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        <span className="font-medium">What will be included:</span>
+                        <ul className="mt-1 ml-4 list-disc">
+                          <li>Customer information and service address</li>
+                          <li>All line items from this invoice (without prices)</li>
+                          <li>Schedule dates and assigned team</li>
+                          <li>Any special notes or instructions</li>
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Badge 
-                        variant={
-                          workOrder.status === 'completed' ? 'success' : 
-                          workOrder.status === 'in_progress' ? 'default' : 
-                          workOrder.status === 'cancelled' ? 'destructive' : 
-                          'secondary'
-                        }
-                      >
-                        {workOrder.status.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
-                      </Badge>
-                      <Button variant="link" onClick={() => navigate(R.workOrderDetail(workOrder.id))}>
-                        View Work Order →
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Badge 
+                          variant={
+                            workOrder.status === 'completed' ? 'success' : 
+                            workOrder.status === 'in_progress' ? 'default' : 
+                            workOrder.status === 'cancelled' ? 'destructive' : 
+                            'secondary'
+                          }
+                        >
+                          {workOrder.status.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                        </Badge>
+                        <span className="text-sm">Work Order Created</span>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => navigate(R.workOrderDetail(workOrder.id))}>
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        View Work Order
                       </Button>
                     </div>
+                    
+                    {adjustments.length > 0 && (
+                      <Alert>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          There are pending adjustments from the field crew that need review.
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
                 )}
               </div>
