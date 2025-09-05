@@ -58,6 +58,7 @@ export const R = {
   
   // Job & Scheduling
   scheduling: "/app/scheduling",
+  workflow: "/app/workflow",
   jobs: "/app/jobs",
   jobNew: "/app/jobs/create",
   jobDetail: (id: string) => `/app/jobs/${id}`,

@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   Home, FileText, Users, Briefcase, DollarSign, BarChart3, Settings,
   Truck, Receipt, ShoppingCart, TrendingUp, Building2, UserCheck,
-  FileBarChart, HelpCircle, ChevronDown, ClipboardList
+  FileBarChart, HelpCircle, ChevronDown, ClipboardList, CalendarRange
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { R } from "@/routes/routeMap";
@@ -77,6 +77,7 @@ const navigationGroups: NavigationGroup[] = [
       { id: "jobs", label: "Jobs", icon: Briefcase, path: R.jobs, testId: "nav-jobs" },
       { id: "work-orders", label: "Work Orders", icon: ClipboardList, path: R.workOrders, testId: "nav-work-orders", badge: "NEW" },
       { id: "scheduling", label: "Scheduling", icon: FileText, path: R.scheduling, testId: "nav-scheduling" },
+      { id: "workflow", label: "Workflow Calendar", icon: CalendarRange, path: R.workflow, testId: "nav-workflow" },
       { id: "fleet", label: "Fleet", icon: Truck, path: R.fleet, testId: "nav-fleet" },
       { id: "teams", label: "Teams", icon: UserCheck, path: R.teams, testId: "nav-teams" },
     ],
