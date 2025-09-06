@@ -221,42 +221,5 @@ export default function EstimatePortalPage() {
         </DialogContent>
       </Dialog>
     </div>
-
-      <Dialog open={showSignatureDialog} onOpenChange={setShowSignatureDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Sign Estimate #{est.estimate_number}</DialogTitle>
-            <DialogDescription>
-              Please review the estimate details and provide your signature to accept the terms and conditions.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="bg-muted/50 p-4 rounded-lg space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">Total Amount:</span>
-                <span className="font-semibold">${est.total?.toFixed(2) || '0.00'}</span>
-              </div>
-              {deposit > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Deposit Required:</span>
-                  <span className="font-semibold text-blue-600">${deposit.toFixed(2)}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">Customer:</span>
-                <span>{est.customer?.company_name || `${est.customer?.first_name || ''} ${est.customer?.last_name || ''}`.trim() || 'Customer'}</span>
-              </div>
-            </div>
-            
-            <EnhancedSignaturePad
-              onSave={handleSignatureSave}
-              requireTerms={true}
-              termsText={getTermsText()}
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
   );
 }
