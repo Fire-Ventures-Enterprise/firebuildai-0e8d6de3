@@ -635,6 +635,105 @@ export type Database = {
         }
         Relationships: []
       }
+      contractor_accounts: {
+        Row: {
+          business_name: string | null
+          charges_enabled: boolean | null
+          country: string | null
+          created_at: string
+          email: string
+          id: string
+          payouts_enabled: boolean | null
+          status: string | null
+          stripe_account_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_name?: string | null
+          charges_enabled?: boolean | null
+          country?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          payouts_enabled?: boolean | null
+          status?: string | null
+          stripe_account_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_name?: string | null
+          charges_enabled?: boolean | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          payouts_enabled?: boolean | null
+          status?: string | null
+          stripe_account_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contractor_payouts: {
+        Row: {
+          amount: number
+          connected_account_id: string
+          created_at: string
+          currency: string | null
+          description: string | null
+          id: string
+          invoice_id: string | null
+          status: string | null
+          stripe_transfer_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          connected_account_id: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          invoice_id?: string | null
+          status?: string | null
+          stripe_transfer_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          connected_account_id?: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          invoice_id?: string | null
+          status?: string | null
+          stripe_transfer_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contractor_payouts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contractor_payouts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_enhanced"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
