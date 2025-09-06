@@ -349,24 +349,22 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
             onAddItem={addLineItem}
             onRemoveItem={removeLineItem}
           />
-              
-              <div className="mt-4 space-y-2 text-right">
-                <div>Subtotal: ${calculateSubtotal().toFixed(2)}</div>
-                <div className="flex items-center justify-end gap-2">
-                  <Label htmlFor="tax_rate">Tax Rate (%):</Label>
-                  <Input
-                    id="tax_rate"
-                    type="number"
-                    className="w-20"
-                    {...register('tax_rate')}
-                    defaultValue={13}
-                  />
-                </div>
-                <div>Tax: ${calculateTax().toFixed(2)}</div>
-                <div className="text-lg font-bold">Total: ${calculateTotal().toFixed(2)}</div>
-              </div>
-            </CardContent>
-          </Card>
+          
+          <div className="mt-4 space-y-2 text-right">
+            <div>Subtotal: ${calculateSubtotal().toFixed(2)}</div>
+            <div className="flex items-center justify-end gap-2">
+              <Label htmlFor="tax_rate">Tax Rate (%):</Label>
+              <Input
+                id="tax_rate"
+                type="number"
+                className="w-20"
+                {...register('tax_rate')}
+                defaultValue={13}
+              />
+            </div>
+            <div>Tax: ${calculateTax().toFixed(2)}</div>
+            <div className="text-lg font-bold">Total: ${calculateTotal().toFixed(2)}</div>
+          </div>
         </TabsContent>
 
         <TabsContent value="payment" className="space-y-4">
