@@ -426,6 +426,419 @@ export type Database = {
           },
         ]
       }
+      communication_analytics: {
+        Row: {
+          channel_id: string | null
+          created_at: string
+          engagement_rate: number | null
+          id: string
+          message_count: number | null
+          metrics: Json | null
+          period_end: string
+          period_start: string
+          response_time_avg: number | null
+          user_id: string
+        }
+        Insert: {
+          channel_id?: string | null
+          created_at?: string
+          engagement_rate?: number | null
+          id?: string
+          message_count?: number | null
+          metrics?: Json | null
+          period_end: string
+          period_start: string
+          response_time_avg?: number | null
+          user_id: string
+        }
+        Update: {
+          channel_id?: string | null
+          created_at?: string
+          engagement_rate?: number | null
+          id?: string
+          message_count?: number | null
+          metrics?: Json | null
+          period_end?: string
+          period_start?: string
+          response_time_avg?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_analytics_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "communication_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      communication_channel_members: {
+        Row: {
+          channel_id: string
+          id: string
+          is_active: boolean | null
+          joined_at: string
+          last_read_at: string | null
+          member_type: string
+          notification_preferences: Json | null
+          permissions: Json | null
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          last_read_at?: string | null
+          member_type: string
+          notification_preferences?: Json | null
+          permissions?: Json | null
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          last_read_at?: string | null
+          member_type?: string
+          notification_preferences?: Json | null
+          permissions?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_channel_members_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "communication_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_channels: {
+        Row: {
+          channel_type: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          job_id: string | null
+          metadata: Json | null
+          name: string
+          project_id: string | null
+          stakeholder_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          channel_type: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          job_id?: string | null
+          metadata?: Json | null
+          name: string
+          project_id?: string | null
+          stakeholder_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          channel_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          job_id?: string | null
+          metadata?: Json | null
+          name?: string
+          project_id?: string | null
+          stakeholder_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      communication_message_tags: {
+        Row: {
+          message_id: string
+          tag_id: string
+        }
+        Insert: {
+          message_id: string
+          tag_id: string
+        }
+        Update: {
+          message_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_message_tags_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "communication_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communication_message_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "communication_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_messages: {
+        Row: {
+          attachments: Json | null
+          category: string | null
+          channel_id: string
+          content: string
+          created_at: string
+          id: string
+          message_type: string
+          metadata: Json | null
+          parent_message_id: string | null
+          priority: string | null
+          read_at: string | null
+          read_by: string[] | null
+          sender_id: string
+          status: string | null
+          thread_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          attachments?: Json | null
+          category?: string | null
+          channel_id: string
+          content: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          metadata?: Json | null
+          parent_message_id?: string | null
+          priority?: string | null
+          read_at?: string | null
+          read_by?: string[] | null
+          sender_id: string
+          status?: string | null
+          thread_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attachments?: Json | null
+          category?: string | null
+          channel_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          metadata?: Json | null
+          parent_message_id?: string | null
+          priority?: string | null
+          read_at?: string | null
+          read_by?: string[] | null
+          sender_id?: string
+          status?: string | null
+          thread_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "communication_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_scheduled_messages: {
+        Row: {
+          channel_id: string | null
+          content: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          scheduled_for: string
+          sender_id: string
+          status: string | null
+        }
+        Insert: {
+          channel_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          scheduled_for: string
+          sender_id: string
+          status?: string | null
+        }
+        Update: {
+          channel_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          scheduled_for?: string
+          sender_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_scheduled_messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "communication_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      communication_templates: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          stakeholder_type: string | null
+          subject: string | null
+          template_type: string
+          updated_at: string
+          user_id: string
+          variables: Json | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          stakeholder_type?: string | null
+          subject?: string | null
+          template_type: string
+          updated_at?: string
+          user_id: string
+          variables?: Json | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          stakeholder_type?: string | null
+          subject?: string | null
+          template_type?: string
+          updated_at?: string
+          user_id?: string
+          variables?: Json | null
+        }
+        Relationships: []
+      }
+      communication_workflows: {
+        Row: {
+          actions: Json | null
+          conditions: Json | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          trigger_event: string | null
+          updated_at: string
+          user_id: string
+          workflow_type: string
+        }
+        Insert: {
+          actions?: Json | null
+          conditions?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          trigger_event?: string | null
+          updated_at?: string
+          user_id: string
+          workflow_type: string
+        }
+        Update: {
+          actions?: Json | null
+          conditions?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          trigger_event?: string | null
+          updated_at?: string
+          user_id?: string
+          workflow_type?: string
+        }
+        Relationships: []
+      }
       company_details: {
         Row: {
           address: string | null
