@@ -119,3 +119,32 @@ export interface EnhancedInvoice {
 export interface CreateEnhancedInvoiceRequest extends Omit<EnhancedInvoice, 'id' | 'createdAt' | 'updatedAt'> {}
 
 export interface UpdateEnhancedInvoiceRequest extends Partial<CreateEnhancedInvoiceRequest> {}
+
+// Enhanced Invoice with Workflow
+export interface EnhancedInvoiceWithWorkflow extends EnhancedInvoice {
+  workflowStatus: 'estimate_sent' | 'deposit_paid' | 'invoice_created' | 'work_scheduled' | 'work_order_generated' | 'in_progress' | 'completed' | 'final_payment_received';
+  workOrderId?: string;
+  depositPaidDate?: Date;
+  workScheduledDate?: Date;
+  workStartedDate?: Date;
+  workCompletedDate?: Date;
+  finalPaymentDate?: Date;
+  
+  // Workflow notifications
+  officeNotifications?: Array<{
+    id?: string;
+    type: 'deposit_received' | 'work_scheduled' | 'work_started' | 'work_completed' | 'field_report_submitted' | 'payment_due';
+    message: string;
+    sentAt: Date;
+    readAt?: Date;
+    actionRequired?: boolean;
+  }>;
+  clientNotifications?: Array<{
+    id?: string;
+    type: 'deposit_received' | 'work_scheduled' | 'work_started' | 'work_completed' | 'field_report_submitted' | 'payment_due';
+    message: string;
+    sentAt: Date;
+    readAt?: Date;
+    actionRequired?: boolean;
+  }>;
+}
