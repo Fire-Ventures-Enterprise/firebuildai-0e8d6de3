@@ -926,6 +926,48 @@ export type Database = {
         }
         Relationships: []
       }
+      company_profiles: {
+        Row: {
+          buffer_days_per_task: number | null
+          created_at: string
+          holidays: string[] | null
+          id: string
+          name: string
+          primary_industry: string
+          secondary_industries: string[] | null
+          services_enabled: Json | null
+          updated_at: string
+          user_id: string
+          working_hours: Json | null
+        }
+        Insert: {
+          buffer_days_per_task?: number | null
+          created_at?: string
+          holidays?: string[] | null
+          id?: string
+          name: string
+          primary_industry?: string
+          secondary_industries?: string[] | null
+          services_enabled?: Json | null
+          updated_at?: string
+          user_id: string
+          working_hours?: Json | null
+        }
+        Update: {
+          buffer_days_per_task?: number | null
+          created_at?: string
+          holidays?: string[] | null
+          id?: string
+          name?: string
+          primary_industry?: string
+          secondary_industries?: string[] | null
+          services_enabled?: Json | null
+          updated_at?: string
+          user_id?: string
+          working_hours?: Json | null
+        }
+        Relationships: []
+      }
       company_working_hours: {
         Row: {
           created_at: string
@@ -1146,6 +1188,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      custom_services: {
+        Row: {
+          category: string
+          created_at: string
+          dependencies: Json | null
+          description: string | null
+          duration_days: number | null
+          estimated_duration: string | null
+          id: string
+          industry_types: string[] | null
+          materials: string[] | null
+          name: string
+          phases: Json | null
+          product_selection: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          dependencies?: Json | null
+          description?: string | null
+          duration_days?: number | null
+          estimated_duration?: string | null
+          id?: string
+          industry_types?: string[] | null
+          materials?: string[] | null
+          name: string
+          phases?: Json | null
+          product_selection?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          dependencies?: Json | null
+          description?: string | null
+          duration_days?: number | null
+          estimated_duration?: string | null
+          id?: string
+          industry_types?: string[] | null
+          materials?: string[] | null
+          name?: string
+          phases?: Json | null
+          product_selection?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       customers: {
         Row: {
@@ -4239,6 +4332,51 @@ export type Database = {
           user_agent?: string | null
           user_email?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      service_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          dependencies: Json | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phases: Json | null
+          product_selection: Json | null
+          template_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          dependencies?: Json | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phases?: Json | null
+          product_selection?: Json | null
+          template_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          dependencies?: Json | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phases?: Json | null
+          product_selection?: Json | null
+          template_id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
