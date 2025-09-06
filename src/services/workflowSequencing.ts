@@ -321,10 +321,14 @@ export function sequenceWorkflow(
     // Extract all materials from phase tasks
     const phaseMaterials = tasks.flatMap(t => extractMaterials(t.description));
     
-    // Check for inspections
-    const inspections = tasks
-      .filter(t => t.inspectionRequired)
-      .map(t => `${t.trade} inspection`);
+    // Check for inspections - group by trade to avoid duplicates
+    const uniqueTrades = new Set<string>();
+    tasks.forEach(t => {
+      if (t.inspectionRequired && t.trade) {
+        uniqueTrades.add(t.trade);
+      }
+    });
+    const inspections = Array.from(uniqueTrades).map(trade => `${trade} inspection`);
     
     // Calculate phase duration (max of parallel tasks + buffer)
     const maxDuration = Math.max(...tasks.map(t => t.duration || 1));
