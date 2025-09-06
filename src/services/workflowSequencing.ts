@@ -47,21 +47,21 @@ export interface WorkflowNotification {
 const TASK_PATTERNS = {
   // Demolition & Prep
   demolition: {
-    keywords: ['demo', 'demolition', 'remove', 'tear out', 'strip'],
+    keywords: ['demo', 'demolition', 'remove', 'removal', 'tear out', 'strip', 'existing', 'take down', 'dismantle'],
     phase: 1,
     phaseLabel: 'Demo & Prep',
     trade: 'General',
     baseDuration: 1
   },
   containment: {
-    keywords: ['containment', 'protection', 'setup', 'prep', 'plastic', 'dust'],
+    keywords: ['containment', 'protection', 'setup', 'prep', 'plastic', 'dust', 'site prep'],
     phase: 1,
     phaseLabel: 'Demo & Prep',
     trade: 'General',
     baseDuration: 0.5
   },
   cleanup: {
-    keywords: ['cleanup', 'debris', 'disposal', 'haul', 'dump'],
+    keywords: ['cleanup', 'debris', 'disposal', 'haul', 'dump', 'clean'],
     phase: 1,
     phaseLabel: 'Demo & Prep',
     trade: 'General',
@@ -70,7 +70,7 @@ const TASK_PATTERNS = {
 
   // Rough-in Work
   electricalRough: {
-    keywords: ['electrical rough', 'wire', 'wiring', 'outlet rough', 'panel', 'circuit'],
+    keywords: ['electrical rough', 'wire', 'wiring', 'outlet rough', 'panel', 'circuit', 'electrical', 'power source', 'switches', 'plugs', 'pot lights'],
     phase: 2,
     phaseLabel: 'Rough-In Work',
     trade: 'Electrical',
@@ -78,7 +78,7 @@ const TASK_PATTERNS = {
     inspectionRequired: true
   },
   plumbingRough: {
-    keywords: ['plumbing rough', 'pipe', 'water line', 'drain', 'vent', 'pex'],
+    keywords: ['plumbing rough', 'pipe', 'water line', 'drain', 'vent', 'pex', 'plumbing', 're-route plumbing', 'new water line'],
     phase: 2,
     phaseLabel: 'Rough-In Work',
     trade: 'Plumbing',
@@ -86,7 +86,7 @@ const TASK_PATTERNS = {
     inspectionRequired: true
   },
   hvacRough: {
-    keywords: ['hvac', 'duct', 'ductwork', 'air handler', 'furnace rough'],
+    keywords: ['hvac', 'duct', 'ductwork', 'air handler', 'furnace rough', 'hood vent', 'venting'],
     phase: 2,
     phaseLabel: 'Rough-In Work',
     trade: 'HVAC',
@@ -94,7 +94,7 @@ const TASK_PATTERNS = {
     inspectionRequired: true
   },
   framing: {
-    keywords: ['framing', 'stud', 'joist', 'beam', 'structural', 'wall frame'],
+    keywords: ['framing', 'stud', 'joist', 'beam', 'structural', 'wall frame', 'window', 'door', 'new window', 'new door', 'framing adjustments'],
     phase: 2,
     phaseLabel: 'Rough-In Work',
     trade: 'Framing',
@@ -104,7 +104,7 @@ const TASK_PATTERNS = {
 
   // Insulation & Drywall
   insulation: {
-    keywords: ['insulation', 'batt', 'foam', 'r-value'],
+    keywords: ['insulation', 'batt', 'foam', 'r-value', 'seal', 'sealing'],
     phase: 3,
     phaseLabel: 'Insulation & Drywall',
     trade: 'Insulation',
@@ -112,14 +112,14 @@ const TASK_PATTERNS = {
     inspectionRequired: true
   },
   drywall: {
-    keywords: ['drywall', 'sheetrock', 'gypsum', 'board', 'patch'],
+    keywords: ['drywall', 'sheetrock', 'gypsum', 'board', 'patch', 'new 1/2" drywall', 'repair', 'patching', 'ceiling'],
     phase: 3,
     phaseLabel: 'Drywall & Paint',
     trade: 'Drywall',
     baseDuration: 2
   },
   mudding: {
-    keywords: ['mud', 'tape', 'compound', 'finish drywall', 'smooth'],
+    keywords: ['mud', 'tape', 'compound', 'finish drywall', 'smooth', 'scrape', 'flat finish'],
     phase: 3,
     phaseLabel: 'Drywall & Paint',
     trade: 'Drywall',
@@ -144,28 +144,28 @@ const TASK_PATTERNS = {
 
   // Major Installations
   cabinets: {
-    keywords: ['cabinet', 'cupboard', 'vanity', 'storage'],
+    keywords: ['cabinet', 'cupboard', 'vanity', 'storage', 'cabinetry', 'shaker', 'kitchen island', 'millwork', 'soft-close', 'drawer slides', 'spice rack'],
     phase: 5,
     phaseLabel: 'Major Installations',
     trade: 'Carpentry',
     baseDuration: 1.5
   },
   countertops: {
-    keywords: ['counter', 'countertop', 'granite', 'quartz', 'marble', 'laminate'],
+    keywords: ['counter', 'countertop', 'granite', 'quartz', 'marble', 'laminate', 'level 1', 'level 2', 'countertop installation'],
     phase: 5,
     phaseLabel: 'Major Installations',
     trade: 'Countertops',
     baseDuration: 1
   },
   flooring: {
-    keywords: ['floor', 'tile floor', 'hardwood', 'laminate floor', 'vinyl', 'carpet'],
+    keywords: ['floor', 'tile floor', 'hardwood', 'laminate floor', 'vinyl', 'carpet', 'plank flooring', 'sqft', 'square feet', 'subfloor'],
     phase: 5,
     phaseLabel: 'Major Installations',
     trade: 'Flooring',
     baseDuration: 2
   },
   appliances: {
-    keywords: ['appliance', 'refrigerator', 'stove', 'dishwasher', 'microwave', 'oven'],
+    keywords: ['appliance', 'refrigerator', 'stove', 'dishwasher', 'microwave', 'oven', 'fridge', 'appliance hookup'],
     phase: 5,
     phaseLabel: 'Major Installations',
     trade: 'Appliances',
@@ -174,28 +174,28 @@ const TASK_PATTERNS = {
 
   // Finish Work
   backsplash: {
-    keywords: ['backsplash', 'tile back', 'wall tile'],
+    keywords: ['backsplash', 'tile back', 'wall tile', 'backsplash tiles', 'full-height backsplash', 'stove wall'],
     phase: 6,
     phaseLabel: 'Finish Work',
     trade: 'Tile',
     baseDuration: 1
   },
   plumbingFinish: {
-    keywords: ['sink', 'faucet', 'toilet', 'fixture', 'plumbing finish'],
+    keywords: ['sink', 'faucet', 'toilet', 'fixture', 'plumbing finish', 'undermount', '60/40', 'stainless steel sink'],
     phase: 6,
     phaseLabel: 'Finish Work',
     trade: 'Plumbing',
     baseDuration: 1
   },
   electricalFinish: {
-    keywords: ['light fixture', 'switch', 'outlet install', 'electrical finish', 'led', 'under cabinet light'],
+    keywords: ['light fixture', 'switch', 'outlet install', 'electrical finish', 'led', 'under cabinet light', 'pendant lights', 'usb charger', 'island plug'],
     phase: 6,
     phaseLabel: 'Finish Work',
     trade: 'Electrical',
     baseDuration: 1
   },
   trim: {
-    keywords: ['trim', 'baseboard', 'crown', 'molding', 'casing'],
+    keywords: ['trim', 'baseboard', 'crown', 'molding', 'casing', 'square flat baseboards', 'beveled edge', 'window casing', 'door casing'],
     phase: 6,
     phaseLabel: 'Finish Work',
     trade: 'Carpentry',

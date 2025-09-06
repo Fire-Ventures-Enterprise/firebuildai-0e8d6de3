@@ -34,16 +34,55 @@ export function WorkflowSequencer() {
       return;
     }
 
-    // Parse input items (one per line)
-    const items = inputItems
-      .split('\n')
-      .filter(line => line.trim())
-      .map(line => ({ description: line.trim() }));
+    // Enhanced parsing to handle complex estimate formats
+    let items: { description: string }[] = [];
+    
+    // Check if input looks like a detailed estimate with headers
+    const lines = inputItems.split('\n').map(line => line.trim()).filter(Boolean);
+    
+    for (const line of lines) {
+      // Skip headers, prices, and formatting lines
+      if (line.startsWith('#') || 
+          line.startsWith('$') || 
+          line.startsWith('---') ||
+          line.startsWith('**') && line.endsWith('**') ||
+          line.length < 5) {
+        continue;
+      }
+      
+      // Clean up markdown formatting and extract actual work items
+      let cleanLine = line
+        .replace(/^\*\s*/, '') // Remove bullet points
+        .replace(/^\d+\.\s*/, '') // Remove numbered lists
+        .replace(/^-\s*/, '') // Remove dashes
+        .replace(/\*\*/g, '') // Remove bold markdown
+        .trim();
+      
+      // Skip section headers and notes
+      if (cleanLine.startsWith('###') ||
+          cleanLine.startsWith('####') ||
+          cleanLine.toLowerCase().includes('note:') ||
+          cleanLine.toLowerCase().includes('client') ||
+          cleanLine.toLowerCase().includes('responsibility') ||
+          cleanLine.toLowerCase().includes('acknowledgment') ||
+          cleanLine.toLowerCase().includes('management fee') ||
+          cleanLine.toLowerCase().includes('scope of work')) {
+        continue;
+      }
+      
+      // Only add lines that describe actual work items
+      if (cleanLine.length > 10 && 
+          !cleanLine.match(/^\d+(\.\d+)?%?$/) && // Skip percentages/numbers
+          !cleanLine.match(/^level \d+/i) && // Skip level descriptions
+          !cleanLine.includes('$')) { // Skip lines with prices
+        items.push({ description: cleanLine });
+      }
+    }
 
     if (items.length === 0) {
       toast({
         title: "No valid items found",
-        description: "Please enter at least one line item",
+        description: "Please enter at least one line item or paste an estimate",
         variant: "destructive"
       });
       return;
@@ -64,22 +103,64 @@ export function WorkflowSequencer() {
   };
 
   const loadTestCase = () => {
-    const testItems = `Demolition of existing kitchen cabinets and countertops
-Remove and cap existing plumbing lines
-Electrical rough-in for under-cabinet lighting and new outlets
-Drywall repair and patching
-Install new kitchen cabinets
-Granite countertop installation
-Plumbing rough-in for new sink location
-Install new sink and faucet
-Tile backsplash installation
-Paint kitchen walls and ceiling
-Install under-cabinet LED lighting
-Final electrical connections
-Cleanup and debris removal`;
+    const testItems = `Kitchen Remodel
+
+### **Demolition**
+* Complete removal of existing cabinetry
+* Removal of the front door separation wall
+* Demolition of existing backsplash wall
+* Removal of tile flooring on the main level (excluding bedrooms)
+* Wood-Burning Fireplace: Complete removal from roof down to the basement ceiling
+
+### **Construction**
+* Supply and install new ½" drywall for kitchen, family room ceilings
+* Prime and paint ceiling only
+
+### **Window Work**
+* Remove existing kitchen window
+* Supply and install new 60" wide x 40" tall window in the kitchen area
+
+### **Cabinetry & Millwork**
+* White shaker cabinetry with a contrasting secondary color for the island
+* Soft-close hinges and under-mounted, ball-bearing drawer slides
+* Includes a 9" spice rack and pull-out garbage cabinet
+
+### **Kitchen Island**
+* Seats 3 comfortably with additional cabinetry storage
+* Finished in a secondary color (blue)
+
+### **Countertops & Sink**
+* Choice of Level 1 Granite or Quartz countertops
+* Undermount 60/40 stainless steel sink included
+
+### **Backsplash**
+* Supply and install customer-selected backsplash tiles
+* Full-height backsplash installation at the stove wall
+
+### **Flooring**
+* Supply and install approximately 410 sqft of 5"–6" wide plank flooring
+
+### **Electrical & Lighting**
+* Supply and install 6 pot lights
+* Updated switches and plugs (modern decor style)
+* Island plug with integrated USB charger
+* Power source for dishwasher
+* Installation of 3 client-supplied pendant lights above the island
+
+### **Painting**
+* Supply and apply paint to walls and ceilings of kitchen, living room, and eating area
+
+### **Trim, Baseboards & Casings**
+* Supply, paint, and install 5" square flat baseboards with beveled edge
+
+### **Plumbing & Appliance Hookups**
+* Re-route plumbing for new sink location
+* Install client-supplied faucet and dishwasher
+* Add new water line for fridge
+* Install client-supplied hood vent`;
     
     setInputItems(testItems);
-    setProjectName("Johnson Kitchen Renovation");
+    setProjectName("Kitchen Remodel");
   };
 
   const getPhaseIcon = (phaseLabel: string) => {
