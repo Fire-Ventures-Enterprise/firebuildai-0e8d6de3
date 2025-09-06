@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { 
   Calendar, 
@@ -17,7 +19,9 @@ import {
   Bell,
   ChevronRight,
   Package,
-  Wrench
+  Wrench,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { WorkOrder, ConstructionPhase } from '@/types/workflow';
@@ -25,6 +29,13 @@ import { ContractorWorkflowEngine } from '@/services/contractorWorkflowEngine';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function WorkflowDashboardPage() {
   const [activeJobs, setActiveJobs] = useState<any[]>([]);
@@ -32,6 +43,8 @@ export default function WorkflowDashboardPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [crewLinkDialogOpen, setCrewLinkDialogOpen] = useState(false);
+  const [selectedWorkOrderToken, setSelectedWorkOrderToken] = useState<string>('');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -148,6 +161,36 @@ export default function WorkflowDashboardPage() {
         variant: "destructive"
       });
     }
+  };
+
+  const generateCrewLink = async (workOrderId: string) => {
+    try {
+      // Generate or regenerate crew token
+      const { data: token, error } = await supabase.rpc('regenerate_wo_token', {
+        p_wo_id: workOrderId
+      });
+
+      if (error) throw error;
+
+      setSelectedWorkOrderToken(token);
+      setCrewLinkDialogOpen(true);
+    } catch (error: any) {
+      console.error('Error generating crew link:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate crew link",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const copyCrewLink = () => {
+    const link = `${window.location.origin}/portal/work-order/${selectedWorkOrderToken}`;
+    navigator.clipboard.writeText(link);
+    toast({
+      title: "Link Copied",
+      description: "Crew access link has been copied to clipboard"
+    });
   };
 
   const getPhaseLabel = (phase: string): string => {
@@ -333,6 +376,7 @@ export default function WorkflowDashboardPage() {
                           variant="outline" 
                           size="sm"
                           className="flex items-center gap-1"
+                          onClick={() => generateCrewLink(job.id)}
                         >
                           <QrCode className="h-4 w-4" />
                           Crew Link
@@ -447,6 +491,52 @@ export default function WorkflowDashboardPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Crew Link Dialog */}
+      <Dialog open={crewLinkDialogOpen} onOpenChange={setCrewLinkDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Crew Access Link</DialogTitle>
+            <DialogDescription>
+              Share this link with your crew members to give them access to the work order.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="grid flex-1 gap-2">
+                <Label htmlFor="link" className="sr-only">
+                  Link
+                </Label>
+                <Input
+                  id="link"
+                  value={`${window.location.origin}/portal/work-order/${selectedWorkOrderToken}`}
+                  readOnly
+                />
+              </div>
+              <Button type="button" size="sm" className="px-3" onClick={copyCrewLink}>
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <p>This link provides access to:</p>
+              <ul className="list-disc list-inside mt-1">
+                <li>View work order details</li>
+                <li>Mark tasks as complete</li>
+                <li>Submit daily field reports</li>
+                <li>Report issues or material shortages</li>
+              </ul>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => window.open(`${window.location.origin}/portal/work-order/${selectedWorkOrderToken}`, '_blank')}
+              className="w-full"
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Open in New Tab
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
