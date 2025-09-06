@@ -259,7 +259,7 @@ Cleanup and debris removal`;
                             Phase {notification.phase} - {notification.timing}
                           </span>
                         </div>
-                        <p className="text-sm mt-1">{notification.message}</p>
+                        <div className="text-sm mt-1">{notification.message}</div>
                       </div>
                     </div>
                   ))}
