@@ -51,6 +51,7 @@ import CreateJobPage from "./pages/app/CreateJobPage";
 import PurchaseOrdersPage from "./pages/app/PurchaseOrdersPage";
 import CreatePurchaseOrderPage from "./pages/app/CreatePurchaseOrderPage";
 import ContractorTrackingPage from "./pages/app/ContractorTrackingPage";
+import ContractorSettingsPage from "./pages/app/ContractorSettingsPage";
 import ExpensesPage from "./pages/app/ExpensesPage";
 import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
@@ -251,6 +252,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <ContractorTrackingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/contractors/settings" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ContractorSettingsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

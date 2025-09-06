@@ -110,6 +110,7 @@ const navigationGroups: NavigationGroup[] = [
     color: "text-gray-600",
     items: [
       { id: "company", label: "Company", icon: Building2, path: R.company, testId: "nav-company" },
+      { id: "contractor-settings", label: "Contractor Settings", icon: Building2, path: "/app/contractors/settings", testId: "nav-contractor-settings" },
       { id: "settings", label: "Settings", icon: Settings, path: R.settings, testId: "nav-settings" },
     ],
   },

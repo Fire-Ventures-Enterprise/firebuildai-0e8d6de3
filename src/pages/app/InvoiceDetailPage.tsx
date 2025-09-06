@@ -6,7 +6,7 @@ import { EnhancedInvoicePreview } from "@/components/invoicing/EnhancedInvoicePr
 import { InvoiceSchedulingModal } from "@/components/invoicing/InvoiceSchedulingModal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign, Wrench, ChevronDown, Link, Printer, AlertTriangle, ExternalLink, QrCode } from "lucide-react";
+import { ArrowLeft, FileText, Calendar, Send, Edit, Trash, DollarSign, Wrench, ChevronDown, Link, Printer, AlertTriangle, ExternalLink, QrCode, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EnhancedInvoice } from "@/types/enhanced-invoice";
@@ -19,6 +19,7 @@ import { CreateCrewLinkButton } from "@/components/workorders/CreateCrewLinkButt
 import { WorkOrderPrintSheet } from "@/components/workorders/WorkOrderPrintSheet";
 import { InvoiceWorkOrderActions } from "@/components/invoicing/InvoiceWorkOrderActions";
 import { InvoiceAdjustmentsBanner } from "@/components/invoicing/InvoiceAdjustmentsBanner";
+import { ContractorPayout } from "@/components/contractors/ContractorPayout";
 import { createWorkOrderFromInvoice, getWorkOrder, getWorkOrderItems } from "@/services/workOrders";
 import { R } from "@/routes/routeMap";
 import { getInvoiceSchedule } from "@/services/scheduling";
@@ -41,6 +42,7 @@ export default function InvoiceDetailPage() {
   const [showSchedulingModal, setShowSchedulingModal] = useState(false);
   const [hasDepositPayment, setHasDepositPayment] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [contractorAccount, setContractorAccount] = useState<any>(null);
 
   useEffect(() => {
     if (id) {
@@ -49,6 +51,7 @@ export default function InvoiceDetailPage() {
       checkSchedule(id);
       fetchAdjustments(id);
       checkDepositPayment(id);
+      checkContractorAccount();
     }
   }, [id]);
   
@@ -106,6 +109,25 @@ export default function InvoiceDetailPage() {
       }
     } catch (error) {
       console.error("Error checking deposit payment:", error);
+    }
+  };
+
+  const checkContractorAccount = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("contractor_accounts")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (data && data.payouts_enabled) {
+        setContractorAccount(data);
+      }
+    } catch (error) {
+      console.error("Error checking contractor account:", error);
     }
   };
 
@@ -650,7 +672,16 @@ export default function InvoiceDetailPage() {
 
         <TabsContent value="payments" className="mt-6">
           <Card className="p-6">
-            <h3 className="font-semibold mb-4">Payment History</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Payment History</h3>
+              {contractorAccount && invoice.balance > 0 && (
+                <ContractorPayout 
+                  invoice={invoice}
+                  contractorAccount={contractorAccount}
+                  onSuccess={() => fetchInvoice(id!)}
+                />
+              )}
+            </div>
             <p className="text-muted-foreground text-sm">Payment tracking coming soon...</p>
           </Card>
         </TabsContent>
