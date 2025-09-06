@@ -1,4 +1,5 @@
-import { AppLayout } from "@/layouts/AppLayout";
+// WorkflowSequencingPage - Fixed double header issue by removing AppLayout wrapper
+// AppLayout is already applied in the route configuration in App.tsx
 import { WorkflowSequencer } from "@/components/workflow/WorkflowSequencer";
 import WorkflowTestRunner from "@/components/workflow/WorkflowTestRunner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
