@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SalesPublic } from "@/services/salesPublic";
-import { EstimatePrintExport } from "@/components/sales/EstimatePrintExport";
+import { EstimatePrint, BaseDoc } from "@/components/print/DocumentPrint";
 import { Button } from "@/components/ui/button";
-import { notify } from "@/lib/notify";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { downloadPdfFromNode } from "@/lib/pdf";
 import EnhancedSignaturePad from "@/components/estimates/EnhancedSignaturePad";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { Download, FileSignature, CreditCard, Loader2 } from "lucide-react";
 
 export default function EstimatePortalPage() {
   const { token } = useParams<{ token: string }>();
@@ -24,15 +27,29 @@ export default function EstimatePortalPage() {
         setEst(e);
         await SalesPublic.markViewedEstimate(token);
       } catch (error) {
-        notify.error("Failed to load estimate", error);
+        console.error("Failed to load estimate:", error);
+        toast.error("Failed to load estimate");
       } finally {
         setLoading(false);
       }
     })();
   }, [token]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen">Loading…</div>;
-  if (!est) return <div className="flex items-center justify-center min-h-screen">Estimate not found</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!est) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-muted-foreground">Estimate not found</p>
+      </div>
+    );
+  }
 
   const handleSignatureSave = async (signatureData: string, agreedToTerms: boolean) => {
     try {
@@ -49,13 +66,14 @@ export default function EstimatePortalPage() {
         agreedToTerms 
       });
       
-      notify.success("Estimate accepted and signed successfully!");
+      toast.success("Estimate accepted and signed successfully!");
       setShowSignatureDialog(false);
       
       // Update local state to reflect acceptance
       setEst({ ...est, status: "accepted", signed_at: new Date().toISOString() });
     } catch (e) {
-      notify.error("Failed to accept estimate", e);
+      console.error("Failed to accept estimate:", e);
+      toast.error("Failed to accept estimate");
     }
   };
 
@@ -78,7 +96,7 @@ export default function EstimatePortalPage() {
       }
     } catch (error) {
       console.error('Error processing deposit:', error);
-      notify.error("Failed to process deposit payment", error);
+      toast.error("Failed to process deposit payment");
     }
   };
 
@@ -87,59 +105,122 @@ export default function EstimatePortalPage() {
     return `I have read and agree to all terms and conditions outlined in this estimate and the attached ${contractName}. I understand that by signing, I am authorizing the work to proceed as described.`;
   };
 
-  return (
-    <div className="max-w-[950px] mx-auto p-4 space-y-4">
-      <EstimatePrintExport
-        estimate={est}
-        items={est.items ?? []}
-        company={{ name: "FireBuildAI" }}
-        contractTitle={est.contract_title ?? "Service Agreement"}
-        watermarkText={est.status?.toUpperCase() === "ACCEPTED" ? "ACCEPTED" : "ESTIMATE"}
-      />
+  // Transform estimate data to BaseDoc format
+  const estimateDoc: Omit<BaseDoc, "kind"> = {
+    number: est.estimate_number,
+    date: format(new Date(est.issue_date), "MMM dd, yyyy"),
+    dueDate: est.expiry_date ? format(new Date(est.expiry_date), "MMM dd, yyyy") : undefined,
+    statusLabel: est.status?.toUpperCase() === "ACCEPTED" ? "ACCEPTED" : est.status?.toUpperCase() || "DRAFT",
+    org: {
+      name: est.company?.name || "Your Company",
+      logoUrl: est.company?.logo_url,
+      address: est.company?.address ? 
+        `${est.company.address}${est.company.city ? `\n${est.company.city}, ${est.company.province || ""} ${est.company.postal_code || ""}` : ""}`.trim() : 
+        undefined,
+      phone: est.company?.phone,
+      email: est.company?.email,
+    },
+    billTo: {
+      name: est.customer?.company_name || `${est.customer?.first_name || ''} ${est.customer?.last_name || ''}`.trim() || "Customer",
+      address: est.customer?.address ? 
+        `${est.customer.address}${est.customer.city ? `\n${est.customer.city}, ${est.customer.state || ""} ${est.customer.zip_code || ""}` : ""}`.trim() :
+        undefined,
+      email: est.customer?.email,
+      phone: est.customer?.phone,
+    },
+    items: (est.items || []).map((item: any, idx: number) => ({
+      id: item.id || `item-${idx}`,
+      title: item.item_name || item.description || "Item",
+      description: item.description !== item.item_name ? item.description : undefined,
+      quantity: item.quantity || 1,
+      unit: item.unit,
+      rate: item.rate || 0,
+      total: item.amount || 0,
+    })),
+    subtotal: { currency: "USD", value: est.subtotal || 0 },
+    discount: est.discount_amount ? { currency: "USD", value: est.discount_amount } : undefined,
+    tax: est.tax_amount ? { currency: "USD", value: est.tax_amount } : undefined,
+    total: { currency: "USD", value: est.total || 0 },
+    notes: est.notes,
+    terms: est.terms_conditions || est.terms || "Valid for 30 days. Deposit required to schedule. This document does not constitute a contract until accepted.",
+    signatureLine: est.status !== "accepted",
+  };
 
-      <div className="no-print border rounded p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-lg font-semibold">Estimate #{est.estimate_number}</div>
-            <div className="text-sm text-muted-foreground">
-              Status: <span className="font-medium capitalize">{est.status}</span>
-              {est.signed_at && (
-                <span className="ml-2">• Signed on {new Date(est.signed_at).toLocaleDateString()}</span>
-              )}
-            </div>
-          </div>
-          <div>
+  const downloadPdf = async () => {
+    try {
+      await downloadPdfFromNode("estimate-print", `Estimate-${est.estimate_number}.pdf`);
+      toast.success("Estimate downloaded successfully");
+    } catch (error) {
+      console.error("Failed to download PDF:", error);
+      toast.error("Failed to download estimate");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="mb-6 flex justify-between items-center">
+          <h1 className="text-2xl font-semibold text-gray-900">Estimate #{est.estimate_number}</h1>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={downloadPdf}>
+              <Download className="h-4 w-4 mr-2" />
+              Download PDF
+            </Button>
             {est.status !== "accepted" ? (
-              <Button 
-                onClick={() => setShowSignatureDialog(true)}
-                size="lg"
-              >
-                Review & Sign Estimate
+              <Button onClick={() => setShowSignatureDialog(true)}>
+                <FileSignature className="h-4 w-4 mr-2" />
+                Review & Sign
               </Button>
-            ) : (
-              <div className="text-green-600 font-medium">✓ Estimate Accepted</div>
-            )}
+            ) : deposit > 0 ? (
+              <Button onClick={payDeposit}>
+                <CreditCard className="h-4 w-4 mr-2" />
+                Pay Deposit
+              </Button>
+            ) : null}
           </div>
         </div>
 
-        {deposit > 0 && (
-          <div className="flex items-center justify-between p-3 border rounded bg-muted/30">
-            <div>
-              <div className="font-medium">Deposit Required</div>
-              <div className="text-sm text-muted-foreground">
-                Amount due to secure scheduling: ${deposit.toFixed(2)}
+        <div className="bg-white rounded-lg shadow-sm" id="estimate-print">
+          <EstimatePrint doc={estimateDoc} />
+        </div>
+      </div>
+
+      <Dialog open={showSignatureDialog} onOpenChange={setShowSignatureDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Sign Estimate #{est.estimate_number}</DialogTitle>
+            <DialogDescription>
+              Please review the estimate details and provide your signature to accept the terms and conditions.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm font-medium">Total Amount:</span>
+                <span className="font-semibold">${est.total?.toFixed(2) || '0.00'}</span>
+              </div>
+              {deposit > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-sm font-medium">Deposit Required:</span>
+                  <span className="font-semibold text-blue-600">${deposit.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-sm font-medium">Customer:</span>
+                <span>{est.customer?.company_name || `${est.customer?.first_name || ''} ${est.customer?.last_name || ''}`.trim() || 'Customer'}</span>
               </div>
             </div>
-            <Button 
-              onClick={payDeposit}
-              variant={est.status === "accepted" ? "default" : "secondary"}
-              disabled={est.status !== "accepted"}
-            >
-              {est.status === "accepted" ? "Pay Deposit" : "Sign First"}
-            </Button>
+            
+            <EnhancedSignaturePad
+              onSave={handleSignatureSave}
+              requireTerms={true}
+              termsText={getTermsText()}
+            />
           </div>
-        )}
-      </div>
+        </DialogContent>
+      </Dialog>
+    </div>
 
       <Dialog open={showSignatureDialog} onOpenChange={setShowSignatureDialog}>
         <DialogContent className="max-w-2xl">
