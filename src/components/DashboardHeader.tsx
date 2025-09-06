@@ -41,54 +41,54 @@ export const DashboardHeader = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-card">
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* Logo and Brand */}
-        <div className="flex items-center gap-3">
-          {/* Mobile Menu */}
+      <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-3 md:py-4">
+        {/* Logo and Brand - Mobile Optimized */}
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Mobile Menu - Only visible on mobile */}
           <div className="md:hidden">
             <MobileMenu />
           </div>
-          {/* Desktop Sidebar Toggle */}
+          {/* Desktop Sidebar Toggle - Only visible on desktop */}
           <div className="hidden md:block">
             <SidebarTrigger />
           </div>
           <img 
             src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
             alt="FireBuildAI"
-            className="w-14 h-14 object-contain"
+            className="w-10 h-10 md:w-14 md:h-14 object-contain"
           />
-          <div>
-            <h1 className="text-xl font-bold text-foreground">FireBuildAI</h1>
-            <p className="text-xs text-muted-foreground">Build Better Business</p>
+          <div className="hidden sm:block">
+            <h1 className="text-lg md:text-xl font-bold text-foreground">FireBuildAI</h1>
+            <p className="text-xs text-muted-foreground hidden lg:block">Build Better Business</p>
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="flex-1 max-w-md mx-8">
-          <div className="relative">
+        {/* Search Bar - Hidden on mobile, shown on tablet+ */}
+        <div className="hidden md:flex flex-1 max-w-md mx-4 lg:mx-8">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input 
               placeholder="Search clients, jobs, estimates..." 
-              className="pl-10 bg-background"
+              className="pl-10 bg-background w-full"
             />
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-3">
+        {/* Actions - Mobile Optimized */}
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
           {isAdmin && (
-            <Link to={R.admin}>
+            <Link to={R.admin} className="hidden lg:block">
               <Button variant="ghost" size="sm" className="gap-2 text-destructive">
                 <Shield className="w-4 h-4" />
-                <span className="hidden sm:inline">Admin</span>
+                <span className="hidden xl:inline">Admin</span>
               </Button>
             </Link>
           )}
           
-          <Link to={R.home}>
+          <Link to={R.home} className="hidden sm:block">
             <Button variant="ghost" size="sm" className="gap-2">
               <ExternalLink className="w-4 h-4" />
-              <span className="hidden sm:inline">View Site</span>
+              <span className="hidden lg:inline">View Site</span>
             </Button>
           </Link>
           
@@ -99,50 +99,57 @@ export const DashboardHeader = () => {
               size="icon"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               aria-label="Toggle theme"
+              className="h-9 w-9 md:h-10 md:w-10"
             >
               {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
+                <Sun className="w-4 h-4 md:w-5 md:h-5" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <Moon className="w-4 h-4 md:w-5 md:h-5" />
               )}
             </Button>
           )}
           
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5" />
+          <Button variant="ghost" size="icon" className="relative h-9 w-9 md:h-10 md:w-10">
+            <Bell className="w-4 h-4 md:w-5 md:h-5" />
             <Badge 
               variant="destructive" 
-              className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 text-xs"
+              className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 flex items-center justify-center p-0 text-[10px] md:text-xs"
             >
               3
             </Badge>
           </Button>
           
-          <Link to={R.settings}>
-            <Button variant="ghost" size="icon">
-              <Settings className="w-5 h-5" />
+          <Link to={R.settings} className="hidden sm:block">
+            <Button variant="ghost" size="icon" className="h-9 w-9 md:h-10 md:w-10">
+              <Settings className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
           </Link>
           
-          {/* User Profile Dropdown */}
+          {/* User Profile Dropdown - Mobile Optimized */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full overflow-hidden">
-                <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
+              <Button variant="ghost" size="icon" className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden">
+                <div className="w-8 h-8 md:w-9 md:h-9 bg-gradient-primary rounded-full flex items-center justify-center">
                   <User className="w-4 h-4 text-primary-foreground" />
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-48 md:w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">Account</p>
-                  <p className="text-xs leading-none text-muted-foreground">
+                  <p className="text-xs leading-none text-muted-foreground truncate">
                     {user?.email}
                   </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              {isAdmin && (
+                <DropdownMenuItem onClick={() => navigate(R.admin)} className="lg:hidden">
+                  <Shield className="mr-2 h-4 w-4" />
+                  <span>Admin Panel</span>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={() => navigate(R.settings)}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>

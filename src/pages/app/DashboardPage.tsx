@@ -47,14 +47,14 @@ export const DashboardPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 px-3 sm:px-4 md:px-0">
       <TrialBanner />
       
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
+      {/* Header Section - Mobile Optimized */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Overview of your contractor management platform</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Overview of your contractor management platform</p>
         </div>
         <div className="flex gap-2">
           <Button 
@@ -62,6 +62,7 @@ export const DashboardPage = () => {
             size="sm"
             onClick={() => navigate(R.jobNew)}
             data-testid="dashboard-new-job"
+            className="h-9 px-3 text-sm"
           >
             + New Job
           </Button>
@@ -70,34 +71,39 @@ export const DashboardPage = () => {
             size="sm"
             onClick={() => navigate(R.purchaseOrderNew)}
             data-testid="dashboard-new-po"
+            className="h-9 px-3 text-sm"
           >
             New PO
           </Button>
         </div>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Metrics Grid - Mobile Responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {metrics.map((metric, index) => (
           <MetricsCard key={index} {...metric} />
         ))}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
-        <div className="space-y-6">
+      {/* Main Content Grid - Mobile Responsive */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* Mobile: Stack all cards vertically */}
+        {/* Tablet: 2 columns */}
+        {/* Desktop: 3 columns */}
+        
+        {/* Quick Actions and Reviews */}
+        <div className="space-y-4 md:space-y-6">
           <QuickActionsCard />
           <ReviewsCard />
         </div>
         
-        {/* Middle Column */}
-        <div className="space-y-6">
+        {/* Recent Activity */}
+        <div className="space-y-4 md:space-y-6">
           <RecentActivityCard />
         </div>
         
-        {/* Right Column */}
-        <div className="space-y-6">
+        {/* Team Performance and Fleet */}
+        <div className="space-y-4 md:space-y-6">
           <TeamPerformanceCard />
           <FleetStatusCard />
         </div>
