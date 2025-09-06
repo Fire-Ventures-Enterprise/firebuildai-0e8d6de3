@@ -59,6 +59,7 @@ import VendorsPage from "./pages/app/VendorsPage";
 import ExpensesNewPage from "./pages/app/ExpensesNewPage";
 import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
 import WorkflowSequencingPage from "./pages/app/WorkflowSequencingPage";
+import WorkflowTestPage from "./pages/app/WorkflowTestPage";
 import WorkflowDashboardPage from "./pages/app/WorkflowDashboardPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
@@ -288,6 +289,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <WorkflowSequencingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/workflow-test" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <WorkflowTestPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
