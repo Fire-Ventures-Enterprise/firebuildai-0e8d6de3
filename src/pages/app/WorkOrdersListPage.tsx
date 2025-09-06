@@ -73,8 +73,7 @@ export default function WorkOrdersListPage() {
         .from("work_orders")
         .select(`
           *,
-          invoices_enhanced(id, invoice_number, customer_name),
-          teams(name)
+          invoices_enhanced(id, invoice_number, customer_name)
         `)
         .order("starts_at", { ascending: false });
 
@@ -114,7 +113,7 @@ export default function WorkOrdersListPage() {
           starts_at: wo.starts_at,
           ends_at: wo.ends_at,
           status: wo.status,
-          team_name: wo.teams?.name,
+          team_name: null,
           created_at: wo.created_at,
         }));
         
@@ -135,7 +134,7 @@ export default function WorkOrdersListPage() {
           starts_at: wo.starts_at,
           ends_at: wo.ends_at,
           status: wo.status,
-          team_name: wo.teams?.name,
+          team_name: null,
           created_at: wo.created_at,
         }));
 
