@@ -59,6 +59,7 @@ import VendorsPage from "./pages/app/VendorsPage";
 import ExpensesNewPage from "./pages/app/ExpensesNewPage";
 import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
 import WorkflowSequencingPage from "./pages/app/WorkflowSequencingPage";
+import WorkflowDashboardPage from "./pages/app/WorkflowDashboardPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
 
@@ -204,7 +205,7 @@ const App = () => (
             <Route path="/app/workflow" element={
               <ProtectedRoute>
                 <AppLayout>
-                  <WorkflowCalendarPage />
+                  <WorkflowDashboardPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
