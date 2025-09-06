@@ -23,10 +23,14 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Single Dashboard Header - contains all header elements */}
           <DashboardHeader />
           
-          {/* Page Content */}
-          <main className="flex-1 p-6">
-            <AppBreadcrumbs />
-            {children}
+          {/* Page Content with improved spacing */}
+          <main className="flex-1 px-8 py-6 lg:px-12 lg:py-8">
+            <div className="max-w-[1600px] mx-auto">
+              <AppBreadcrumbs />
+              <div className="mt-6">
+                {children}
+              </div>
+            </div>
           </main>
         </div>
       </div>

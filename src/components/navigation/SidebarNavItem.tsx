@@ -26,14 +26,14 @@ export function SidebarNavItem({ to, icon: Icon, label, testId, collapsed, badge
         <SidebarMenuButton 
           asChild
           className={cn(
-            "w-full transition-all",
+            "w-full transition-all h-11 px-3",
             isActive && "bg-primary text-primary-foreground hover:bg-primary/90"
           )}
         >
           <span className="flex items-center justify-between w-full">
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-3">
               <Icon className="h-4 w-4 flex-shrink-0" />
-              {!collapsed && <span>{label}</span>}
+              {!collapsed && <span className="text-sm">{label}</span>}
             </span>
             {badge && !collapsed && (
               <span className="ml-auto text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">

@@ -47,14 +47,14 @@ export const DashboardPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-4 md:space-y-6 px-3 sm:px-4 md:px-0">
+    <div className="space-y-6 md:space-y-8">
       <TrialBanner />
       
-      {/* Header Section - Mobile Optimized */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      {/* Header Section with Better Spacing */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Overview of your contractor management platform</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-2">Overview of your contractor management platform</p>
         </div>
         <div className="flex gap-2">
           <Button 
@@ -78,15 +78,15 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Metrics Grid - Mobile Responsive */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      {/* Metrics Grid with Improved Spacing */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {metrics.map((metric, index) => (
           <MetricsCard key={index} {...metric} />
         ))}
       </div>
 
-      {/* Main Content Grid - Mobile Responsive */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      {/* Main Content Grid with Better Gaps */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Mobile: Stack all cards vertically */}
         {/* Tablet: 2 columns */}
         {/* Desktop: 3 columns */}
