@@ -16,6 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { MobileMenu } from "@/components/navigation/MobileMenu";
 
 export const DashboardHeader = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -38,10 +40,18 @@ export const DashboardHeader = () => {
   };
 
   return (
-    <header className="bg-card border-b border-border shadow-card">
+    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-card">
       <div className="flex items-center justify-between px-6 py-4">
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
+          {/* Mobile Menu */}
+          <div className="md:hidden">
+            <MobileMenu />
+          </div>
+          {/* Desktop Sidebar Toggle */}
+          <div className="hidden md:block">
+            <SidebarTrigger />
+          </div>
           <img 
             src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
             alt="FireBuildAI"
