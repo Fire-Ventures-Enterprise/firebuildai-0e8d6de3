@@ -68,58 +68,31 @@ export function CustomServiceManager({
   const loadCustomServices = async () => {
     setLoading(true);
     try {
-      const user = (await supabase.auth.getUser()).data.user;
-      if (!user) return;
-
-      // Use RPC or direct query with type assertion
       const { data: services, error } = await supabase
-        .rpc('get_custom_services', { p_user_id: user.id })
-        .returns<any[]>();
+        .from('custom_services')
+        .select('*')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .order('created_at', { ascending: false });
 
-      if (error) {
-        // Fallback to direct query if RPC doesn't exist
-        const { data: directServices } = await supabase
-          .from('custom_services' as any)
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+      if (error) throw error;
 
-        if (directServices) {
-          const formattedServices: ServiceDefinition[] = directServices.map((s: any) => ({
-            id: s.id,
-            name: s.name,
-            description: s.description,
-            category: s.category,
-            estimatedDuration: s.estimated_duration,
-            duration_days: s.duration_days,
-            industryTypes: s.industry_types || [IndustryType.CUSTOM],
-            phases: s.phases || [],
-            materials: s.materials || [],
-            dependencies: s.dependencies || {},
-            productSelection: s.product_selection,
-            isCustom: true,
-            userId: s.user_id
-          }));
-          setCustomServices(formattedServices);
-        }
-      } else if (services) {
-        const formattedServices: ServiceDefinition[] = services.map((s: any) => ({
-          id: s.id,
-          name: s.name,
-          description: s.description,
-          category: s.category,
-          estimatedDuration: s.estimated_duration,
-          duration_days: s.duration_days,
-          industryTypes: s.industry_types || [IndustryType.CUSTOM],
-          phases: s.phases || [],
-          materials: s.materials || [],
-          dependencies: s.dependencies || {},
-          productSelection: s.product_selection,
-          isCustom: true,
-          userId: s.user_id
-        }));
-        setCustomServices(formattedServices);
-      }
+      const formattedServices: ServiceDefinition[] = services?.map(s => ({
+        id: s.id,
+        name: s.name,
+        description: s.description || '',
+        category: s.category,
+        estimatedDuration: s.estimated_duration || '',
+        duration_days: s.duration_days || 1,
+        industryTypes: (s.industry_types as IndustryType[]) || [IndustryType.CUSTOM],
+        phases: (s.phases as any as ServicePhase[]) || [],
+        materials: s.materials || [],
+        dependencies: (s.dependencies as any) || {},
+        productSelection: s.product_selection as any,
+        isCustom: true,
+        userId: s.user_id
+      })) || [];
+
+      setCustomServices(formattedServices);
     } catch (error) {
       console.error('Error loading custom services:', error);
       toast({
@@ -154,10 +127,10 @@ export function CustomServiceManager({
         estimated_duration: formData.estimatedDuration,
         duration_days: formData.duration_days,
         industry_types: formData.industryTypes,
-        phases: formData.phases,
-        materials: formData.materials,
-        dependencies: formData.dependencies,
-        product_selection: formData.productSelection,
+        phases: (formData.phases || []) as any,
+        materials: formData.materials || [],
+        dependencies: (formData.dependencies || {}) as any,
+        product_selection: (formData.productSelection || null) as any,
         user_id: user.id
       };
 
@@ -191,7 +164,7 @@ export function CustomServiceManager({
         // Create new service
         const { data, error } = await supabase
           .from('custom_services')
-          .insert([serviceData])
+          .insert(serviceData)
           .select()
           .single();
 
