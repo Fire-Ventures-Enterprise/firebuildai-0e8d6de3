@@ -21,22 +21,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          {/* Header with Mobile Menu */}
-          <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b">
-            <div className="flex items-center justify-between px-4 py-3">
-              <div className="flex items-center gap-2">
-                {/* Mobile Menu */}
-                <div className="md:hidden">
-                  <MobileMenu />
-                </div>
-                {/* Desktop Sidebar Toggle */}
-                <div className="hidden md:block">
-                  <SidebarTrigger />
-                </div>
-                <DashboardHeader />
-              </div>
-            </div>
-          </header>
+          {/* Single Dashboard Header - contains all header elements */}
+          <DashboardHeader />
           
           {/* Page Content */}
           <main className="flex-1 p-6">
