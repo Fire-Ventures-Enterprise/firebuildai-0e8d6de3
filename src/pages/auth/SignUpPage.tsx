@@ -133,13 +133,22 @@ export const SignUpPage = () => {
               </Button>
             </form>
           </CardContent>
-          <CardFooter>
-            <p className="text-center text-sm text-muted-foreground w-full">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline">
-                Sign in
-              </Link>
-            </p>
+          <CardFooter className="flex flex-col gap-3">
+            <div className="relative w-full">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or
+                </span>
+              </div>
+            </div>
+            <Link to="/login" className="w-full">
+              <Button variant="outline" className="w-full">
+                Sign in to existing account
+              </Button>
+            </Link>
           </CardFooter>
         </Card>
       </div>
