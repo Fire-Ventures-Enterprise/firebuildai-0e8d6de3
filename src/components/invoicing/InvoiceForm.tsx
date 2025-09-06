@@ -7,13 +7,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, Plus, Trash2, UserPlus } from "lucide-react";
+import { CalendarIcon, UserPlus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Invoice, InvoiceItem, InvoiceStatus, CreateInvoiceRequest } from "@/types/invoice";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddCustomerDialog } from "@/components/shared/AddCustomerDialog";
+import { DraggableInvoiceItems } from "./DraggableInvoiceItems";
 
 interface InvoiceFormProps {
   open: boolean;
@@ -282,75 +283,13 @@ export const InvoiceForm = ({ open, onOpenChange, invoice, mode, onSave }: Invoi
           </div>
 
           {/* Line Items */}
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-muted">
-                <tr>
-                  <th className="text-left p-3 font-medium">Description</th>
-                  <th className="text-center p-3 font-medium w-24">Quantity</th>
-                  <th className="text-center p-3 font-medium w-32">Rate</th>
-                  <th className="text-right p-3 font-medium w-32">Amount</th>
-                  <th className="w-10"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {formData.items.map((item, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="p-3">
-                      <Input
-                        placeholder="Item description"
-                        value={item.description}
-                        onChange={(e) => updateLineItem(index, 'description', e.target.value)}
-                        className="border-0 p-0 h-auto"
-                        required
-                      />
-                    </td>
-                    <td className="p-3">
-                      <Input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => updateLineItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                        className="text-center"
-                        required
-                      />
-                    </td>
-                    <td className="p-3">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={item.rate}
-                        onChange={(e) => updateLineItem(index, 'rate', parseFloat(e.target.value) || 0)}
-                        className="text-center"
-                        required
-                      />
-                    </td>
-                    <td className="p-3 text-right font-medium">
-                      ${item.amount.toFixed(2)}
-                    </td>
-                    <td className="p-3">
-                      {formData.items.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeLineItem(index)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="p-3 border-t">
-              <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Line Item
-              </Button>
-            </div>
-          </div>
+          <DraggableInvoiceItems
+            items={formData.items}
+            onItemsChange={(items) => setFormData(prev => ({ ...prev, items }))}
+            onItemUpdate={updateLineItem}
+            onAddItem={addLineItem}
+            onRemoveItem={removeLineItem}
+          />
 
           {/* Notes */}
           <div>

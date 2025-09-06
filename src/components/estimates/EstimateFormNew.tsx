@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LineItemsArray } from "@/components/forms/LineItemsArray";
+import { DraggableLineItems } from "@/components/forms/DraggableLineItems";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -200,7 +200,7 @@ export function EstimateFormNew({ initialData, onSubmit, onCancel }: EstimateFor
 
         <div className="space-y-2">
           <FormLabel>Line Items</FormLabel>
-          <LineItemsArray
+          <DraggableLineItems
             form={form}
             fa={itemsFieldArray}
             title="Line Items"

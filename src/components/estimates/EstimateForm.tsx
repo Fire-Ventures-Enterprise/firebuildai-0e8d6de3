@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Trash2, UserPlus } from 'lucide-react';
+import { CalendarIcon, UserPlus } from 'lucide-react';
+import { DraggableEstimateItems } from './DraggableEstimateItems';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -341,56 +342,13 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
         </TabsContent>
 
         <TabsContent value="items" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex justify-between items-center">
-                <span>Line Items</span>
-                <Button type="button" size="sm" onClick={addLineItem}>
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Item
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {lineItems.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-2">
-                    <div className="col-span-6">
-                      <Input
-                        placeholder="Description"
-                        value={item.description}
-                        onChange={(e) => updateLineItem(index, 'description', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <Input
-                        type="number"
-                        placeholder="Qty"
-                        value={item.quantity}
-                        onChange={(e) => updateLineItem(index, 'quantity', parseFloat(e.target.value))}
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        type="number"
-                        placeholder="Rate"
-                        value={item.rate}
-                        onChange={(e) => updateLineItem(index, 'rate', parseFloat(e.target.value))}
-                      />
-                    </div>
-                    <div className="col-span-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeLineItem(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <DraggableEstimateItems
+            items={lineItems}
+            onItemsChange={setLineItems}
+            onItemUpdate={updateLineItem}
+            onAddItem={addLineItem}
+            onRemoveItem={removeLineItem}
+          />
               
               <div className="mt-4 space-y-2 text-right">
                 <div>Subtotal: ${calculateSubtotal().toFixed(2)}</div>
