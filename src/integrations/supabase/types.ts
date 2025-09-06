@@ -1028,6 +1028,262 @@ export type Database = {
         }
         Relationships: []
       }
+      enhanced_estimate_items_pricing: {
+        Row: {
+          amount: number | null
+          bulk_price_allocated: number | null
+          bulk_price_percentage: number | null
+          construction_phase: string | null
+          created_at: string
+          description: string
+          estimate_id: string
+          id: string
+          is_hidden: boolean | null
+          item_name: string
+          item_type: string
+          markup: number | null
+          markup_amount: number | null
+          markup_type: string | null
+          notes: string | null
+          override_reason: string | null
+          price_override: number | null
+          quantity: number
+          rate: number | null
+          sequencing_keywords: string[] | null
+          sort_order: number | null
+          tax: boolean | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          bulk_price_allocated?: number | null
+          bulk_price_percentage?: number | null
+          construction_phase?: string | null
+          created_at?: string
+          description: string
+          estimate_id: string
+          id?: string
+          is_hidden?: boolean | null
+          item_name: string
+          item_type: string
+          markup?: number | null
+          markup_amount?: number | null
+          markup_type?: string | null
+          notes?: string | null
+          override_reason?: string | null
+          price_override?: number | null
+          quantity?: number
+          rate?: number | null
+          sequencing_keywords?: string[] | null
+          sort_order?: number | null
+          tax?: boolean | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          bulk_price_allocated?: number | null
+          bulk_price_percentage?: number | null
+          construction_phase?: string | null
+          created_at?: string
+          description?: string
+          estimate_id?: string
+          id?: string
+          is_hidden?: boolean | null
+          item_name?: string
+          item_type?: string
+          markup?: number | null
+          markup_amount?: number | null
+          markup_type?: string | null
+          notes?: string | null
+          override_reason?: string | null
+          price_override?: number | null
+          quantity?: number
+          rate?: number | null
+          sequencing_keywords?: string[] | null
+          sort_order?: number | null
+          tax?: boolean | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enhanced_estimate_items_pricing_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "enhanced_estimates_pricing"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enhanced_estimates_pricing: {
+        Row: {
+          bulk_price: number | null
+          bulk_price_description: string | null
+          bulk_total_price: number | null
+          contract_attached: boolean | null
+          contract_required: boolean | null
+          contract_text: string | null
+          created_at: string
+          customer_address: string | null
+          customer_city: string | null
+          customer_email: string
+          customer_id: string | null
+          customer_name: string
+          customer_phone: string | null
+          customer_postal_code: string | null
+          customer_province: string | null
+          deposit_amount: number | null
+          deposit_due: string | null
+          deposit_percentage: number | null
+          discount: number | null
+          discount_amount: number | null
+          discount_type: string | null
+          estimate_number: string
+          expiration_date: string | null
+          id: string
+          issue_date: string
+          itemized_subtotal: number | null
+          management_fee: number | null
+          management_fee_fixed: number | null
+          management_fee_percentage: number | null
+          notes: string | null
+          other_fees: number | null
+          override_reason: string | null
+          permit_fee_amount: number | null
+          permit_fees: number | null
+          pricing_config: Json
+          private_notes: string | null
+          scope_of_work: string | null
+          service_address: string | null
+          service_city: string | null
+          service_postal_code: string | null
+          service_province: string | null
+          signature_required: boolean | null
+          status: string
+          subtotal: number
+          subtotal_override: number | null
+          tax_amount: number
+          tax_rate: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bulk_price?: number | null
+          bulk_price_description?: string | null
+          bulk_total_price?: number | null
+          contract_attached?: boolean | null
+          contract_required?: boolean | null
+          contract_text?: string | null
+          created_at?: string
+          customer_address?: string | null
+          customer_city?: string | null
+          customer_email: string
+          customer_id?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          customer_postal_code?: string | null
+          customer_province?: string | null
+          deposit_amount?: number | null
+          deposit_due?: string | null
+          deposit_percentage?: number | null
+          discount?: number | null
+          discount_amount?: number | null
+          discount_type?: string | null
+          estimate_number: string
+          expiration_date?: string | null
+          id?: string
+          issue_date?: string
+          itemized_subtotal?: number | null
+          management_fee?: number | null
+          management_fee_fixed?: number | null
+          management_fee_percentage?: number | null
+          notes?: string | null
+          other_fees?: number | null
+          override_reason?: string | null
+          permit_fee_amount?: number | null
+          permit_fees?: number | null
+          pricing_config?: Json
+          private_notes?: string | null
+          scope_of_work?: string | null
+          service_address?: string | null
+          service_city?: string | null
+          service_postal_code?: string | null
+          service_province?: string | null
+          signature_required?: boolean | null
+          status?: string
+          subtotal?: number
+          subtotal_override?: number | null
+          tax_amount?: number
+          tax_rate?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bulk_price?: number | null
+          bulk_price_description?: string | null
+          bulk_total_price?: number | null
+          contract_attached?: boolean | null
+          contract_required?: boolean | null
+          contract_text?: string | null
+          created_at?: string
+          customer_address?: string | null
+          customer_city?: string | null
+          customer_email?: string
+          customer_id?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          customer_postal_code?: string | null
+          customer_province?: string | null
+          deposit_amount?: number | null
+          deposit_due?: string | null
+          deposit_percentage?: number | null
+          discount?: number | null
+          discount_amount?: number | null
+          discount_type?: string | null
+          estimate_number?: string
+          expiration_date?: string | null
+          id?: string
+          issue_date?: string
+          itemized_subtotal?: number | null
+          management_fee?: number | null
+          management_fee_fixed?: number | null
+          management_fee_percentage?: number | null
+          notes?: string | null
+          other_fees?: number | null
+          override_reason?: string | null
+          permit_fee_amount?: number | null
+          permit_fees?: number | null
+          pricing_config?: Json
+          private_notes?: string | null
+          scope_of_work?: string | null
+          service_address?: string | null
+          service_city?: string | null
+          service_postal_code?: string | null
+          service_province?: string | null
+          signature_required?: boolean | null
+          status?: string
+          subtotal?: number
+          subtotal_override?: number | null
+          tax_amount?: number
+          tax_rate?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enhanced_estimates_pricing_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estimate_items: {
         Row: {
           amount: number
