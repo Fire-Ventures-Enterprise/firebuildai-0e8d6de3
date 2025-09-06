@@ -78,6 +78,7 @@ const navigationGroups: NavigationGroup[] = [
       { id: "work-orders", label: "Work Orders", icon: ClipboardList, path: R.workOrders, testId: "nav-work-orders", badge: "NEW" },
       { id: "scheduling", label: "Scheduling", icon: FileText, path: R.scheduling, testId: "nav-scheduling" },
       { id: "workflow", label: "Workflow Calendar", icon: CalendarRange, path: R.workflow, testId: "nav-workflow" },
+      { id: "workflow-sequencing", label: "AI Sequencing", icon: CalendarRange, path: "/app/workflow-sequencing", testId: "nav-workflow-sequencing", badge: "AI" },
       { id: "fleet", label: "Fleet", icon: Truck, path: R.fleet, testId: "nav-fleet" },
       { id: "teams", label: "Teams", icon: UserCheck, path: R.teams, testId: "nav-teams" },
     ],

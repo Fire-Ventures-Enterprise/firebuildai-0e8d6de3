@@ -58,6 +58,7 @@ import SettingsPage from "./pages/app/SettingsPage";
 import VendorsPage from "./pages/app/VendorsPage";
 import ExpensesNewPage from "./pages/app/ExpensesNewPage";
 import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
+import WorkflowSequencingPage from "./pages/app/WorkflowSequencingPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
 
@@ -281,6 +282,14 @@ const App = () => (
             } />
             
             <Route path="/portal/work-order/:token" element={<WorkOrderPortalPage />} />
+            
+            <Route path="/app/workflow-sequencing" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <WorkflowSequencingPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
             
             <Route path="/app/finance/expenses" element={
               <ProtectedRoute>
