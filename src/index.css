@@ -172,3 +172,140 @@ All colors MUST be HSL.
     @apply min-h-[44px];
   }
 }
+
+/* Print Styles - Professional PDF Output */
+@media print {
+  /* Hide navigation and UI elements */
+  .no-print,
+  header[data-header="main-dashboard-header"],
+  nav,
+  aside,
+  .sidebar,
+  .desktop-sidebar,
+  .mobile-menu,
+  button,
+  .breadcrumb,
+  .toast,
+  .toaster,
+  [role="navigation"],
+  [data-sidebar],
+  .app-breadcrumbs {
+    display: none !important;
+  }
+
+  /* Reset page styles for clean printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Clean white background for professional look */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    line-height: 1.6 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  }
+
+  /* Main content takes full width */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+
+  /* Add company branding header for printed pages */
+  body::before {
+    content: "FireBuildAI - Contractor Management Platform";
+    display: block;
+    text-align: center;
+    font-size: 16pt;
+    font-weight: bold;
+    margin-bottom: 20pt;
+    padding-bottom: 10pt;
+    border-bottom: 2px solid #000;
+  }
+
+  /* Ensure tables and content break properly */
+  table { page-break-inside: avoid; }
+  tr { page-break-inside: avoid; }
+  img { page-break-inside: avoid; max-width: 100% !important; }
+  
+  /* Professional typography for print */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    font-weight: bold !important;
+    color: #000000 !important;
+    margin-top: 1em !important;
+    margin-bottom: 0.5em !important;
+  }
+
+  h1 { font-size: 20pt !important; }
+  h2 { font-size: 16pt !important; }
+  h3 { font-size: 14pt !important; }
+  h4 { font-size: 12pt !important; }
+
+  /* Links should be visible but not underlined */
+  a {
+    color: #000000 !important;
+    text-decoration: none !important;
+  }
+
+  /* Cards and containers should have clear borders */
+  .card {
+    border: 1px solid #d1d5db !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 12pt !important;
+    padding: 12pt !important;
+  }
+
+  /* Hide shadows and effects */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure gradient backgrounds don't print */
+  .bg-gradient-hero,
+  .bg-gradient-to-r,
+  .bg-gradient-to-b {
+    background: transparent !important;
+  }
+
+  /* Table styling for professional look */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border: 1px solid #d1d5db !important;
+    padding: 6pt !important;
+  }
+
+  th {
+    background-color: #f9fafb !important;
+    font-weight: bold !important;
+  }
+
+  /* Hide interactive elements */
+  input, select, textarea {
+    border: 1px solid #d1d5db !important;
+    background: transparent !important;
+  }
+
+  /* Footer with page numbers */
+  @bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    font-size: 10pt;
+    color: #666666;
+  }
+}
