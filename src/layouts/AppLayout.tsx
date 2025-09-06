@@ -2,9 +2,8 @@
 import { ReactNode } from 'react';
 import { DashboardHeader } from '@/components/DashboardHeader';
 import { DesktopSidebar } from '@/components/navigation/DesktopSidebar';
-import { MobileMenu } from '@/components/navigation/MobileMenu';
 import { AppBreadcrumbs } from '@/components/AppBreadcrumbs';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 interface AppLayoutProps {
   children: ReactNode;
