@@ -58,10 +58,10 @@ export function CompanyProfileConfig({ currentProfile, onProfileUpdate }: Compan
         id: p.id,
         name: p.name,
         primaryIndustry: p.primary_industry as IndustryType,
-        secondaryIndustries: p.secondary_industries as IndustryType[],
-        servicesEnabled: p.services_enabled || { useIndustryDefaults: true },
-        workingHours: p.working_hours,
-        holidays: p.holidays,
+        secondaryIndustries: (p.secondary_industries as IndustryType[]) || [],
+        servicesEnabled: (p.services_enabled as any) || { useIndustryDefaults: true },
+        workingHours: p.working_hours as any,
+        holidays: p.holidays || [],
         bufferDaysPerTask: p.buffer_days_per_task || 0.1
       })) || [];
 
