@@ -1,8 +1,10 @@
 import { AppLayout } from "@/layouts/AppLayout";
 import { WorkflowSequencer } from "@/components/workflow/WorkflowSequencer";
+import WorkflowTestRunner from "@/components/workflow/WorkflowTestRunner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Lightbulb, Zap, CheckCircle2, ArrowRight } from "lucide-react";
+import { Lightbulb, Zap, CheckCircle2, ArrowRight, TestTube, Wrench } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function WorkflowSequencingPage() {
   return (
@@ -116,7 +118,26 @@ export default function WorkflowSequencingPage() {
           </Card>
         </div>
 
-        <WorkflowSequencer />
+        <Tabs defaultValue="sequencer" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="sequencer" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              Workflow Sequencer
+            </TabsTrigger>
+            <TabsTrigger value="test" className="flex items-center gap-2">
+              <TestTube className="h-4 w-4" />
+              Test Suite
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="sequencer" className="mt-6">
+            <WorkflowSequencer />
+          </TabsContent>
+          
+          <TabsContent value="test" className="mt-6">
+            <WorkflowTestRunner />
+          </TabsContent>
+        </Tabs>
       </div>
     </AppLayout>
   );
