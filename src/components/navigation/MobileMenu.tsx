@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, NavLink } from "react-router-dom";
-import { Menu, X, Home, FileText, Users, Briefcase, DollarSign, Settings, Building2, TrendingUp, ClipboardList } from "lucide-react";
+import { Menu, X, Home, FileText, Users, Briefcase, DollarSign, Settings, Building2, TrendingUp, ClipboardList, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,6 +17,7 @@ const menuItems: MobileMenuItem[] = [
   { label: "Dashboard", path: R.dashboard, icon: Home },
   { label: "Jobs", path: R.jobs, icon: Briefcase },
   { label: "Work Orders", path: R.workOrders, icon: ClipboardList },
+  { label: "AI Sequencing", path: "/app/workflow-sequencing", icon: Zap },
   { label: "Estimates", path: R.estimates, icon: FileText },
   { label: "Invoices", path: R.invoices, icon: FileText },
   { label: "Purchase Orders", path: R.purchaseOrders, icon: FileText },
