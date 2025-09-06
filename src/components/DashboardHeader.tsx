@@ -39,8 +39,10 @@ export const DashboardHeader = () => {
     }
   };
 
+  console.log('DashboardHeader rendering - this should only appear once per page load');
+
   return (
-    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-card">
+    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-card" data-header="main-dashboard-header">
       <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-3 md:py-4">
         {/* Logo and Brand - Mobile Optimized */}
         <div className="flex items-center gap-2 md:gap-3">
