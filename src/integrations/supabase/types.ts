@@ -44,6 +44,98 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_integrations: {
+        Row: {
+          account_name: string
+          account_type: string | null
+          bank_code: string
+          capabilities: Json | null
+          configuration: Json | null
+          country: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_name: string
+          account_type?: string | null
+          bank_code: string
+          capabilities?: Json | null
+          configuration?: Json | null
+          country: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_name?: string
+          account_type?: string | null
+          bank_code?: string
+          capabilities?: Json | null
+          configuration?: Json | null
+          country?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      bank_webhooks: {
+        Row: {
+          bank_code: string
+          created_at: string | null
+          error: string | null
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean | null
+          processed_at: string | null
+          transaction_id: string | null
+          webhook_id: string
+        }
+        Insert: {
+          bank_code: string
+          created_at?: string | null
+          error?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          transaction_id?: string | null
+          webhook_id: string
+        }
+        Update: {
+          bank_code?: string
+          created_at?: string | null
+          error?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          transaction_id?: string | null
+          webhook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_webhooks_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       billing_milestones: {
         Row: {
           amount: number | null
@@ -1000,6 +1092,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      compliance_logs: {
+        Row: {
+          action: string
+          compliance_type: string
+          country: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          reported: boolean | null
+          reported_at: string | null
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          compliance_type: string
+          country: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          reported?: boolean | null
+          reported_at?: string | null
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          compliance_type?: string
+          country?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          reported?: boolean | null
+          reported_at?: string | null
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_logs_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultation_bookings: {
         Row: {
@@ -3418,6 +3557,62 @@ export type Database = {
           },
         ]
       }
+      payment_methods: {
+        Row: {
+          country: string
+          created_at: string | null
+          customer_id: string | null
+          details: Json
+          id: string
+          is_default: boolean | null
+          is_verified: boolean | null
+          metadata: Json | null
+          method_type: string
+          updated_at: string | null
+          user_id: string
+          verification_status: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          country: string
+          created_at?: string | null
+          customer_id?: string | null
+          details?: Json
+          id?: string
+          is_default?: boolean | null
+          is_verified?: boolean | null
+          metadata?: Json | null
+          method_type: string
+          updated_at?: string | null
+          user_id: string
+          verification_status?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          country?: string
+          created_at?: string | null
+          customer_id?: string | null
+          details?: Json
+          id?: string
+          is_default?: boolean | null
+          is_verified?: boolean | null
+          metadata?: Json | null
+          method_type?: string
+          updated_at?: string | null
+          user_id?: string
+          verification_status?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_stages: {
         Row: {
           amount: number | null
@@ -3470,6 +3665,153 @@ export type Database = {
             columns: ["estimate_id"]
             isOneToOne: false
             referencedRelation: "estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_transactions: {
+        Row: {
+          actual_delivery: string | null
+          amount: number
+          bank_integration_id: string | null
+          bank_reference_id: string | null
+          contractor_id: string | null
+          created_at: string | null
+          currency: string
+          description: string | null
+          direction: string
+          error_code: string | null
+          error_message: string | null
+          estimated_delivery: string | null
+          exchange_rate: number | null
+          id: string
+          invoice_id: string | null
+          metadata: Json | null
+          processing_fee: number | null
+          project_id: string | null
+          purchase_order_id: string | null
+          recipient_account_info: Json | null
+          recipient_email: string | null
+          recipient_name: string
+          reference_number: string | null
+          retry_count: number | null
+          retryable: boolean | null
+          sender_account_info: Json | null
+          sender_email: string | null
+          sender_name: string | null
+          status: string
+          tracking_url: string | null
+          transaction_type: string
+          updated_at: string | null
+          user_id: string
+          webhook_data: Json | null
+        }
+        Insert: {
+          actual_delivery?: string | null
+          amount: number
+          bank_integration_id?: string | null
+          bank_reference_id?: string | null
+          contractor_id?: string | null
+          created_at?: string | null
+          currency: string
+          description?: string | null
+          direction: string
+          error_code?: string | null
+          error_message?: string | null
+          estimated_delivery?: string | null
+          exchange_rate?: number | null
+          id?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          processing_fee?: number | null
+          project_id?: string | null
+          purchase_order_id?: string | null
+          recipient_account_info?: Json | null
+          recipient_email?: string | null
+          recipient_name: string
+          reference_number?: string | null
+          retry_count?: number | null
+          retryable?: boolean | null
+          sender_account_info?: Json | null
+          sender_email?: string | null
+          sender_name?: string | null
+          status?: string
+          tracking_url?: string | null
+          transaction_type: string
+          updated_at?: string | null
+          user_id: string
+          webhook_data?: Json | null
+        }
+        Update: {
+          actual_delivery?: string | null
+          amount?: number
+          bank_integration_id?: string | null
+          bank_reference_id?: string | null
+          contractor_id?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          direction?: string
+          error_code?: string | null
+          error_message?: string | null
+          estimated_delivery?: string | null
+          exchange_rate?: number | null
+          id?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          processing_fee?: number | null
+          project_id?: string | null
+          purchase_order_id?: string | null
+          recipient_account_info?: Json | null
+          recipient_email?: string | null
+          recipient_name?: string
+          reference_number?: string | null
+          retry_count?: number | null
+          retryable?: boolean | null
+          sender_account_info?: Json | null
+          sender_email?: string | null
+          sender_name?: string | null
+          status?: string
+          tracking_url?: string | null
+          transaction_type?: string
+          updated_at?: string | null
+          user_id?: string
+          webhook_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_bank_integration_id_fkey"
+            columns: ["bank_integration_id"]
+            isOneToOne: false
+            referencedRelation: "bank_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_due_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices_enhanced"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "po_payment_totals"
+            referencedColumns: ["po_id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
             referencedColumns: ["id"]
           },
         ]
