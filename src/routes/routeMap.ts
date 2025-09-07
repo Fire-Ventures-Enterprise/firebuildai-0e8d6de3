@@ -89,6 +89,7 @@ export const R = {
   vendorDetail: (id: string) => `/app/finance/vendors/${id}`,
   
   financialAnalytics: "/app/financial-analytics",
+  xactimate: "/app/xactimate",
   
   // Work Orders
   workOrders: "/app/work-orders",

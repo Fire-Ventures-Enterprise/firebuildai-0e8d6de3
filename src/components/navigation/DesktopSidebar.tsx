@@ -65,6 +65,7 @@ const navigationGroups: NavigationGroup[] = [
       { id: "purchase-orders", label: "Purchase Orders", icon: ShoppingCart, path: R.purchaseOrders, testId: "nav-purchase-orders" },
       { id: "expenses", label: "Expenses", icon: DollarSign, path: R.expenses, testId: "nav-expenses" },
       { id: "vendors", label: "Vendors", icon: Building2, path: R.vendors, testId: "nav-vendors" },
+      { id: "xactimate", label: "Xactimate", icon: FileText, path: "/app/xactimate", testId: "nav-xactimate", badge: "NEW" },
       { id: "financial-analytics", label: "Financial Analytics", icon: TrendingUp, path: R.financialAnalytics, testId: "nav-financial-analytics" },
     ],
   },
