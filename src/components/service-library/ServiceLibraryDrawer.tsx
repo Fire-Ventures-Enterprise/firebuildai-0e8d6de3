@@ -1,91 +1,102 @@
 import { useState, useEffect } from 'react';
 import { 
   Package, 
-  ChefHat, 
-  Bath, 
-  Home, 
   Wind, 
   Zap, 
-  Square,
-  ChevronRight,
-  Loader2,
-  Calendar,
-  DollarSign,
-  CheckCircle2,
-  Info
+  Droplets, 
+  Bath, 
+  ChefHat, 
+  Square, 
+  Trees, 
+  Home, 
+  Lightbulb, 
+  Paintbrush2,
+  X,
+  Settings,
+  Building2,
+  CheckCircle,
+  Clock,
+  AlertCircle
 } from 'lucide-react';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import {
+import { CompanyProfileConfig } from './CompanyProfileConfig';
+import { 
   getTemplates,
   getTemplateWithTasks,
   createProjectTasksFromTemplate,
-  scheduleProjectTasks,
-  type Template,
-  type ProjectTask
-} from '@/services/templates';
-import { supabase } from '@/integrations/supabase/client';
+  scheduleProjectTasks
+} from '@/services/serviceLibrary';
+import { ProjectTask } from '@/types/projectTasks';
+import { DefaultCompanyProfiles } from '@/types/industry';
+import { supabase } from '@/lib/supabase';
+
+const iconMap = {
+  Package,
+  Wind,
+  Zap,
+  Droplets,
+  Bath,
+  ChefHat,
+  Square,
+  Trees,
+  Home,
+  Lightbulb,
+  Paintbrush2,
+  Building2
+};
+
+const industryLabels = {
+  general_contractor: 'General Contractor',
+  flooring: 'Flooring',
+  hvac: 'HVAC',
+  electrical: 'Electrical',
+  plumbing: 'Plumbing',
+  bathroom: 'Bathroom Renovation',
+  kitchen: 'Kitchen Renovation',
+  landscaping: 'Landscaping',
+  roofing: 'Roofing',
+  lighting: 'Lighting',
+  painting: 'Painting'
+};
 
 interface ServiceLibraryDrawerProps {
   open: boolean;
   onClose: () => void;
-  onTasksCreated: (tasks: ProjectTask[]) => void;
-  targetId: string;
-  targetType: 'invoice' | 'estimate';
+  onTasksCreated?: (tasks: ProjectTask[]) => void;
+  targetId?: string;
+  targetType?: 'invoice' | 'estimate';
+  companyProfile?: any;
+  onProfileUpdate?: (profile: any) => void;
 }
 
-const industryLabels: Record<string, string> = {
-  kitchen_bath: 'Kitchen & Bath',
-  exterior: 'Exterior',
-  mechanical: 'HVAC & Mechanical',
-  electrical: 'Electrical',
-  construction: 'General Construction'
-};
-
-const iconMap: Record<string, any> = {
-  ChefHat,
-  Bath,
-  Home,
-  Wind,
-  Zap,
-  Square,
-  Package
-};
-
-export function ServiceLibraryDrawer({
-  open,
-  onClose,
+export function ServiceLibraryDrawer({ 
+  open, 
+  onClose, 
   onTasksCreated,
   targetId,
-  targetType
+  targetType = 'invoice',
+  companyProfile = DefaultCompanyProfiles.general_contractor,
+  onProfileUpdate
 }: ServiceLibraryDrawerProps) {
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
   const [templateDetails, setTemplateDetails] = useState<any>(null);
-  const [metrics, setMetrics] = useState<any>([]);
-  const [options, setOptions] = useState<any>([]);
+  const [metrics, setMetrics] = useState<Record<string, number>>({});
+  const [options, setOptions] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
-  const [metricsValues, setMetricsValues] = useState<Record<string, any>>({});
-  const [optionsValues, setOptionsValues] = useState<Record<string, any>>({});
+  const [showConfig, setShowConfig] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -94,24 +105,24 @@ export function ServiceLibraryDrawer({
     }
   }, [open]);
 
-  async function loadTemplates() {
+  const loadTemplates = async () => {
     setLoading(true);
     try {
       const data = await getTemplates();
       setTemplates(data);
     } catch (error) {
-      console.error('Error loading templates:', error);
+      console.error('Failed to load templates:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load service library',
+        description: 'Failed to load service templates',
         variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleTemplateSelect(template: Template) {
+  const handleTemplateSelect = async (template: any) => {
     setSelectedTemplate(template);
     setLoading(true);
     
@@ -119,40 +130,35 @@ export function ServiceLibraryDrawer({
       const details = await getTemplateWithTasks(template.id);
       setTemplateDetails(details);
       
-      // Load metrics
+      // Load metrics from template
       const { data: metricsData } = await supabase
-        .from('preset_metrics')
+        .from('service_template_metrics')
         .select('*')
-        .eq('template_id', template.id)
-        .order('sort_order');
+        .eq('template_id', template.id);
       
-      setMetrics(metricsData || []);
+      if (metricsData) {
+        const initialMetrics: Record<string, number> = {};
+        metricsData.forEach((metric: any) => {
+          initialMetrics[metric.metric_name] = metric.default_value || 0;
+        });
+        setMetrics(initialMetrics);
+      }
       
-      // Initialize metrics values
-      const defaultMetrics: Record<string, any> = {};
-      (metricsData || []).forEach((metric: any) => {
-        defaultMetrics[metric.metric_key] = metric.default_value || '';
-      });
-      setMetricsValues(defaultMetrics);
-      
-      // Load options
+      // Load options from template
       const { data: optionsData } = await supabase
-        .from('preset_options')
+        .from('service_template_options')
         .select('*')
-        .eq('template_id', template.id)
-        .order('sort_order');
+        .eq('template_id', template.id);
       
-      setOptions(optionsData || []);
-      
-      // Initialize options values
-      const defaultOptions: Record<string, any> = {};
-      (optionsData || []).forEach((option: any) => {
-        defaultOptions[option.option_key] = option.default_value || false;
-      });
-      setOptionsValues(defaultOptions);
-      
+      if (optionsData) {
+        const initialOptions: Record<string, boolean> = {};
+        optionsData.forEach((option: any) => {
+          initialOptions[option.option_name] = option.default_selected || false;
+        });
+        setOptions(initialOptions);
+      }
     } catch (error) {
-      console.error('Error loading template details:', error);
+      console.error('Failed to load template details:', error);
       toast({
         title: 'Error',
         description: 'Failed to load template details',
@@ -161,10 +167,10 @@ export function ServiceLibraryDrawer({
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleGenerate() {
-    if (!selectedTemplate || !templateDetails) return;
+  const handleGenerate = async () => {
+    if (!selectedTemplate || !templateDetails || !targetId) return;
     
     setGenerating(true);
     try {
@@ -172,140 +178,153 @@ export function ServiceLibraryDrawer({
       const tasks = await createProjectTasksFromTemplate(
         selectedTemplate.id,
         targetId,
-        targetType,
-        optionsValues,
-        metricsValues
+        metrics,
+        options
       );
       
-      // Schedule tasks
-      const scheduledTasks = await scheduleProjectTasks(tasks, new Date());
+      // Schedule the tasks
+      const scheduledTasks = await scheduleProjectTasks(
+        targetId,
+        tasks,
+        new Date(),
+        {}
+      );
       
-      // Create line items from tasks
+      // Insert scheduled tasks as line items based on target type
       if (targetType === 'invoice') {
-        const invoiceItems = scheduledTasks.map(task => ({
+        const lineItems = scheduledTasks.map((task, index) => ({
           invoice_id: targetId,
           item_name: task.label,
-          description: `${task.trade} - ${task.duration_days} days`,
-          quantity: task.quantity || 1,
-          rate: task.rate_per_unit || 0,
-          amount: task.total_amount || 0
+          description: `Phase: ${task.trade || 'General'} - Duration: ${task.duration_days} days`,
+          quantity: 1,
+          rate: 0, // Will be set by user
+          amount: 0,
+          sort_order: index,
+          is_heading: false
         }));
-        await supabase.from('invoice_items_enhanced').insert(invoiceItems);
+        
+        const { error } = await supabase
+          .from('invoice_line_items')
+          .insert(lineItems);
+        
+        if (error) throw error;
       } else {
-        const estimateItems = scheduledTasks.map(task => ({
+        const lineItems = scheduledTasks.map((task, index) => ({
           estimate_id: targetId,
-          description: task.label,
-          quantity: task.quantity || 1,
-          rate: task.rate_per_unit || 0,
-          amount: task.total_amount || 0
+          item_name: task.label,
+          description: `Phase: ${task.trade || 'General'} - Duration: ${task.duration_days} days`,
+          quantity: 1,
+          rate: 0, // Will be set by user
+          amount: 0,
+          sort_order: index,
+          is_heading: false
         }));
-        await supabase.from('estimate_items').insert(estimateItems);
+        
+        const { error } = await supabase
+          .from('estimate_line_items')
+          .insert(lineItems);
+        
+        if (error) throw error;
       }
-      
-      // Notify parent component
-      onTasksCreated(scheduledTasks);
       
       toast({
         title: 'Success',
-        description: `Generated ${tasks.length} tasks from ${selectedTemplate.name}`,
+        description: `Generated ${scheduledTasks.length} tasks and schedule`,
       });
       
+      onTasksCreated?.(scheduledTasks);
       handleClose();
     } catch (error) {
-      console.error('Error generating from template:', error);
+      console.error('Failed to generate tasks:', error);
       toast({
         title: 'Error',
-        description: 'Failed to generate from template',
+        description: 'Failed to generate tasks and schedule',
         variant: 'destructive'
       });
     } finally {
       setGenerating(false);
     }
-  }
+  };
 
-  function handleClose() {
+  const handleClose = () => {
     setSelectedTemplate(null);
     setTemplateDetails(null);
-    setMetrics([]);
-    setOptions([]);
-    setMetricsValues({});
-    setOptionsValues({});
+    setMetrics({});
+    setOptions({});
     setSelectedIndustry('all');
     onClose();
-  }
+  };
 
   const filteredTemplates = selectedIndustry === 'all' 
     ? templates 
     : templates.filter(t => t.industry === selectedIndustry);
 
-  const industries = Array.from(new Set(templates.map(t => t.industry).filter(Boolean)));
-
   return (
     <Sheet open={open} onOpenChange={handleClose}>
-      <SheetContent className="w-full sm:max-w-2xl">
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            Service Library
-          </SheetTitle>
+          <div className="flex items-center justify-between">
+            <SheetTitle className="flex items-center space-x-2">
+              <Building2 className="h-5 w-5" />
+              <span>Service Library</span>
+            </SheetTitle>
+            {companyProfile && onProfileUpdate && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowConfig(true)}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Configure
+              </Button>
+            )}
+          </div>
           <SheetDescription>
-            {selectedTemplate 
-              ? `Configure ${selectedTemplate.name}`
-              : 'Choose a service preset to generate tasks, schedule, and work orders'}
+            {companyProfile?.name} - Choose a service template to generate tasks and schedules
           </SheetDescription>
         </SheetHeader>
 
-        {loading ? (
+        {loading && !selectedTemplate ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
           </div>
         ) : !selectedTemplate ? (
-          <div className="py-4">
-            <Tabs value={selectedIndustry} onValueChange={setSelectedIndustry} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
-                <TabsTrigger value="all">All</TabsTrigger>
-                {industries.map(industry => (
-                  <TabsTrigger key={industry} value={industry}>
-                    {industryLabels[industry] || industry}
-                  </TabsTrigger>
-                ))}
+          <>
+            <Tabs value={selectedIndustry} onValueChange={setSelectedIndustry} className="mt-6">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="all">All ({templates.length})</TabsTrigger>
+                <TabsTrigger value="general_contractor">General</TabsTrigger>
+                <TabsTrigger value="kitchen">Kitchen</TabsTrigger>
+                <TabsTrigger value="bathroom">Bathroom</TabsTrigger>
               </TabsList>
               
               <TabsContent value={selectedIndustry} className="mt-4">
                 <ScrollArea className="h-[500px]">
                   <div className="space-y-3">
                     {filteredTemplates.map((template) => {
-                      const Icon = iconMap[template.icon || 'Package'] || Package;
+                      const Icon = iconMap[template.icon as keyof typeof iconMap] || Package;
                       return (
-                        <Card
+                        <Card 
                           key={template.id}
-                          className="cursor-pointer hover:border-primary transition-colors"
+                          className="cursor-pointer hover:shadow-md transition-all"
                           onClick={() => handleTemplateSelect(template)}
                         >
                           <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between">
-                              <div className="flex items-start gap-3">
-                                <div className="p-2 bg-primary/10 rounded-lg">
-                                  <Icon className="h-5 w-5 text-primary" />
-                                </div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <Icon className="h-5 w-5 text-primary" />
                                 <div>
-                                  <CardTitle className="text-lg">{template.name}</CardTitle>
-                                  <CardDescription className="text-sm mt-1">
-                                    {template.description}
-                                  </CardDescription>
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <Badge variant="secondary" className="text-xs">
-                                      {template.category}
-                                    </Badge>
-                                    <Badge variant="outline" className="text-xs">
-                                      {template.version}
-                                    </Badge>
-                                  </div>
+                                  <CardTitle className="text-base">{template.name}</CardTitle>
+                                  <Badge variant="outline" className="mt-1">
+                                    {industryLabels[template.industry as keyof typeof industryLabels] || template.industry}
+                                  </Badge>
                                 </div>
                               </div>
-                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
                             </div>
                           </CardHeader>
+                          <CardContent>
+                            <CardDescription>{template.description}</CardDescription>
+                          </CardContent>
                         </Card>
                       );
                     })}
@@ -313,137 +332,129 @@ export function ServiceLibraryDrawer({
                 </ScrollArea>
               </TabsContent>
             </Tabs>
-          </div>
+          </>
         ) : (
-          <div className="py-4">
-            <Tabs defaultValue="metrics" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="metrics">Metrics</TabsTrigger>
-                <TabsTrigger value="options">Options</TabsTrigger>
-                <TabsTrigger value="tasks">Tasks</TabsTrigger>
-                <TabsTrigger value="milestones">Milestones</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="metrics" className="mt-4">
-                <div className="space-y-4">
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      Enter project measurements to calculate accurate pricing
-                    </AlertDescription>
-                  </Alert>
-                  
-                  {metrics.map((metric: any) => (
+          <div className="mt-6 space-y-6">
+            <div className="flex items-center space-x-3">
+              <Button variant="ghost" size="sm" onClick={() => setSelectedTemplate(null)}>
+                ← Back
+              </Button>
+              <h3 className="text-lg font-semibold">{selectedTemplate.name}</h3>
+            </div>
+            
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
+              </div>
+            ) : templateDetails && (
+              <Tabs defaultValue="metrics" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="metrics">Metrics</TabsTrigger>
+                  <TabsTrigger value="options">Options</TabsTrigger>
+                  <TabsTrigger value="tasks">Tasks</TabsTrigger>
+                  <TabsTrigger value="milestones">Milestones</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="metrics" className="space-y-4">
+                  <h4 className="text-sm font-medium">Project Metrics</h4>
+                  {templateDetails.metrics?.map((metric: any) => (
                     <div key={metric.id} className="space-y-2">
-                      <Label htmlFor={metric.metric_key}>
-                        {metric.label}
-                        {metric.required && <span className="text-destructive ml-1">*</span>}
-                        {metric.unit && <span className="text-muted-foreground ml-1">({metric.unit})</span>}
+                      <Label htmlFor={metric.metric_name}>
+                        {metric.display_name} ({metric.unit})
                       </Label>
                       <Input
-                        id={metric.metric_key}
+                        id={metric.metric_name}
                         type="number"
-                        value={metricsValues[metric.metric_key]}
-                        onChange={(e) => setMetricsValues({
-                          ...metricsValues,
-                          [metric.metric_key]: e.target.value
+                        value={metrics[metric.metric_name] || metric.default_value || 0}
+                        onChange={(e) => setMetrics({
+                          ...metrics,
+                          [metric.metric_name]: parseFloat(e.target.value)
                         })}
-                        placeholder={metric.label}
-                        required={metric.required}
-                        min={metric.min_value}
-                        max={metric.max_value}
                       />
                     </div>
                   ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="options" className="mt-4">
-                <div className="space-y-4">
-                  {options.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">No options available for this preset</p>
-                  ) : (
-                    options.map((option: any) => (
-                      <div key={option.id} className="flex items-center justify-between">
-                        <Label htmlFor={option.option_key} className="flex-1">
-                          {option.label}
-                        </Label>
-                        <Switch
-                          id={option.option_key}
-                          checked={optionsValues[option.option_key]}
-                          onCheckedChange={(checked) => setOptionsValues({
-                            ...optionsValues,
-                            [option.option_key]: checked
-                          })}
-                        />
-                      </div>
-                    ))
-                  )}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="tasks" className="mt-4">
-                <ScrollArea className="h-[400px]">
-                  <div className="space-y-2">
-                    {templateDetails?.tasks?.map((task: any, index: number) => (
-                      <div key={task.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm text-muted-foreground">{index + 1}</span>
-                          <div>
-                            <p className="text-sm font-medium">{task.label}</p>
-                            <p className="text-xs text-muted-foreground">{task.trade} • {task.duration_days} days</p>
-                          </div>
-                        </div>
-                        {task.is_lead_time && (
-                          <Badge variant="secondary" className="text-xs">Lead Time</Badge>
+                </TabsContent>
+                
+                <TabsContent value="options" className="space-y-4">
+                  <h4 className="text-sm font-medium">Service Options</h4>
+                  {templateDetails.options?.map((option: any) => (
+                    <div key={option.id} className="flex items-center justify-between">
+                      <Label htmlFor={option.option_name} className="flex-1">
+                        {option.display_name}
+                        {option.description && (
+                          <span className="block text-xs text-muted-foreground">
+                            {option.description}
+                          </span>
                         )}
+                      </Label>
+                      <Switch
+                        id={option.option_name}
+                        checked={options[option.option_name] || option.default_selected || false}
+                        onCheckedChange={(checked) => setOptions({
+                          ...options,
+                          [option.option_name]: checked
+                        })}
+                      />
+                    </div>
+                  ))}
+                </TabsContent>
+                
+                <TabsContent value="tasks" className="space-y-2">
+                  <h4 className="text-sm font-medium">Tasks ({templateDetails.tasks?.length || 0})</h4>
+                  <ScrollArea className="h-[300px]">
+                    {templateDetails.tasks?.map((task: any, index: number) => (
+                      <div key={task.id} className="flex items-center space-x-2 py-2">
+                        <Badge variant="outline">{index + 1}</Badge>
+                        <span className="text-sm">{task.task_name}</span>
+                        <Badge variant="secondary">{task.duration_days}d</Badge>
                       </div>
                     ))}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
-              
-              <TabsContent value="milestones" className="mt-4">
-                <div className="space-y-3">
-                  {templateDetails?.milestones?.map((milestone: any) => (
-                    <div key={milestone.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  </ScrollArea>
+                </TabsContent>
+                
+                <TabsContent value="milestones" className="space-y-2">
+                  <h4 className="text-sm font-medium">Milestones</h4>
+                  <div className="space-y-3">
+                    {templateDetails.milestones?.map((milestone: any) => (
+                      <div key={milestone.id} className="flex items-start space-x-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
                         <div>
                           <p className="text-sm font-medium">{milestone.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            {milestone.trigger_type === 'on_accept' ? 'On acceptance' : 'After tasks complete'}
+                            {milestone.percentage}% complete
                           </p>
                         </div>
                       </div>
-                      <Badge>{milestone.percentage}%</Badge>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            )}
           </div>
         )}
+        
+        <SheetFooter className="mt-6">
+          {selectedTemplate && (
+            <Button 
+              onClick={handleGenerate} 
+              disabled={generating || !templateDetails}
+              className="w-full"
+            >
+              {generating ? 'Generating...' : 'Generate Tasks & Schedule'}
+            </Button>
+          )}
+        </SheetFooter>
 
-        {selectedTemplate && (
-          <SheetFooter>
-            <Button variant="outline" onClick={() => setSelectedTemplate(null)}>
-              Back
-            </Button>
-            <Button onClick={handleGenerate} disabled={generating}>
-              {generating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Generate Tasks & Schedule
-                </>
-              )}
-            </Button>
-          </SheetFooter>
+        {/* Configuration Modal */}
+        {showConfig && companyProfile && onProfileUpdate && (
+          <CompanyProfileConfig
+            companyProfile={companyProfile}
+            onProfileUpdate={(updatedProfile: any) => {
+              onProfileUpdate(updatedProfile);
+              setShowConfig(false);
+            }}
+            onClose={() => setShowConfig(false)}
+          />
         )}
       </SheetContent>
     </Sheet>
