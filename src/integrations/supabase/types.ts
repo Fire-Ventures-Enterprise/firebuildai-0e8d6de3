@@ -3557,6 +3557,69 @@ export type Database = {
           },
         ]
       }
+      payment_links: {
+        Row: {
+          amount: number
+          bank_name: string
+          completed_at: string | null
+          created_at: string
+          currency: string
+          expires_at: string | null
+          id: string
+          invoice_id: string | null
+          link_url: string
+          notes: string | null
+          purchase_order_id: string | null
+          recipient_email: string | null
+          recipient_name: string | null
+          reference_number: string
+          status: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          bank_name: string
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          link_url: string
+          notes?: string | null
+          purchase_order_id?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          reference_number: string
+          status?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          bank_name?: string
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          link_url?: string
+          notes?: string | null
+          purchase_order_id?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          reference_number?: string
+          status?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payment_methods: {
         Row: {
           country: string
