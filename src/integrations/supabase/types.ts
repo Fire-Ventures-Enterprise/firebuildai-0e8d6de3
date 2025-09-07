@@ -5393,6 +5393,488 @@ export type Database = {
           },
         ]
       }
+      xactimate_change_orders: {
+        Row: {
+          approved_by: string | null
+          approved_date: string | null
+          change_order_number: string | null
+          created_at: string | null
+          description: string | null
+          estimate_id: string
+          id: string
+          line_items: Json | null
+          reason: string | null
+          status: string | null
+          submitted_date: string | null
+          total_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          approved_by?: string | null
+          approved_date?: string | null
+          change_order_number?: string | null
+          created_at?: string | null
+          description?: string | null
+          estimate_id: string
+          id?: string
+          line_items?: Json | null
+          reason?: string | null
+          status?: string | null
+          submitted_date?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          approved_by?: string | null
+          approved_date?: string | null
+          change_order_number?: string | null
+          created_at?: string | null
+          description?: string | null
+          estimate_id?: string
+          id?: string
+          line_items?: Json | null
+          reason?: string | null
+          status?: string | null
+          submitted_date?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_change_orders_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "xactimate_estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xactimate_estimates: {
+        Row: {
+          adjuster_email: string | null
+          adjuster_id: string | null
+          adjuster_phone: string | null
+          carrier_name: string | null
+          cause_of_loss: string | null
+          claim_number: string | null
+          created_at: string | null
+          date_of_loss: string | null
+          deductible: number | null
+          depreciation: number | null
+          estimate_data: Json | null
+          id: string
+          import_status: string | null
+          imported_at: string | null
+          insured_name: string | null
+          original_file_name: string | null
+          original_file_url: string | null
+          overhead_profit: number | null
+          project_id: string | null
+          property_address: string | null
+          property_city: string | null
+          property_postal_code: string | null
+          property_state: string | null
+          total_acv: number | null
+          total_rcv: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          adjuster_email?: string | null
+          adjuster_id?: string | null
+          adjuster_phone?: string | null
+          carrier_name?: string | null
+          cause_of_loss?: string | null
+          claim_number?: string | null
+          created_at?: string | null
+          date_of_loss?: string | null
+          deductible?: number | null
+          depreciation?: number | null
+          estimate_data?: Json | null
+          id?: string
+          import_status?: string | null
+          imported_at?: string | null
+          insured_name?: string | null
+          original_file_name?: string | null
+          original_file_url?: string | null
+          overhead_profit?: number | null
+          project_id?: string | null
+          property_address?: string | null
+          property_city?: string | null
+          property_postal_code?: string | null
+          property_state?: string | null
+          total_acv?: number | null
+          total_rcv?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          adjuster_email?: string | null
+          adjuster_id?: string | null
+          adjuster_phone?: string | null
+          carrier_name?: string | null
+          cause_of_loss?: string | null
+          claim_number?: string | null
+          created_at?: string | null
+          date_of_loss?: string | null
+          deductible?: number | null
+          depreciation?: number | null
+          estimate_data?: Json | null
+          id?: string
+          import_status?: string | null
+          imported_at?: string | null
+          insured_name?: string | null
+          original_file_name?: string | null
+          original_file_url?: string | null
+          overhead_profit?: number | null
+          project_id?: string | null
+          property_address?: string | null
+          property_city?: string | null
+          property_postal_code?: string | null
+          property_state?: string | null
+          total_acv?: number | null
+          total_rcv?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_estimates_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xactimate_line_items: {
+        Row: {
+          actual_cost: number | null
+          acv_total: number | null
+          assigned_contractor_id: string | null
+          category: string | null
+          completion_date: string | null
+          completion_percentage: number | null
+          created_at: string | null
+          depreciation_amount: number | null
+          description: string | null
+          estimate_id: string
+          id: string
+          line_item_type: string | null
+          long_description: string | null
+          notes: string | null
+          quantity: number | null
+          rcv_total: number | null
+          room_name: string | null
+          selector: string | null
+          sort_order: number | null
+          status: string | null
+          tax_amount: number | null
+          total_price: number | null
+          trade: string | null
+          unit: string | null
+          unit_price: number | null
+          updated_at: string | null
+          work_order_id: string | null
+          xactimate_code: string | null
+        }
+        Insert: {
+          actual_cost?: number | null
+          acv_total?: number | null
+          assigned_contractor_id?: string | null
+          category?: string | null
+          completion_date?: string | null
+          completion_percentage?: number | null
+          created_at?: string | null
+          depreciation_amount?: number | null
+          description?: string | null
+          estimate_id: string
+          id?: string
+          line_item_type?: string | null
+          long_description?: string | null
+          notes?: string | null
+          quantity?: number | null
+          rcv_total?: number | null
+          room_name?: string | null
+          selector?: string | null
+          sort_order?: number | null
+          status?: string | null
+          tax_amount?: number | null
+          total_price?: number | null
+          trade?: string | null
+          unit?: string | null
+          unit_price?: number | null
+          updated_at?: string | null
+          work_order_id?: string | null
+          xactimate_code?: string | null
+        }
+        Update: {
+          actual_cost?: number | null
+          acv_total?: number | null
+          assigned_contractor_id?: string | null
+          category?: string | null
+          completion_date?: string | null
+          completion_percentage?: number | null
+          created_at?: string | null
+          depreciation_amount?: number | null
+          description?: string | null
+          estimate_id?: string
+          id?: string
+          line_item_type?: string | null
+          long_description?: string | null
+          notes?: string | null
+          quantity?: number | null
+          rcv_total?: number | null
+          room_name?: string | null
+          selector?: string | null
+          sort_order?: number | null
+          status?: string | null
+          tax_amount?: number | null
+          total_price?: number | null
+          trade?: string | null
+          unit?: string | null
+          unit_price?: number | null
+          updated_at?: string | null
+          work_order_id?: string | null
+          xactimate_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_line_items_assigned_contractor_id_fkey"
+            columns: ["assigned_contractor_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "xactimate_line_items_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "xactimate_estimates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "xactimate_line_items_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xactimate_photo_links: {
+        Row: {
+          created_at: string | null
+          id: string
+          line_item_id: string
+          metadata: Json | null
+          photo_caption: string | null
+          photo_url: string
+          stage: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          line_item_id: string
+          metadata?: Json | null
+          photo_caption?: string | null
+          photo_url: string
+          stage: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          line_item_id?: string
+          metadata?: Json | null
+          photo_caption?: string | null
+          photo_url?: string
+          stage?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_photo_links_line_item_id_fkey"
+            columns: ["line_item_id"]
+            isOneToOne: false
+            referencedRelation: "xactimate_line_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xactimate_progress_reports: {
+        Row: {
+          cost_variance: number | null
+          created_at: string | null
+          estimate_id: string
+          generated_by: string | null
+          id: string
+          notes: string | null
+          overall_completion_percentage: number | null
+          photos_count: number | null
+          report_date: string
+          sent_at: string | null
+          sent_to_adjuster: boolean | null
+          trades_progress: Json | null
+        }
+        Insert: {
+          cost_variance?: number | null
+          created_at?: string | null
+          estimate_id: string
+          generated_by?: string | null
+          id?: string
+          notes?: string | null
+          overall_completion_percentage?: number | null
+          photos_count?: number | null
+          report_date: string
+          sent_at?: string | null
+          sent_to_adjuster?: boolean | null
+          trades_progress?: Json | null
+        }
+        Update: {
+          cost_variance?: number | null
+          created_at?: string | null
+          estimate_id?: string
+          generated_by?: string | null
+          id?: string
+          notes?: string | null
+          overall_completion_percentage?: number | null
+          photos_count?: number | null
+          report_date?: string
+          sent_at?: string | null
+          sent_to_adjuster?: boolean | null
+          trades_progress?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_progress_reports_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "xactimate_estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xactimate_sync_log: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          details: Json | null
+          error_message: string | null
+          estimate_id: string | null
+          id: string
+          items_synced: number | null
+          started_at: string | null
+          status: string | null
+          sync_direction: string | null
+          sync_type: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          details?: Json | null
+          error_message?: string | null
+          estimate_id?: string | null
+          id?: string
+          items_synced?: number | null
+          started_at?: string | null
+          status?: string | null
+          sync_direction?: string | null
+          sync_type?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          details?: Json | null
+          error_message?: string | null
+          estimate_id?: string | null
+          id?: string
+          items_synced?: number | null
+          started_at?: string | null
+          status?: string | null
+          sync_direction?: string | null
+          sync_type?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_sync_log_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "xactimate_estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xactimate_trade_assignments: {
+        Row: {
+          actual_cost: number | null
+          assigned_at: string | null
+          assigned_line_items: number | null
+          completed_at: string | null
+          completed_line_items: number | null
+          contractor_id: string | null
+          created_at: string | null
+          estimate_id: string
+          estimated_cost: number | null
+          id: string
+          status: string | null
+          trade_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          actual_cost?: number | null
+          assigned_at?: string | null
+          assigned_line_items?: number | null
+          completed_at?: string | null
+          completed_line_items?: number | null
+          contractor_id?: string | null
+          created_at?: string | null
+          estimate_id: string
+          estimated_cost?: number | null
+          id?: string
+          status?: string | null
+          trade_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          actual_cost?: number | null
+          assigned_at?: string | null
+          assigned_line_items?: number | null
+          completed_at?: string | null
+          completed_line_items?: number | null
+          contractor_id?: string | null
+          created_at?: string | null
+          estimate_id?: string
+          estimated_cost?: number | null
+          id?: string
+          status?: string | null
+          trade_name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xactimate_trade_assignments_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "xactimate_trade_assignments_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "xactimate_estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       invoices_due_view: {
