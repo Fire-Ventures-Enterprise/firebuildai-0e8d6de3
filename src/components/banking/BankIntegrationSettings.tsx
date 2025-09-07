@@ -190,13 +190,7 @@ export function BankIntegrationSettings() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Payment Links</h2>
-          <p className="text-muted-foreground">
-            Create and manage payment links for accounts receivable and payable
-          </p>
-        </div>
+      <div className="flex items-center justify-end mb-4">
         <Button onClick={() => setShowCreateForm(true)}>
           <Link className="h-4 w-4 mr-2" />
           Create Payment Link
