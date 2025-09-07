@@ -57,6 +57,7 @@ import FinancialAnalyticsPage from "./pages/app/FinancialAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
 import VendorsPage from "./pages/app/VendorsPage";
 import ExpensesNewPage from "./pages/app/ExpensesNewPage";
+import BankingSettingsPage from "./pages/app/BankingSettingsPage";
 import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
 import WorkflowSequencingPage from "./pages/app/WorkflowSequencingPage";
 import WorkflowTestPage from "./pages/app/WorkflowTestPage";
@@ -380,6 +381,14 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <FinancialAnalyticsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/banking-settings" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <BankingSettingsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
