@@ -73,7 +73,7 @@ export function BankIntegrationSettings() {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      setPaymentLinks(data || []);
+      setPaymentLinks((data || []) as PaymentLink[]);
     } catch (error) {
       console.error('Failed to load payment links:', error);
       toast({
