@@ -10,6 +10,7 @@ import {
   XactimateCompletionReport
 } from '@/types/xactimate';
 import { toast } from '@/hooks/use-toast';
+import { XactimateParser } from './xactimateParser';
 
 // Trade mapping for categorization
 const TRADE_MAPPING: Record<string, string> = {
@@ -62,8 +63,8 @@ export class XactimateService {
   // Parse and import Xactimate estimate
   static async importEstimate(file: File, userId: string): Promise<XactimateEstimate> {
     try {
-      const fileContent = await this.parseFile(file);
-      const estimateData = this.extractEstimateData(fileContent);
+      // Use the enhanced parser
+      const estimateData = await XactimateParser.parseFile(file);
       
       // Create estimate record
       const { data: estimate, error: estimateError } = await supabase

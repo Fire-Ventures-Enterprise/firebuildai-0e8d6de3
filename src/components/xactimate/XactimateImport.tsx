@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Upload, 
   FileText, 
@@ -156,14 +157,27 @@ export const XactimateImport: React.FC = () => {
             Import Xactimate Estimate
           </CardTitle>
           <CardDescription>
-            Upload your Xactimate .XMO or PDF file to import estimate data
+            Upload your Xactimate file to import estimate data and line items
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <Alert className="bg-primary/5 border-primary/20">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="space-y-2">
+              <p className="font-medium">Supported file formats:</p>
+              <ul className="text-sm space-y-1 ml-4">
+                <li>• <span className="font-medium">.XMO / .XML</span> - Native Xactimate format (best results)</li>
+                <li>• <span className="font-medium">.PDF</span> - Exported estimate reports</li>
+                <li>• <span className="font-medium">.CSV</span> - Line item exports</li>
+                <li>• <span className="font-medium">.TXT</span> - Text-based reports</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
+
           <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
             <Input
               type="file"
-              accept=".xmo,.pdf"
+              accept=".xmo,.xml,.pdf,.csv,.txt"
               onChange={handleFileUpload}
               className="hidden"
               id="xactimate-upload"
@@ -175,7 +189,7 @@ export const XactimateImport: React.FC = () => {
                   {file ? file.name : 'Drop Xactimate file here or click to browse'}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Supports .XMO and .PDF files
+                  Maximum file size: 50MB
                 </p>
               </div>
             </label>

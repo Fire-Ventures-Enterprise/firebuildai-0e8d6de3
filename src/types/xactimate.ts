@@ -137,13 +137,23 @@ export interface XactimateProgressReport {
 
 // Import/Export Interfaces
 export interface XactimateImportData {
-  claim_number: string;
-  insured_name: string;
-  property_address: string;
-  date_of_loss: Date;
-  total_rcv: number;
-  total_acv: number;
-  deductible: number;
+  claim_number?: string;
+  insured_name?: string;
+  adjuster_name?: string;
+  adjuster_email?: string;
+  adjuster_phone?: string;
+  carrier_name?: string;
+  property_address?: string;
+  property_city?: string;
+  property_state?: string;
+  property_postal_code?: string;
+  date_of_loss?: Date;
+  cause_of_loss?: string;
+  total_rcv?: number;
+  total_acv?: number;
+  deductible?: number;
+  depreciation?: number;
+  overhead_profit?: number;
   line_items: XactimateLineItemImport[];
 }
 
