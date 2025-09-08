@@ -109,6 +109,15 @@ const App = () => (
             <Route path="/download" element={<DownloadAppPage />} />
             <Route path="/tutorials" element={<TutorialsPage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/api-docs" element={<ApiDocsPage />} />
+            <Route path="/help-center" element={<HelpCenterPage />} />
+            <Route path="/docs" element={<DocumentationPage />} />
+            <Route path="/status" element={<StatusPage />} />
+            <Route path="/terms" element={<TermsPrivacyPage />} />
+            <Route path="/privacy" element={<TermsPrivacyPage />} />
             
             {/* Feature Pages */}
             <Route path="/features/estimates" element={<ProfessionalEstimatesPage />} />
