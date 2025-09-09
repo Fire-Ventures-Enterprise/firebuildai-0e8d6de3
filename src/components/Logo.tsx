@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
-import logoLight from "@/assets/logo-light.png";
-import logoDark from "@/assets/logo-dark.png";
 
 interface LogoProps {
   className?: string;
@@ -55,8 +53,11 @@ export const Logo = ({ className = "", width = 200, height = 56 }: LogoProps) =>
     );
   }
   
-  // Use the imported logo assets directly
-  const logoSrc = isDarkMode ? logoDark : logoLight;
+  // Use the correct logo based on theme
+  // The light logo should be used in light mode, dark logo in dark mode
+  const logoSrc = isDarkMode 
+    ? '/lovable-uploads/6051e38e-b331-47c4-b218-10bea1030315.png'  // dark logo
+    : '/lovable-uploads/467a434f-0eee-4143-bd64-3d716cce95b1.png'; // light logo
   
   // Get company name dynamically
   const companyName = settings?.company_name || 'FireBuild.ai';
