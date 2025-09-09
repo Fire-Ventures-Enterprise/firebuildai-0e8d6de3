@@ -40,9 +40,8 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
       alt="FireBuild.ai" 
       className={`${className} object-contain`}
       style={{ 
-        width: width || 'auto',
-        height: height || 'auto',
-        maxWidth: '100%',
+        width: width ? `${width}px` : undefined,
+        height: height ? `${height}px` : undefined,
         display: 'block'
       }}
       onError={(e) => {
