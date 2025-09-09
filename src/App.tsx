@@ -170,6 +170,7 @@ const App = () => {
             <Route path="/features/estimates" element={<ProfessionalEstimatesPage />} />
             <Route path="/features/invoicing" element={<InvoicePaymentsPage />} />
             <Route path="/features/scheduling" element={<JobSchedulingPage />} />
+            <Route path="/jobscheduling" element={<JobSchedulingPage />} /> {/* Legacy route */}
             <Route path="/features/crew" element={<CrewManagementPage />} />
             <Route path="/features/analytics" element={<FeaturesAnalyticsPage />} />
             <Route path="/features/mobile" element={<MobileAppPage />} />
