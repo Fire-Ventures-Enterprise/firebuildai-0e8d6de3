@@ -1,0 +1,10 @@
+{
+  "appId": "app.lovable.2c86a246efc941ccaae2dc1f5ae58ed8",
+  "appName": "firebuildai",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://2c86a246-efc9-41cc-aae2-dc1f5ae58ed8.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  }
+}

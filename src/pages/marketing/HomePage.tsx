@@ -9,6 +9,7 @@ import { EmailCapturePopup } from "@/components/marketing/EmailCapturePopup";
 import { NotificationPreferencesPopup } from "@/components/marketing/NotificationPreferencesPopup";
 import { MobileAppSection } from "@/components/marketing/MobileAppSection";
 import { ComingSoonSection } from "@/components/marketing/ComingSoonSection";
+import { MobileAppBanner } from "@/components/marketing/MobileAppBanner";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
@@ -17,6 +18,7 @@ import { R } from "@/routes/routeMap";
 export const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
+      <MobileAppBanner />
       <EmailCapturePopup />
       <NotificationPreferencesPopup />
       {/* Navigation Header */}

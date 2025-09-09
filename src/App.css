@@ -1,8 +1,17 @@
+/* Mobile-friendly scrolling fix */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Ensure body allows scrolling */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .logo {
