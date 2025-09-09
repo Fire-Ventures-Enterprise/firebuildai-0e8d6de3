@@ -95,6 +95,9 @@ import FleetPage from "./pages/FleetPage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { ConsultationManagement } from "./pages/admin/ConsultationManagement";
+import { AdminAnalyticsPage } from "./pages/admin/AdminAnalyticsPage";
+import { AdminFeatureFlagsPage } from "./pages/admin/AdminFeatureFlagsPage";
+import { AdminErrorsPage } from "./pages/admin/AdminErrorsPage";
 
 // Other pages
 import NotFound from "./pages/NotFound";
@@ -500,6 +503,21 @@ const App = () => {
             <Route path="/secure-admin-2024-fb-portal/consultations" element={
               <ProtectedRoute>
                 <ConsultationManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/secure-admin-2024-fb-portal/analytics" element={
+              <ProtectedRoute>
+                <AdminAnalyticsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/secure-admin-2024-fb-portal/features" element={
+              <ProtectedRoute>
+                <AdminFeatureFlagsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/secure-admin-2024-fb-portal/errors" element={
+              <ProtectedRoute>
+                <AdminErrorsPage />
               </ProtectedRoute>
             } />
             
