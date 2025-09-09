@@ -366,6 +366,14 @@ const App = () => {
               </ProtectedRoute>
             } />
             
+            <Route path="/app/contractor-settings" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ContractorSettingsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
             <Route path="/app/finance/expenses" element={
               <ProtectedRoute>
                 <AppLayout>
