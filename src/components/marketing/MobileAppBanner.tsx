@@ -36,37 +36,37 @@ export const MobileAppBanner = () => {
   return (
     <>
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-primary via-primary-glow to-primary text-primary-foreground px-4 py-3 relative">
+      <div className="bg-transparent border-b border-border/50 px-4 py-3 relative">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
-            <Smartphone className="h-5 w-5 shrink-0" />
-            <span className="text-sm font-medium">
+            <Smartphone className="h-5 w-5 shrink-0 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">
               Get the FireBuild AI mobile app for iOS and Android!
             </span>
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               onClick={() => setShowQRModal(true)}
-              className="hidden sm:inline-flex"
+              className="hidden sm:inline-flex bg-orange-200 hover:bg-orange-300 text-orange-900 border-orange-300"
             >
               <Download className="mr-2 h-4 w-4" />
               Download App
             </Button>
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               onClick={() => setShowQRModal(true)}
-              className="sm:hidden"
+              className="sm:hidden bg-orange-200 hover:bg-orange-300 text-orange-900 border-orange-300"
             >
               <Download className="h-4 w-4" />
             </Button>
           </div>
           <button
             onClick={() => setIsVisible(false)}
-            className="p-1 hover:bg-white/20 rounded-full transition-colors"
+            className="p-1 hover:bg-muted rounded-full transition-colors"
             aria-label="Close banner"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 text-muted-foreground" />
           </button>
         </div>
       </div>
