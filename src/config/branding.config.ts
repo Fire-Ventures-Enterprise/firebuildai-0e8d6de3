@@ -14,9 +14,9 @@ export const brandingConfig = {
   
   // Logo Configuration
   logos: {
-    // These should be uploaded through the app settings or configured via environment variables
-    light: import.meta.env.VITE_LOGO_LIGHT || '/placeholder-logo-light.svg',
-    dark: import.meta.env.VITE_LOGO_DARK || '/placeholder-logo-dark.svg',
+    // Using the actual logo assets in the project
+    light: '/src/assets/logo-light.png',
+    dark: '/src/assets/logo-dark.png',
     // Legacy paths for backward compatibility
     legacyLight: '/lovable-uploads/6051e38e-b331-47c4-b218-10bea1030315.png',
     legacyDark: '/lovable-uploads/467a434f-0eee-4143-bd64-3d716cce95b1.png',

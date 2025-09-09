@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { getLogoUrl } from "@/config/branding.config";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 
 interface LogoProps {
   className?: string;
@@ -54,11 +55,8 @@ export const Logo = ({ className = "", width = 200, height = 56 }: LogoProps) =>
     );
   }
   
-  // Use dynamic logo URL from configuration
-  const logoSrc = getLogoUrl(
-    isDarkMode ? 'dark' : 'light',
-    settings?.logo_url
-  );
+  // Use the imported logo assets directly
+  const logoSrc = isDarkMode ? logoDark : logoLight;
   
   // Get company name dynamically
   const companyName = settings?.company_name || 'FireBuild.ai';
