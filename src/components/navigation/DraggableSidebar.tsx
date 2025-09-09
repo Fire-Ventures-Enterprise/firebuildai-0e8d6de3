@@ -108,7 +108,7 @@ const defaultNavigationGroups: NavigationGroup[] = [
       { id: "xactimate", label: "Xactimate", icon: FileText, path: "/products/xactimate-plus", testId: "nav-xactimate", badge: "BETA" },
       { id: "scheduling", label: "Scheduling", icon: FileText, path: R.scheduling, testId: "nav-scheduling" },
       { id: "workflow", label: "Workflow Calendar", icon: CalendarRange, path: R.workflow, testId: "nav-workflow" },
-      { id: "workflow-sequencing", label: "AI Sequencing", icon: CalendarRange, path: "/products/ai-scheduling", testId: "nav-workflow-sequencing", badge: "BETA" },
+      { id: "workflow-sequencing", label: "AI Sequencing", icon: CalendarRange, path: "/app/workflow-sequencing", testId: "nav-workflow-sequencing", badge: "BETA" },
       { id: "workflow-automation", label: "Workflow Automation", icon: CalendarRange, path: "/products/workflow-automation", testId: "nav-workflow-automation", badge: "BETA" },
       { id: "communication-hub", label: "Communication Hub", icon: MessageSquare, path: "/app/communication", testId: "nav-communication", badge: "NEW" },
     ],
