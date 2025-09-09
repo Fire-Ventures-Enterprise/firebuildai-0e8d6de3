@@ -80,6 +80,7 @@ import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
 import WorkflowSequencingPage from "./pages/app/WorkflowSequencingPage";
 import WorkflowTestPage from "./pages/app/WorkflowTestPage";
 import WorkflowDashboardPage from "./pages/app/WorkflowDashboardPage";
+import CommunicationPage from "./pages/app/CommunicationPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
 
@@ -445,6 +446,14 @@ const App = () => {
                     <h1 className="text-3xl font-bold">Client Messages</h1>
                     <p className="text-muted-foreground mt-2">Client messaging system coming soon...</p>
                   </div>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/communication" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <CommunicationPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
