@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://app.firebuildai.com
+      url: https://app.firebuild.ai
     steps:
       - uses: actions/checkout@v4
       
@@ -102,7 +102,7 @@ jobs:
       - name: Health Check
         run: |
           sleep 30
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://app.firebuildai.com/health || echo "000")
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://app.firebuild.ai/health || echo "000")
           if [ "$response" != "200" ] && [ "$response" != "404" ]; then
             echo "Health check failed with status $response"
             exit 1
@@ -118,7 +118,7 @@ jobs:
               repo: context.repo.repo,
               sha: context.sha,
               state: 'success',
-              target_url: 'https://app.firebuildai.com',
+              target_url: 'https://app.firebuild.ai',
               description: 'App deployed successfully',
               context: 'deploy/app'
             })
@@ -129,7 +129,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://www.firebuildai.com
+      url: https://www.firebuild.ai
     steps:
       - uses: actions/checkout@v4
       
@@ -170,7 +170,7 @@ jobs:
       - name: Health Check
         run: |
           sleep 30
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://www.firebuildai.com || echo "000")
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://www.firebuild.ai || echo "000")
           if [ "$response" != "200" ] && [ "$response" != "404" ]; then
             echo "Health check failed with status $response"
             exit 1
@@ -180,7 +180,7 @@ jobs:
       - name: Run Linkinator Check
         continue-on-error: true
         run: |
-          npx linkinator https://www.firebuildai.com --recurse --skip "linkedin.com|twitter.com|x.com" || true
+          npx linkinator https://www.firebuild.ai --recurse --skip "linkedin.com|twitter.com|x.com" || true
 
   deploy-admin:
     needs: detect-changes
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://admin.firebuildai.com
+      url: https://admin.firebuild.ai
     steps:
       - uses: actions/checkout@v4
       
@@ -231,7 +231,7 @@ jobs:
       - name: Health Check
         run: |
           sleep 30
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://admin.firebuildai.com/health || echo "000")
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://admin.firebuild.ai/health || echo "000")
           if [ "$response" != "200" ] && [ "$response" != "404" ]; then
             echo "Health check failed with status $response"
             exit 1

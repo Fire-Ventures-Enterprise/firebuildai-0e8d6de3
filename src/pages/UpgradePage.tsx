@@ -192,8 +192,8 @@ export const UpgradePage = () => {
         <div className="text-center mt-12 space-y-4">
           <p className="text-muted-foreground">
             Need help choosing? Contact our sales team at{' '}
-            <a href="mailto:sales@firebuildai.com" className="text-primary hover:underline">
-              sales@firebuildai.com
+            <a href="mailto:sales@firebuild.ai" className="text-primary hover:underline">
+              sales@firebuild.ai
             </a>
           </p>
           <div className="flex justify-center gap-4">

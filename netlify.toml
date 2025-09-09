@@ -40,6 +40,6 @@
   package = "netlify-plugin-submit-sitemap"
   
   [plugins.inputs]
-    baseUrl = "https://firebuildai.com"
+    baseUrl = "https://firebuild.ai"
     sitemapPath = "/sitemap.xml"
     providers = ["google", "bing"]

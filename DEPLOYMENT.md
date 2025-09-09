@@ -29,7 +29,7 @@ This project uses GitHub Actions for CI/CD with automatic deployments to product
 │  └──────────────────────────────────────────────────┘       │
 │         │                  │                  │              │
 │         ▼                  ▼                  ▼              │
-│  firebuildai.com    app.firebuildai.com   admin.firebuildai.com │
+│  firebuild.ai    app.firebuild.ai   admin.firebuild.ai │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -37,9 +37,9 @@ This project uses GitHub Actions for CI/CD with automatic deployments to product
 
 | Environment | URL | Description | Path Filter |
 |------------|-----|-------------|-------------|
-| **Marketing** | [firebuildai.com](https://firebuildai.com) | Public marketing site | `src/pages/marketing/**`, `src/pages/Index.tsx` |
-| **App** | [app.firebuildai.com](https://app.firebuildai.com) | Main application | `src/**` |
-| **Admin** | [admin.firebuildai.com](https://admin.firebuildai.com) | Admin portal | `src/pages/admin/**`, `src/components/admin/**` |
+| **Marketing** | [firebuild.ai](https://firebuild.ai) | Public marketing site | `src/pages/marketing/**`, `src/pages/Index.tsx` |
+| **App** | [app.firebuild.ai](https://app.firebuild.ai) | Main application | `src/**` |
+| **Admin** | [admin.firebuild.ai](https://admin.firebuild.ai) | Admin portal | `src/pages/admin/**`, `src/components/admin/**` |
 | **Functions** | Supabase Edge Functions | Backend APIs | `supabase/functions/**` |
 
 ## Workflow Files

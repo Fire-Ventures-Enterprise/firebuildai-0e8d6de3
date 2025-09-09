@@ -11,9 +11,9 @@ export const appConfig = {
 
   // URLs configuration
   urls: {
-    app: import.meta.env.VITE_APP_URL || 'https://app.firebuildai.com',
-    marketing: import.meta.env.VITE_MARKETING_URL || 'https://firebuildai.com',
-    api: import.meta.env.VITE_API_URL || 'https://api.firebuildai.com',
+    app: import.meta.env.VITE_APP_URL || 'https://app.firebuild.ai',
+    marketing: import.meta.env.VITE_MARKETING_URL || 'https://firebuild.ai',
+    api: import.meta.env.VITE_API_URL || 'https://api.firebuild.ai',
   },
 
   // Feature flags

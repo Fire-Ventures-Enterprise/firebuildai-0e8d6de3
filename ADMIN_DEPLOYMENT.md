@@ -4,13 +4,13 @@
 ## Admin Portal Deployment Options
 
 ### Option 1: Subdomain (Recommended)
-Deploy the admin portal to: `admin.firebuildai.com`
+Deploy the admin portal to: `admin.firebuild.ai`
 
 ### Option 2: Separate Domain
 Deploy to a completely different domain like: `firebuildai-admin.com`
 
 ### Option 3: Port-based separation
-Run admin on different port: `firebuildai.com:3001`
+Run admin on different port: `firebuild.ai:3001`
 
 ## Security Implementation
 
@@ -25,14 +25,14 @@ Run admin on different port: `firebuildai.com:3001`
    - All admin actions are logged
 
 3. **URL Structure**
-   - Main app: `firebuildai.com/app/*`
-   - Admin portal: `firebuildai.com/admin/*` (or separate subdomain)
-   - Marketing site: `firebuildai.com`
+   - Main app: `firebuild.ai/app/*`
+   - Admin portal: `firebuild.ai/admin/*` (or separate subdomain)
+   - Marketing site: `firebuild.ai`
 
 ## Deployment Steps for Separate Subdomain
 
 1. In your hosting provider (Vercel/Netlify):
-   - Create a new deployment for `admin.firebuildai.com`
+   - Create a new deployment for `admin.firebuild.ai`
    - Set environment variables for Supabase
    - Configure DNS for the subdomain
 

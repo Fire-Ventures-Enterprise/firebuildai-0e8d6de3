@@ -15,9 +15,9 @@ export function buildBrandedProps(input: {
     serviceAddress?: string;
   };
   token: string; // public portal token
-  landingBase: string; // e.g., https://firebuildai.com/open/estimate
-  portalBase: string;  // e.g., https://app.firebuildai.com/portal/estimate
-  payBase: string;     // your checkout endpoint, e.g., https://app.firebuildai.com/pay/deposit
+  landingBase: string; // e.g., https://firebuild.ai/open/estimate
+  portalBase: string;  // e.g., https://app.firebuild.ai/portal/estimate
+  payBase: string;     // your checkout endpoint, e.g., https://app.firebuild.ai/pay/deposit
   items?: Array<{ description: string; qty: number; unit_price: number; line_total: number; title?: string }>;
 }): BrandedEstimateEmailProps {
   const c = input.currency ?? "CAD";

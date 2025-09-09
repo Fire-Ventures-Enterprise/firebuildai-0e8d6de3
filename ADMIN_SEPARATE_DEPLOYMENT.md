@@ -5,7 +5,7 @@ This guide explains how to deploy the admin portal as a completely separate doma
 
 ## Architecture
 
-**Main App**: `firebuildai.com` (customer-facing)
+**Main App**: `firebuild.ai` (customer-facing)
 - Marketing pages
 - Customer login (`/login`)
 - Customer dashboard (`/app/*`)
@@ -38,7 +38,7 @@ This guide explains how to deploy the admin portal as a completely separate doma
 
 ### Step 2: Clean Up Main Project
 
-In your ORIGINAL project (firebuildai.com):
+In your ORIGINAL project (firebuild.ai):
 1. Remove admin routes from `src/App.tsx`
 2. Delete `/pages/admin/*` folder
 3. Delete `/components/admin/*` folder
@@ -92,7 +92,7 @@ In the admin project, ensure these are set:
 After deployment:
 - **Admin Login**: `https://firebuildai-admin.com/login`
 - **Admin Dashboard**: `https://firebuildai-admin.com/dashboard`
-- **Customer App**: `https://firebuildai.com` (completely separate)
+- **Customer App**: `https://firebuild.ai` (completely separate)
 
 ## Testing Locally
 

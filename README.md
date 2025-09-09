@@ -2,9 +2,9 @@
 
 [![Production Deploy](https://github.com/your-org/firebuildai/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/your-org/firebuildai/actions/workflows/deploy-production.yml)
 [![CI](https://github.com/your-org/firebuildai/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/firebuildai/actions/workflows/ci.yml)
-[![Marketing](https://img.shields.io/website?url=https%3A%2F%2Ffirebuildai.com&label=Marketing)](https://firebuildai.com)
-[![App](https://img.shields.io/website?url=https%3A%2F%2Fapp.firebuildai.com&label=App)](https://app.firebuildai.com)
-[![Admin](https://img.shields.io/website?url=https%3A%2F%2Fadmin.firebuildai.com&label=Admin)](https://admin.firebuildai.com)
+[![Marketing](https://img.shields.io/website?url=https%3A%2F%2Ffirebuild.ai&label=Marketing)](https://firebuild.ai)
+[![App](https://img.shields.io/website?url=https%3A%2F%2Fapp.firebuild.ai&label=App)](https://app.firebuild.ai)
+[![Admin](https://img.shields.io/website?url=https%3A%2F%2Fadmin.firebuild.ai&label=Admin)](https://admin.firebuild.ai)
 [![Architecture](https://img.shields.io/badge/Architecture-Documentation-blue)](./docs/ARCHITECTURE.md)
 
 ## Project info

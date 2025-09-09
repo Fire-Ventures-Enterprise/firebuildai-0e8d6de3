@@ -9,8 +9,8 @@ This document captures **current** and **target** architecture for FireBuildAI.
 ```mermaid
 flowchart LR
   subgraph Frontend["Single React App Deployment"]
-    MKT["firebuildai.com\nMarketing: /, /signup, /login"]
-    APP["app.firebuildai.com\nApp: /app/* (auth required)"]
+    MKT["firebuild.ai\nMarketing: /, /signup, /login"]
+    APP["app.firebuild.ai\nApp: /app/* (auth required)"]
     ADM["/secure-admin-2024-fb-portal/*\nAdmin routes hidden/guarded"]
   end
 
@@ -42,15 +42,15 @@ flowchart LR
 ```mermaid
 flowchart LR
   subgraph Public["Public"]
-    MKT2["firebuildai.com\nMarketing SPA"]
+    MKT2["firebuild.ai\nMarketing SPA"]
   end
 
   subgraph Product["Product"]
-    APP2["app.firebuildai.com\nMain App SPA\nJobs • job-based Chat • POs • Analytics"]
+    APP2["app.firebuild.ai\nMain App SPA\nJobs • job-based Chat • POs • Analytics"]
   end
 
   subgraph Internal["Internal"]
-    ADM2["admin-firebuildai.com\nAdmin SPA\nUsers • Billing • System Analytics"]
+    ADM2["admin-firebuild.ai\nAdmin SPA\nUsers • Billing • System Analytics"]
   end
 
   MKT2 -->|signup/login redirect| APP2
@@ -85,7 +85,7 @@ flowchart LR
 ## Key Changes in Target Architecture
 
 ### 1. **Admin Portal Separation**
-- Deploy to separate domain: `admin-firebuildai.com`
+- Deploy to separate domain: `admin-firebuild.ai`
 - Independent build pipeline and deployment
 - Complete code isolation from customer-facing app
 - Reduced attack surface
@@ -158,8 +158,8 @@ flowchart LR
 - **CI/CD**: GitHub Actions (planned)
 - **Hosting**: Lovable Platform (current), Self-hosting ready
 - **Domains**: 
-  - Main: `firebuildai.com`
-  - Admin: `admin-firebuildai.com` (target)
+  - Main: `firebuild.ai`
+  - Admin: `admin-firebuild.ai` (target)
 
 ---
 

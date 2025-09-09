@@ -49,11 +49,11 @@ export const DeploymentInfo = () => {
   const getEnvironmentUrl = (env: string) => {
     switch (env) {
       case 'marketing':
-        return 'https://firebuildai.com';
+        return 'https://firebuild.ai';
       case 'app':
-        return 'https://app.firebuildai.com';
+        return 'https://app.firebuild.ai';
       case 'admin':
-        return 'https://admin.firebuildai.com';
+        return 'https://admin.firebuild.ai';
       default:
         return window.location.origin;
     }
