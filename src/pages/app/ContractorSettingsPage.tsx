@@ -14,11 +14,17 @@ export default function ContractorSettingsPage() {
   const [loadingPayouts, setLoadingPayouts] = useState(false);
   const [account, setAccount] = useState<any>(null);
   const [checking, setChecking] = useState(false);
+  const [activeTab, setActiveTab] = useState("payment");
 
   useEffect(() => {
-    fetchPayouts();
     checkExistingAccount();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "payouts") {
+      fetchPayouts();
+    }
+  }, [activeTab]);
 
   const checkExistingAccount = async () => {
     setChecking(true);
@@ -34,6 +40,8 @@ export default function ContractorSettingsPage() {
 
       if (data) {
         setAccount(data);
+        // If account exists, default to business tab
+        setActiveTab("business");
       }
     } catch (error) {
       console.error("Error checking account:", error);
@@ -82,9 +90,13 @@ export default function ContractorSettingsPage() {
     }
   };
 
+  const handleAccountUpdate = () => {
+    checkExistingAccount();
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
-      <Tabs defaultValue="business" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-lg bg-card/50 border">
           <TabsTrigger value="business" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <FileText className="h-4 w-4 mr-2" />
@@ -101,8 +113,14 @@ export default function ContractorSettingsPage() {
         </TabsList>
 
         <TabsContent value="business" className="mt-6">
-          {account ? (
-            <ContractorBusinessInfo account={account} onUpdate={checkExistingAccount} />
+          {checking ? (
+            <Card className="bg-card/50 border-muted">
+              <CardContent className="py-8">
+                <p className="text-center text-muted-foreground">Loading...</p>
+              </CardContent>
+            </Card>
+          ) : account ? (
+            <ContractorBusinessInfo account={account} onUpdate={handleAccountUpdate} />
           ) : (
             <Card className="bg-card/50 border-muted">
               <CardContent className="py-8">
@@ -115,7 +133,7 @@ export default function ContractorSettingsPage() {
         </TabsContent>
 
         <TabsContent value="payment" className="mt-6">
-          <ContractorAccountSetup />
+          <ContractorAccountSetup onAccountCreated={handleAccountUpdate} />
         </TabsContent>
 
         <TabsContent value="payouts" className="mt-6">

@@ -12,7 +12,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { ExternalLink, Loader2, CheckCircle, AlertCircle, Building2, Info, FileText, Shield, Phone, MapPin, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
-export function ContractorAccountSetup() {
+interface ContractorAccountSetupProps {
+  onAccountCreated?: () => void;
+}
+
+export function ContractorAccountSetup({ onAccountCreated }: ContractorAccountSetupProps = {}) {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(false);
   const [account, setAccount] = useState<any>(null);
@@ -70,6 +74,7 @@ export function ContractorAccountSetup() {
         // Refresh account status after a delay
         setTimeout(() => {
           checkExistingAccount();
+          onAccountCreated?.();
         }, 2000);
       }
     } catch (error: any) {
@@ -97,6 +102,10 @@ export function ContractorAccountSetup() {
 
       if (data?.onboardingUrl) {
         window.open(data.onboardingUrl, '_blank');
+        setTimeout(() => {
+          checkExistingAccount();
+          onAccountCreated?.();
+        }, 2000);
       }
     } catch (error: any) {
       console.error("Error:", error);
