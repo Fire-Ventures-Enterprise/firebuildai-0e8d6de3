@@ -9,8 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, UserPlus } from 'lucide-react';
+import { CalendarIcon, UserPlus, Sparkles } from 'lucide-react';
 import { DraggableEstimateItems } from './DraggableEstimateItems';
+import { SmartEstimateInput } from './SmartEstimateInput';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,6 +35,8 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
   const [expirationDate, setExpirationDate] = useState<Date>();
   const [depositType, setDepositType] = useState<'percentage' | 'fixed'>('percentage');
   const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [useSmartInput, setUseSmartInput] = useState(false);
+  const [extractedScope, setExtractedScope] = useState('');
 
   useEffect(() => {
     fetchCustomers();
@@ -226,6 +229,41 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Smart Input Toggle */}
+      <div className="flex justify-end">
+        <Button
+          type="button"
+          variant={useSmartInput ? "default" : "outline"}
+          size="sm"
+          onClick={() => setUseSmartInput(!useSmartInput)}
+          className="flex items-center gap-2"
+        >
+          <Sparkles className="h-4 w-4" />
+          {useSmartInput ? 'Smart Mode On' : 'Enable Smart Input'}
+        </Button>
+      </div>
+
+      {/* Smart Input Section */}
+      {useSmartInput && (
+        <SmartEstimateInput
+          onItemsExtracted={(items) => {
+            const formattedItems = items.map(item => ({
+              description: item.description,
+              quantity: item.quantity,
+              rate: item.rate
+            }));
+            setLineItems(formattedItems);
+          }}
+          onScopeExtracted={(scope) => {
+            setValue('scope_of_work', scope);
+            setExtractedScope(scope);
+          }}
+          onNotesExtracted={(notes) => {
+            setValue('notes', notes);
+          }}
+        />
+      )}
+
       <Tabs defaultValue="details">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="details">Details</TabsTrigger>
@@ -336,6 +374,7 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
               id="scope_of_work"
               {...register('scope_of_work')}
               rows={4}
+              value={extractedScope || watch('scope_of_work')}
               placeholder="Describe the work to be performed..."
             />
           </div>
