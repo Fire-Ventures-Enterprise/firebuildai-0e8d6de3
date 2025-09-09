@@ -12,11 +12,12 @@ import WorkOrdersListPage from "./pages/app/WorkOrdersListPage";
 import WorkOrderPortalPage from "./pages/portal/WorkOrderPortalPage";
 import { DeploymentInfo } from "./components/DeploymentInfo";
 import { R } from "./routes/routeMap";
-import { isLegacyDomain } from "./utils/domainDetection";
+import { getMarketingRoute, getDomainStrategy } from "./utils/marketingStrategy";
 
 // Marketing pages
 import { HomePage } from "./pages/marketing/HomePage";
 import { LegacyDomainPage } from "./pages/marketing/LegacyDomainPage";
+import { IndustryLandingPage } from "./pages/marketing/IndustryLandingPage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
 import AboutPage from "./pages/marketing/AboutPage";
 import { PricingPage } from "./pages/PricingPage";
@@ -109,22 +110,28 @@ import { legacyRedirects } from "./routes/legacyRedirects";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Check if we're on the legacy .com domain
-  const [showLegacyPage, setShowLegacyPage] = useState(false);
+  // Check domain and get marketing route
+  const [marketingRoute, setMarketingRoute] = useState<any>(null);
   
   useEffect(() => {
-    setShowLegacyPage(isLegacyDomain());
+    const route = getMarketingRoute();
+    setMarketingRoute(route);
   }, []);
 
-  // If on legacy domain, show the redirect/marketing page
-  if (showLegacyPage) {
+  // If on secondary domain with special marketing campaign
+  if (getDomainStrategy() === 'secondary' && marketingRoute) {
+    const MarketingComponent = 
+      marketingRoute.component === 'IndustryLandingPage' ? IndustryLandingPage :
+      marketingRoute.component === 'LegacyDomainPage' ? LegacyDomainPage :
+      HomePage;
+    
     return (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <LegacyDomainPage />
+            <MarketingComponent />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
