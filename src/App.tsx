@@ -18,6 +18,14 @@ import { HomePage } from "./pages/marketing/HomePage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
 import AboutPage from "./pages/marketing/AboutPage";
 import { PricingPage } from "./pages/PricingPage";
+import { BlogPage } from "./pages/marketing/BlogPage";
+import { CareersPage } from "./pages/marketing/CareersPage";
+import { ContactPage } from "./pages/marketing/ContactPage";
+import { ApiDocsPage } from "./pages/marketing/ApiDocsPage";
+import { HelpCenterPage } from "./pages/marketing/HelpCenterPage";
+import { DocumentationPage } from "./pages/marketing/DocumentationPage";
+import { StatusPage } from "./pages/marketing/StatusPage";
+import { TermsPrivacyPage } from "./pages/marketing/TermsPrivacyPage";
 
 // Feature pages
 import { ProfessionalEstimatesPage } from "./pages/features/ProfessionalEstimatesPage";
