@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { R } from "@/routes/routeMap";
+import { Logo } from "@/components/Logo";
 
 export const HomePage = () => {
   return (
@@ -27,8 +28,7 @@ export const HomePage = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-8">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-lg" />
-                <span className="text-xl font-bold">FireBuild</span>
+                <Logo className="h-12 w-auto" />
               </Link>
               
               <nav className="hidden md:flex items-center gap-6">
@@ -114,8 +114,7 @@ export const HomePage = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-lg" />
-                <span className="text-xl font-bold">FireBuild</span>
+                <Logo className="h-12 w-auto" />
               </div>
               <p className="text-sm text-muted-foreground">
                 The all-in-one platform for modern contractors.

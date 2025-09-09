@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { MobileMenu } from "@/components/navigation/MobileMenu";
+import { Logo } from "@/components/Logo";
 
 export const DashboardHeader = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -54,15 +55,7 @@ export const DashboardHeader = () => {
           <div className="hidden md:block">
             <SidebarTrigger />
           </div>
-          <img 
-            src="/lovable-uploads/a384a2f8-9029-4efd-b9db-d6facfe2369c.png" 
-            alt="FireBuildAI"
-            className="w-10 h-10 md:w-14 md:h-14 object-contain"
-          />
-          <div className="hidden sm:block">
-            <h1 className="text-lg md:text-xl font-bold text-foreground">FireBuildAI</h1>
-            <p className="text-xs text-muted-foreground hidden lg:block">Build Better Business</p>
-          </div>
+          <Logo className="h-10 md:h-14 w-auto" />
         </div>
 
         {/* Search Bar - Hidden on mobile, shown on tablet+ */}
