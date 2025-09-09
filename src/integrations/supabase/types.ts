@@ -136,6 +136,30 @@ export type Database = {
           },
         ]
       }
+      beta_registrations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          product: string
+          subdomain: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          product: string
+          subdomain?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          product?: string
+          subdomain?: string | null
+        }
+        Relationships: []
+      }
       billing_milestones: {
         Row: {
           amount: number | null

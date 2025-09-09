@@ -8,6 +8,7 @@ import { CTASection } from "@/components/marketing/CTASection";
 import { EmailCapturePopup } from "@/components/marketing/EmailCapturePopup";
 import { NotificationPreferencesPopup } from "@/components/marketing/NotificationPreferencesPopup";
 import { MobileAppSection } from "@/components/marketing/MobileAppSection";
+import { ComingSoonSection } from "@/components/marketing/ComingSoonSection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
@@ -95,6 +96,11 @@ export const HomePage = () => {
       {/* Mobile App Download */}
       <div id="mobile-app">
         <MobileAppSection />
+      </div>
+      
+      {/* Coming Soon Products */}
+      <div id="coming-soon">
+        <ComingSoonSection />
       </div>
       
       {/* CTA Section */}

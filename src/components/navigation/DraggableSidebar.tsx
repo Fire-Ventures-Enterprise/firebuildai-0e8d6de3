@@ -105,10 +105,11 @@ const defaultNavigationGroups: NavigationGroup[] = [
     items: [
       { id: "jobs", label: "Jobs", icon: Briefcase, path: R.jobs, testId: "nav-jobs" },
       { id: "work-orders", label: "Work Orders", icon: ClipboardList, path: R.workOrders, testId: "nav-work-orders", badge: "NEW" },
-      { id: "xactimate", label: "Xactimate", icon: FileText, path: "/app/xactimate", testId: "nav-xactimate", badge: "NEW" },
+      { id: "xactimate", label: "Xactimate", icon: FileText, path: "/products/xactimate-plus", testId: "nav-xactimate", badge: "BETA" },
       { id: "scheduling", label: "Scheduling", icon: FileText, path: R.scheduling, testId: "nav-scheduling" },
       { id: "workflow", label: "Workflow Calendar", icon: CalendarRange, path: R.workflow, testId: "nav-workflow" },
-      { id: "workflow-sequencing", label: "AI Sequencing", icon: CalendarRange, path: "/app/workflow-sequencing", testId: "nav-workflow-sequencing", badge: "AI" },
+      { id: "workflow-sequencing", label: "AI Sequencing", icon: CalendarRange, path: "/products/ai-scheduling", testId: "nav-workflow-sequencing", badge: "BETA" },
+      { id: "workflow-automation", label: "Workflow Automation", icon: CalendarRange, path: "/products/workflow-automation", testId: "nav-workflow-automation", badge: "BETA" },
       { id: "communication-hub", label: "Communication Hub", icon: MessageSquare, path: "/app/communication", testId: "nav-communication", badge: "NEW" },
     ],
   },
@@ -129,6 +130,7 @@ const defaultNavigationGroups: NavigationGroup[] = [
     color: "text-indigo-500",
     items: [
       { id: "analytics", label: "Business Analytics", icon: BarChart3, path: R.analyticsHub, testId: "nav-analytics" },
+      { id: "analytics-pro", label: "Analytics Pro", icon: TrendingUp, path: "/products/analytics-pro", testId: "nav-analytics-pro", badge: "BETA" },
       { id: "team-performance", label: "Team Performance", icon: Users, path: R.teamPerformance, testId: "nav-team-performance" },
       { id: "job-performance", label: "Job Performance", icon: Briefcase, path: R.jobPerformance, testId: "nav-job-performance" },
       { id: "client-reports", label: "Client Reports", icon: FileText, path: R.clientReports, testId: "nav-client-reports" },

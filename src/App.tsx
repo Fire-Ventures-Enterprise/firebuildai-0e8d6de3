@@ -27,6 +27,12 @@ import { DocumentationPage } from "./pages/marketing/DocumentationPage";
 import { StatusPage } from "./pages/marketing/StatusPage";
 import { TermsPrivacyPage } from "./pages/marketing/TermsPrivacyPage";
 
+// Product landing pages
+import { AISchedulingPage } from "./pages/products/AISchedulingPage";
+import { XactimatePlusPage } from "./pages/products/XactimatePlusPage";
+import { AnalyticsProPage } from "./pages/products/AnalyticsProPage";
+import { WorkflowAutomationPage } from "./pages/products/WorkflowAutomationPage";
+
 // Feature pages
 import { ProfessionalEstimatesPage } from "./pages/features/ProfessionalEstimatesPage";
 import { InvoicePaymentsPage } from "./pages/features/InvoicePaymentsPage";
@@ -134,6 +140,12 @@ const App = () => (
             <Route path="/features/crew" element={<CrewManagementPage />} />
             <Route path="/features/analytics" element={<FeaturesAnalyticsPage />} />
             <Route path="/features/mobile" element={<MobileAppPage />} />
+            
+            {/* Product Landing Pages - Coming Soon */}
+            <Route path="/products/ai-scheduling" element={<AISchedulingPage />} />
+            <Route path="/products/xactimate-plus" element={<XactimatePlusPage />} />
+            <Route path="/products/analytics-pro" element={<AnalyticsProPage />} />
+            <Route path="/products/workflow-automation" element={<WorkflowAutomationPage />} />
             
             {/* Auth Routes */}
             <Route path="/signup" element={<SignUpPage />} />
