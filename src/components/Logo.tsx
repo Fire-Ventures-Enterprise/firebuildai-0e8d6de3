@@ -45,10 +45,10 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
       <div 
         className={`bg-muted animate-pulse rounded ${className}`} 
         style={{ 
-          width: width || 180, 
-          height: height || 50,
-          minWidth: width || 180,
-          minHeight: height || 50
+          width: width || 200, 
+          height: height || 60,
+          minWidth: width || 200,
+          minHeight: height || 60
         }} 
       />
     );
@@ -61,22 +61,27 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
   );
   
   // Get company name dynamically
-  const companyName = settings?.company_name || 'Your Company';
+  const companyName = settings?.company_name || 'FireBuild.ai';
 
   return (
-    <img 
-      src={logoSrc} 
-      alt={companyName}
-      className={`${className} object-contain`}
-      style={{ 
-        width: width ? `${width}px` : undefined,
-        height: height ? `${height}px` : undefined,
-        display: 'block'
-      }}
-      onError={(e) => {
-        console.error('Logo failed to load:', logoSrc);
-        e.currentTarget.style.display = 'none';
-      }}
-    />
+    <div className={`flex items-center ${className}`}>
+      <img 
+        src={logoSrc} 
+        alt={companyName}
+        className="h-full w-auto object-contain"
+        style={{ 
+          maxHeight: height ? `${height}px` : '60px',
+          minHeight: '32px'
+        }}
+        onError={(e) => {
+          // Fallback to text if logo fails to load
+          e.currentTarget.style.display = 'none';
+          const textFallback = document.createElement('span');
+          textFallback.className = 'text-2xl font-bold text-foreground';
+          textFallback.textContent = companyName;
+          e.currentTarget.parentElement?.appendChild(textFallback);
+        }}
+      />
+    </div>
   );
 };
