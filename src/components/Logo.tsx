@@ -7,7 +7,7 @@ interface LogoProps {
   height?: number;
 }
 
-export const Logo = ({ className = "", width = 140, height = 40 }: LogoProps) => {
+export const Logo = ({ className = "", width, height }: LogoProps) => {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -17,7 +17,15 @@ export const Logo = ({ className = "", width = 140, height = 40 }: LogoProps) =>
 
   if (!mounted) {
     return (
-      <div className={`${className}`} style={{ width, height }} />
+      <div 
+        className={`bg-muted animate-pulse rounded ${className}`} 
+        style={{ 
+          width: width || 180, 
+          height: height || 50,
+          minWidth: width || 180,
+          minHeight: height || 50
+        }} 
+      />
     );
   }
 
@@ -30,11 +38,16 @@ export const Logo = ({ className = "", width = 140, height = 40 }: LogoProps) =>
     <img 
       src={logoSrc} 
       alt="FireBuild.ai" 
-      className={className}
+      className={`${className} object-contain`}
       style={{ 
-        width: width ? `${width}px` : 'auto', 
-        height: height ? `${height}px` : 'auto',
-        objectFit: 'contain'
+        width: width || 'auto',
+        height: height || 'auto',
+        maxWidth: '100%',
+        display: 'block'
+      }}
+      onError={(e) => {
+        console.error('Logo failed to load:', logoSrc);
+        e.currentTarget.style.display = 'none';
       }}
     />
   );
