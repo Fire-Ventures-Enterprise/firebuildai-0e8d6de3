@@ -98,6 +98,7 @@ import { ConsultationManagement } from "./pages/admin/ConsultationManagement";
 import { AdminAnalyticsPage } from "./pages/admin/AdminAnalyticsPage";
 import { AdminFeatureFlagsPage } from "./pages/admin/AdminFeatureFlagsPage";
 import { AdminErrorsPage } from "./pages/admin/AdminErrorsPage";
+import { AdminSubscribersPage } from "./pages/admin/AdminSubscribersPage";
 
 // Other pages
 import NotFound from "./pages/NotFound";
@@ -498,6 +499,11 @@ const App = () => {
             <Route path="/secure-admin-2024-fb-portal" element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/secure-admin-2024-fb-portal/subscribers" element={
+              <ProtectedRoute>
+                <AdminSubscribersPage />
               </ProtectedRoute>
             } />
             <Route path="/secure-admin-2024-fb-portal/consultations" element={
