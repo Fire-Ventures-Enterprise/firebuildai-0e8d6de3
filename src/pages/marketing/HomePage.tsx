@@ -25,10 +25,10 @@ export const HomePage = () => {
       {/* Navigation Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20 py-2">
+          <div className="flex items-center justify-between h-16 py-2">
             <div className="flex items-center gap-6 lg:gap-10">
               <Link to="/" className="flex items-center">
-                <Logo width={200} height={56} className="h-14" />
+                <Logo className="h-10 w-auto" />
               </Link>
               
               <nav className="hidden md:flex items-center gap-6">
@@ -114,7 +114,7 @@ export const HomePage = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="mb-4">
-                <Logo width={200} height={56} className="h-14" />
+                <Logo className="h-10 w-auto" />
               </div>
               <p className="text-sm text-muted-foreground">
                 The all-in-one platform for modern contractors.
