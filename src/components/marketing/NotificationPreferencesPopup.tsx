@@ -46,9 +46,15 @@ export const NotificationPreferencesPopup = () => {
         }
       }
       
+      // Get current user if authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Save to notification_preferences table
       const { error } = await supabase
         .from('notification_preferences')
         .insert({
+          user_id: user?.id || null,
+          email: user?.email || null,
           email_reminders: emailReminder,
           browser_notifications: browserNotifications,
           sms_notifications: smsNotifications,
@@ -56,8 +62,24 @@ export const NotificationPreferencesPopup = () => {
           user_agent: userAgent
         });
 
-      if (error && error.code !== '23505') {
-        throw error;
+      if (error && error.code !== '23505') { // Ignore duplicate key errors
+        console.error('Database error:', error);
+        // Try updating profiles table if user is authenticated
+        if (user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
+              notify_email: emailReminder,
+              notify_browser: browserNotifications,
+              notify_sms: smsNotifications
+            })
+            .eq('id', user.id);
+            
+          if (profileError) {
+            console.error('Profile update error:', profileError);
+            // Continue anyway as notification_preferences should have saved
+          }
+        }
       }
       
       localStorage.setItem('notificationPreferencesSet', 'true');
@@ -65,7 +87,7 @@ export const NotificationPreferencesPopup = () => {
       setIsVisible(false);
     } catch (error) {
       console.error('Error saving preferences:', error);
-      toast.error('Something went wrong. Please try again.');
+      toast.error('We couldn\'t save your preferences. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
