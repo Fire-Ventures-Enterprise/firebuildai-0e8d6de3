@@ -38,7 +38,7 @@ export const MobileAppBanner = () => {
       {/* Top Banner */}
       <div className="bg-transparent border-b border-border/50 px-4 py-3 relative">
         <div className="container mx-auto flex items-center justify-center">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-16 md:ml-24">
             <Smartphone className="h-5 w-5 shrink-0 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">
               Get the FireBuild AI mobile app for iOS and Android!
