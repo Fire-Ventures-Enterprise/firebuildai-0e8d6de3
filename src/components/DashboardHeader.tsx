@@ -55,7 +55,7 @@ export const DashboardHeader = () => {
           <div className="hidden md:block">
             <SidebarTrigger />
           </div>
-          <Logo className="h-10 w-auto" />
+          <Logo />
         </div>
 
         {/* Search Bar - Hidden on mobile, shown on tablet+ */}

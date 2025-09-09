@@ -80,7 +80,7 @@ export function MobileMenu() {
       <SheetContent side="left" className="w-[280px] p-0">
         <SheetHeader className="p-6 border-b">
           <SheetTitle>
-            <Logo className="h-10 w-auto" />
+            <Logo />
           </SheetTitle>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-80px)]">

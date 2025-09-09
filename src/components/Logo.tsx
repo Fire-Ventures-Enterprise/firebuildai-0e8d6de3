@@ -8,7 +8,7 @@ interface LogoProps {
   height?: number;
 }
 
-export const Logo = ({ className = "", width, height }: LogoProps) => {
+export const Logo = ({ className = "", width = 160, height = 45 }: LogoProps) => {
   const [mounted, setMounted] = useState(false);
   const { settings } = useCompanySettings();
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -45,10 +45,10 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
       <div 
         className={`bg-muted animate-pulse rounded ${className}`} 
         style={{ 
-          width: width || 200, 
-          height: height || 60,
-          minWidth: width || 200,
-          minHeight: height || 60
+          width: width, 
+          height: height,
+          minWidth: width,
+          minHeight: height
         }} 
       />
     );
@@ -64,24 +64,28 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
   const companyName = settings?.company_name || 'FireBuild.ai';
 
   return (
-    <div className={`flex items-center ${className}`}>
-      <img 
-        src={logoSrc} 
-        alt={companyName}
-        className="h-full w-auto object-contain"
-        style={{ 
-          maxHeight: height ? `${height}px` : '60px',
-          minHeight: '32px'
-        }}
-        onError={(e) => {
-          // Fallback to text if logo fails to load
+    <img 
+      src={logoSrc} 
+      alt={companyName}
+      className={className}
+      width={width}
+      height={height}
+      style={{ 
+        objectFit: 'contain',
+        display: 'block'
+      }}
+      onError={(e) => {
+        console.error('Logo failed to load:', logoSrc);
+        // Create a text fallback
+        const parent = e.currentTarget.parentElement;
+        if (parent) {
           e.currentTarget.style.display = 'none';
-          const textFallback = document.createElement('span');
-          textFallback.className = 'text-2xl font-bold text-foreground';
-          textFallback.textContent = companyName;
-          e.currentTarget.parentElement?.appendChild(textFallback);
-        }}
-      />
-    </div>
+          const textElement = document.createElement('span');
+          textElement.className = 'text-xl font-bold text-foreground';
+          textElement.textContent = companyName;
+          parent.appendChild(textElement);
+        }
+      }}
+    />
   );
 };
