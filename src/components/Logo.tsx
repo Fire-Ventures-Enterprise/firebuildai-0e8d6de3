@@ -1,4 +1,3 @@
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { getLogoUrl } from "@/config/branding.config";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
@@ -10,12 +9,35 @@ interface LogoProps {
 }
 
 export const Logo = ({ className = "", width, height }: LogoProps) => {
-  const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { settings } = useCompanySettings();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Check for dark mode using document root class or media query
+    const checkDarkMode = () => {
+      const isDark = document.documentElement.classList.contains('dark') || 
+                     window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(isDark);
+    };
+    
+    checkDarkMode();
+    
+    // Listen for theme changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+    
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', checkDarkMode);
+    
+    return () => {
+      observer.disconnect();
+      mediaQuery.removeEventListener('change', checkDarkMode);
+    };
   }, []);
 
   if (!mounted) {
@@ -31,17 +53,15 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
       />
     );
   }
-
-  const currentTheme = theme === "system" ? resolvedTheme : theme;
   
   // Use dynamic logo URL from configuration
   const logoSrc = getLogoUrl(
-    currentTheme === "dark" ? 'dark' : 'light',
+    isDarkMode ? 'dark' : 'light',
     settings?.logo_url
   );
   
   // Get company name dynamically
-  const companyName = settings?.company_name || 'Company Logo';
+  const companyName = settings?.company_name || 'Your Company';
 
   return (
     <img 
