@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,9 +29,13 @@ import {
   Calendar,
   TrendingUp,
   Package,
+  AlertCircle,
+  Crown,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { appConfig } from '@/config/app.config';
+import { getCurrentProfile } from '@/services/session';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Types for the different portal models
 enum PortalModel {
@@ -78,6 +82,9 @@ interface Client {
 export default function ClientPortalPage() {
   const { toast } = useToast();
   const [portalModel, setPortalModel] = useState<PortalModel>(PortalModel.STANDALONE);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  
   const [whiteLabelSettings, setWhiteLabelSettings] = useState<WhiteLabelSettings>({
     companyName: '',
     logo: null,
@@ -98,6 +105,23 @@ export default function ClientPortalPage() {
     showFireBuildBadge: true,
     customInvoiceTemplate: false,
   });
+
+  // Check subscription status on mount
+  useEffect(() => {
+    const checkSubscription = async () => {
+      try {
+        const profile = await getCurrentProfile();
+        if (profile) {
+          setIsSubscribed(profile.is_subscribed || profile.subscription_status === 'active');
+        }
+      } catch (error) {
+        console.error('Error checking subscription:', error);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+    checkSubscription();
+  }, []);
 
   const [clients, setClients] = useState<Client[]>([
     {
@@ -377,19 +401,55 @@ export default function ClientPortalPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="space-y-0.5">
-                    <Label>Hide FireBuildAI Branding</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Remove all FireBuildAI references from client portal
-                    </p>
+                <div className="relative">
+                  <div className={`flex items-center justify-between p-4 bg-muted/50 rounded-lg ${!isSubscribed ? 'opacity-75' : ''}`}>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <Label>Hide FireBuildAI Branding</Label>
+                        {!isSubscribed && (
+                          <Badge variant="secondary" className="gap-1">
+                            <Crown className="h-3 w-3" />
+                            Premium
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Remove all FireBuildAI references from client portal
+                      </p>
+                    </div>
+                    <Switch
+                      checked={isSubscribed ? whiteLabelSettings.hideFireBuildBranding : false}
+                      onCheckedChange={(checked) => {
+                        if (!isSubscribed) {
+                          toast({
+                            title: "Premium Feature",
+                            description: "White label branding is only available for subscribed companies. Upgrade to remove FireBuildAI branding.",
+                            variant: "default",
+                          });
+                          return;
+                        }
+                        setWhiteLabelSettings({ ...whiteLabelSettings, hideFireBuildBranding: checked });
+                      }}
+                      disabled={!isSubscribed}
+                    />
                   </div>
-                  <Switch
-                    checked={whiteLabelSettings.hideFireBuildBranding}
-                    onCheckedChange={(checked) =>
-                      setWhiteLabelSettings({ ...whiteLabelSettings, hideFireBuildBranding: checked })
-                    }
-                  />
+                  
+                  {!isSubscribed && (
+                    <Alert className="mt-3">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        White label branding is only available for whitelisted companies. 
+                        <Button 
+                          variant="link" 
+                          className="px-1 h-auto font-semibold"
+                          onClick={() => window.location.href = '/app/upgrade'}
+                        >
+                          Upgrade your plan
+                        </Button>
+                        to remove FireBuildAI branding from your client portal.
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -467,34 +527,74 @@ export default function ClientPortalPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="space-y-0.5">
-                    <Label>Show "Powered by FireBuildAI" Badge</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Display FireBuildAI branding on client portal
-                    </p>
+                <div className="space-y-6">
+                  {/* Show "Powered by FireBuildAI" Badge - Restricted for free users */}
+                  <div className="relative">
+                    <div className={`flex items-center justify-between p-4 bg-muted/50 rounded-lg ${!isSubscribed ? 'opacity-75' : ''}`}>
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <Label>Show "Powered by FireBuildAI" Badge</Label>
+                          {!isSubscribed && (
+                            <Badge variant="secondary" className="gap-1">
+                              <Crown className="h-3 w-3" />
+                              Premium
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Display FireBuildAI branding on client portal
+                        </p>
+                      </div>
+                      <Switch
+                        checked={isSubscribed ? standaloneSettings.showFireBuildBadge : true}
+                        onCheckedChange={(checked) => {
+                          if (!isSubscribed) {
+                            toast({
+                              title: "Premium Feature",
+                              description: "Removing the FireBuildAI badge is only available for subscribed companies. Upgrade to remove branding.",
+                              variant: "default",
+                            });
+                            return;
+                          }
+                          setStandaloneSettings({ ...standaloneSettings, showFireBuildBadge: checked });
+                        }}
+                        disabled={!isSubscribed}
+                      />
+                    </div>
+                    
+                    {!isSubscribed && (
+                      <Alert className="mt-3">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          This feature is only available for whitelisted companies. 
+                          <Button 
+                            variant="link" 
+                            className="px-1 h-auto font-semibold"
+                            onClick={() => window.location.href = '/app/upgrade'}
+                          >
+                            Upgrade your plan
+                          </Button>
+                          to remove FireBuildAI branding from your client portal.
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
-                  <Switch
-                    checked={standaloneSettings.showFireBuildBadge}
-                    onCheckedChange={(checked) =>
-                      setStandaloneSettings({ ...standaloneSettings, showFireBuildBadge: checked })
-                    }
-                  />
-                </div>
 
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="space-y-0.5">
-                    <Label>Custom Invoice Templates</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Use custom designed invoice and estimate templates
-                    </p>
+                  {/* Custom Invoice Templates */}
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                    <div className="space-y-0.5">
+                      <Label>Custom Invoice Templates</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Use custom designed invoice and estimate templates
+                      </p>
+                    </div>
+                    <Switch
+                      checked={standaloneSettings.customInvoiceTemplate}
+                      onCheckedChange={(checked) =>
+                        setStandaloneSettings({ ...standaloneSettings, customInvoiceTemplate: checked })
+                      }
+                    />
                   </div>
-                  <Switch
-                    checked={standaloneSettings.customInvoiceTemplate}
-                    onCheckedChange={(checked) =>
-                      setStandaloneSettings({ ...standaloneSettings, customInvoiceTemplate: checked })
-                    }
-                  />
                 </div>
               </CardContent>
             </Card>
