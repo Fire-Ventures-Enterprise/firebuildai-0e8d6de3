@@ -13,6 +13,7 @@ interface CompanySettings {
   address?: string;
   phone?: string;
   email?: string;
+  logo_url?: string;
 }
 
 export function useCompanySettings() {
@@ -54,6 +55,7 @@ export function useCompanySettings() {
             address: data.address,
             phone: data.phone,
             email: data.email,
+            logo_url: data.logo_url,
           });
         }
       } catch (error) {

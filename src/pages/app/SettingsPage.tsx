@@ -3,7 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReviewPlatformSettings } from '@/components/reviews/ReviewPlatformSettings';
 import { MobilePairingQRCode } from '@/components/account/MobilePairingQRCode';
-import { Settings, Star, Bell, Smartphone } from 'lucide-react';
+import { CompanyBrandingSettings } from '@/components/settings/CompanyBrandingSettings';
+import { Settings, Star, Bell, Smartphone, Palette } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
@@ -16,8 +17,12 @@ export default function SettingsPage() {
         <p className="text-muted-foreground mt-2">Manage your application settings and preferences</p>
       </div>
 
-      <Tabs defaultValue="reviews" className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+      <Tabs defaultValue="branding" className="space-y-4">
+        <TabsList className="grid w-full max-w-lg grid-cols-4">
+          <TabsTrigger value="branding" className="flex items-center gap-2">
+            <Palette className="h-4 w-4" />
+            Branding
+          </TabsTrigger>
           <TabsTrigger value="reviews" className="flex items-center gap-2">
             <Star className="h-4 w-4" />
             Reviews
@@ -31,6 +36,10 @@ export default function SettingsPage() {
             Notifications
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="branding">
+          <CompanyBrandingSettings />
+        </TabsContent>
 
         <TabsContent value="reviews">
           <ReviewPlatformSettings />

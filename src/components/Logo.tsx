@@ -1,5 +1,7 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { getLogoUrl } from "@/config/branding.config";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
 
 interface LogoProps {
   className?: string;
@@ -10,6 +12,7 @@ interface LogoProps {
 export const Logo = ({ className = "", width, height }: LogoProps) => {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { settings } = useCompanySettings();
 
   useEffect(() => {
     setMounted(true);
@@ -30,14 +33,20 @@ export const Logo = ({ className = "", width, height }: LogoProps) => {
   }
 
   const currentTheme = theme === "system" ? resolvedTheme : theme;
-  const logoSrc = currentTheme === "dark" 
-    ? "/lovable-uploads/467a434f-0eee-4143-bd64-3d716cce95b1.png" // Light logo for dark mode
-    : "/lovable-uploads/6051e38e-b331-47c4-b218-10bea1030315.png"; // Dark logo for light mode
+  
+  // Use dynamic logo URL from configuration
+  const logoSrc = getLogoUrl(
+    currentTheme === "dark" ? 'dark' : 'light',
+    settings?.logo_url
+  );
+  
+  // Get company name dynamically
+  const companyName = settings?.company_name || 'Company Logo';
 
   return (
     <img 
       src={logoSrc} 
-      alt="FireBuild.ai" 
+      alt={companyName}
       className={`${className} object-contain`}
       style={{ 
         width: width ? `${width}px` : undefined,
