@@ -8,7 +8,7 @@ interface LogoProps {
   height?: number;
 }
 
-export const Logo = ({ className = "", width = 160, height = 45 }: LogoProps) => {
+export const Logo = ({ className = "", width = 200, height = 56 }: LogoProps) => {
   const [mounted, setMounted] = useState(false);
   const { settings } = useCompanySettings();
   const [isDarkMode, setIsDarkMode] = useState(false);

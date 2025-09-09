@@ -24,27 +24,27 @@ export const HomePage = () => {
       <NotificationPreferencesPopup />
       {/* Navigation Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 py-2">
-            <div className="flex items-center gap-6 lg:gap-10">
-              <Link to="/" className="flex items-center">
-                <Logo />
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center gap-12">
+              <Link to="/" className="flex items-center py-2">
+                <Logo width={220} height={62} />
               </Link>
               
-              <nav className="hidden md:flex items-center gap-6">
-                <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <nav className="hidden lg:flex items-center gap-8">
+                <a href="#features" className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Features
                 </a>
-                <a href="#trades" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#trades" className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Industries
                 </a>
-                <Link to="/tutorials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/tutorials" className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Tutorials
                 </Link>
-                <a href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#testimonials" className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Testimonials
                 </a>
-                <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#pricing" className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
                   Pricing
                 </a>
               </nav>
@@ -52,17 +52,17 @@ export const HomePage = () => {
 
             <div className="flex items-center gap-4">
               <Link to={R.login}>
-                <Button variant="ghost" className="hidden sm:inline-flex">
+                <Button variant="ghost" size="lg" className="hidden sm:inline-flex text-base">
                   Login
                 </Button>
               </Link>
               <Link to={R.signup}>
-                <Button>
+                <Button size="lg" className="text-base px-6">
                   Get Started Free
                 </Button>
               </Link>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="lg:hidden">
+                <Menu className="h-6 w-6" />
               </Button>
             </div>
           </div>
