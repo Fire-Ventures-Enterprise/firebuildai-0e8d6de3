@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ContractorAccountSetup } from "@/components/contractors/ContractorAccountSetup";
+import { ContractorBusinessInfo } from "@/components/contractors/ContractorBusinessInfo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, History, Settings } from "lucide-react";
+import { Building2, History, Settings, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -12,10 +12,35 @@ import { format } from "date-fns";
 export default function ContractorSettingsPage() {
   const [payouts, setPayouts] = useState<any[]>([]);
   const [loadingPayouts, setLoadingPayouts] = useState(false);
+  const [account, setAccount] = useState<any>(null);
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     fetchPayouts();
+    checkExistingAccount();
   }, []);
+
+  const checkExistingAccount = async () => {
+    setChecking(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("contractor_accounts")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (data) {
+        setAccount(data);
+      }
+    } catch (error) {
+      console.error("Error checking account:", error);
+    } finally {
+      setChecking(false);
+    }
+  };
 
   const fetchPayouts = async () => {
     setLoadingPayouts(true);
@@ -59,11 +84,15 @@ export default function ContractorSettingsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <Tabs defaultValue="account" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md bg-card/50 border">
-          <TabsTrigger value="account" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+      <Tabs defaultValue="business" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 max-w-lg bg-card/50 border">
+          <TabsTrigger value="business" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <FileText className="h-4 w-4 mr-2" />
+            Business Info
+          </TabsTrigger>
+          <TabsTrigger value="payment" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Settings className="h-4 w-4 mr-2" />
-            Account Setup
+            Payment Setup
           </TabsTrigger>
           <TabsTrigger value="payouts" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <History className="h-4 w-4 mr-2" />
@@ -71,7 +100,21 @@ export default function ContractorSettingsPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="account" className="mt-6">
+        <TabsContent value="business" className="mt-6">
+          {account ? (
+            <ContractorBusinessInfo account={account} onUpdate={checkExistingAccount} />
+          ) : (
+            <Card className="bg-card/50 border-muted">
+              <CardContent className="py-8">
+                <p className="text-center text-muted-foreground">
+                  Please create a contractor account first in the Payment Setup tab.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="payment" className="mt-6">
           <ContractorAccountSetup />
         </TabsContent>
 

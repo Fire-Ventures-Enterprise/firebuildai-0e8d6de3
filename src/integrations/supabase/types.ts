@@ -1348,43 +1348,88 @@ export type Database = {
       }
       contractor_accounts: {
         Row: {
+          address: string | null
           business_name: string | null
           charges_enabled: boolean | null
+          city: string | null
+          contact_person: string | null
           country: string | null
           created_at: string
           email: string
+          gst_number: string | null
           id: string
+          insurance_certificate_url: string | null
+          insurance_expiry_date: string | null
+          insurance_policy_number: string | null
+          insurance_provider: string | null
+          is_active: boolean | null
+          notes: string | null
           payouts_enabled: boolean | null
+          phone: string | null
+          postal_code: string | null
+          province: string | null
           status: string | null
           stripe_account_id: string
+          trade_type: string | null
           updated_at: string
           user_id: string
+          wsib_number: string | null
         }
         Insert: {
+          address?: string | null
           business_name?: string | null
           charges_enabled?: boolean | null
+          city?: string | null
+          contact_person?: string | null
           country?: string | null
           created_at?: string
           email: string
+          gst_number?: string | null
           id?: string
+          insurance_certificate_url?: string | null
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          is_active?: boolean | null
+          notes?: string | null
           payouts_enabled?: boolean | null
+          phone?: string | null
+          postal_code?: string | null
+          province?: string | null
           status?: string | null
           stripe_account_id: string
+          trade_type?: string | null
           updated_at?: string
           user_id: string
+          wsib_number?: string | null
         }
         Update: {
+          address?: string | null
           business_name?: string | null
           charges_enabled?: boolean | null
+          city?: string | null
+          contact_person?: string | null
           country?: string | null
           created_at?: string
           email?: string
+          gst_number?: string | null
           id?: string
+          insurance_certificate_url?: string | null
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          is_active?: boolean | null
+          notes?: string | null
           payouts_enabled?: boolean | null
+          phone?: string | null
+          postal_code?: string | null
+          province?: string | null
           status?: string | null
           stripe_account_id?: string
+          trade_type?: string | null
           updated_at?: string
           user_id?: string
+          wsib_number?: string | null
         }
         Relationships: []
       }

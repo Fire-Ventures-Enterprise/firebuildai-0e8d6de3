@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ExternalLink, Loader2, CheckCircle, AlertCircle, Building2, Info } from "lucide-react";
+import { ExternalLink, Loader2, CheckCircle, AlertCircle, Building2, Info, FileText, Shield, Phone, MapPin, Calendar } from "lucide-react";
+import { format } from "date-fns";
 
 export function ContractorAccountSetup() {
   const [loading, setLoading] = useState(false);
