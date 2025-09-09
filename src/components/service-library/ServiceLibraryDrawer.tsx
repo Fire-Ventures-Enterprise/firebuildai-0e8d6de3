@@ -34,11 +34,12 @@ import {
   getTemplates,
   getTemplateWithTasks,
   createProjectTasksFromTemplate,
-  scheduleProjectTasks
-} from '@/services/serviceLibrary';
+  scheduleProjectTasks,
+  ensureKitchenRemodelTemplate
+} from '@/services/templates';
 import { ProjectTask } from '@/types/projectTasks';
 import { DefaultCompanyProfiles } from '@/types/industry';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 const iconMap = {
   Package,
@@ -110,6 +111,14 @@ export function ServiceLibraryDrawer({
     try {
       const data = await getTemplates();
       setTemplates(data);
+      
+      // Ensure at least one template exists
+      if (data.length === 0) {
+        const defaultTemplate = await ensureKitchenRemodelTemplate();
+        if (defaultTemplate) {
+          setTemplates([defaultTemplate]);
+        }
+      }
     } catch (error) {
       console.error('Failed to load templates:', error);
       toast({
@@ -130,33 +139,16 @@ export function ServiceLibraryDrawer({
       const details = await getTemplateWithTasks(template.id);
       setTemplateDetails(details);
       
-      // Load metrics from template
-      const { data: metricsData } = await supabase
-        .from('service_template_metrics')
-        .select('*')
-        .eq('template_id', template.id);
+      // Set default metrics and options for now
+      setMetrics({
+        square_footage: 150,
+        num_workers: 2
+      });
       
-      if (metricsData) {
-        const initialMetrics: Record<string, number> = {};
-        metricsData.forEach((metric: any) => {
-          initialMetrics[metric.metric_name] = metric.default_value || 0;
-        });
-        setMetrics(initialMetrics);
-      }
-      
-      // Load options from template
-      const { data: optionsData } = await supabase
-        .from('service_template_options')
-        .select('*')
-        .eq('template_id', template.id);
-      
-      if (optionsData) {
-        const initialOptions: Record<string, boolean> = {};
-        optionsData.forEach((option: any) => {
-          initialOptions[option.option_name] = option.default_selected || false;
-        });
-        setOptions(initialOptions);
-      }
+      setOptions({
+        include_permits: true,
+        include_materials: true
+      });
     } catch (error) {
       console.error('Failed to load template details:', error);
       toast({
@@ -178,50 +170,45 @@ export function ServiceLibraryDrawer({
       const tasks = await createProjectTasksFromTemplate(
         selectedTemplate.id,
         targetId,
-        metrics,
-        options
+        targetType,
+        options,
+        metrics
       );
       
       // Schedule the tasks
       const scheduledTasks = await scheduleProjectTasks(
-        targetId,
         tasks,
-        new Date(),
-        {}
+        new Date()
       );
       
       // Insert scheduled tasks as line items based on target type
       if (targetType === 'invoice') {
         const lineItems = scheduledTasks.map((task, index) => ({
           invoice_id: targetId,
-          item_name: task.label,
-          description: `Phase: ${task.trade || 'General'} - Duration: ${task.duration_days} days`,
+          description: `${task.label} - ${task.trade || 'General'} (${task.duration_days} days)`,
           quantity: 1,
           rate: 0, // Will be set by user
           amount: 0,
-          sort_order: index,
-          is_heading: false
+          sort_order: index
         }));
         
         const { error } = await supabase
-          .from('invoice_line_items')
+          .from('invoice_items')
           .insert(lineItems);
         
         if (error) throw error;
       } else {
         const lineItems = scheduledTasks.map((task, index) => ({
           estimate_id: targetId,
-          item_name: task.label,
-          description: `Phase: ${task.trade || 'General'} - Duration: ${task.duration_days} days`,
+          description: `${task.label} - ${task.trade || 'General'} (${task.duration_days} days)`,
           quantity: 1,
           rate: 0, // Will be set by user
           amount: 0,
-          sort_order: index,
-          is_heading: false
+          sort_order: index
         }));
         
         const { error } = await supabase
-          .from('estimate_line_items')
+          .from('estimate_items')
           .insert(lineItems);
         
         if (error) throw error;
@@ -232,7 +219,13 @@ export function ServiceLibraryDrawer({
         description: `Generated ${scheduledTasks.length} tasks and schedule`,
       });
       
-      onTasksCreated?.(scheduledTasks);
+      // Map scheduled tasks to the correct format for project_tasks
+      const mappedTasks = scheduledTasks.map(task => ({
+        ...task,
+        status: task.status === 'pending' ? 'planned' as const : task.status
+      }));
+      
+      onTasksCreated?.(mappedTasks);
       handleClose();
     } catch (error) {
       console.error('Failed to generate tasks:', error);
