@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ExternalLink, Loader2, CheckCircle, AlertCircle, Building2 } from "lucide-react";
+import { ExternalLink, Loader2, CheckCircle, AlertCircle, Building2, Info } from "lucide-react";
 
 export function ContractorAccountSetup() {
   const [loading, setLoading] = useState(false);
@@ -127,127 +127,156 @@ export function ContractorAccountSetup() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Building2 className="h-6 w-6 text-primary" />
-              <div>
-                <CardTitle>Contractor Payment Account</CardTitle>
-                <CardDescription>
-                  Connect your Stripe account to receive payments directly
-                </CardDescription>
-              </div>
-            </div>
-            {getStatusBadge()}
+    <Card className="bg-card/50 border-muted">
+      <CardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <Building2 className="h-5 w-5 text-primary" />
+          <div>
+            <CardTitle className="text-xl">Contractor Payment Account</CardTitle>
+            <CardDescription className="text-sm">
+              Connect your Stripe account to receive payments directly
+            </CardDescription>
           </div>
-        </CardHeader>
-        <CardContent>
-          {account ? (
-            <div className="space-y-4">
+        </div>
+      </CardHeader>
+      <CardContent>
+        {account ? (
+          <div className="space-y-6">
+            {/* Account Status */}
+            <Alert className={account.payouts_enabled && account.charges_enabled ? "border-green-500/20 bg-green-500/10" : "border-yellow-500/20 bg-yellow-500/10"}>
               {account.payouts_enabled && account.charges_enabled ? (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertTitle>Account Active</AlertTitle>
+                <>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertTitle className="text-green-600">Account Active</AlertTitle>
                   <AlertDescription>
                     Your contractor account is set up and ready to receive payments.
                   </AlertDescription>
-                </Alert>
+                </>
               ) : (
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Setup Incomplete</AlertTitle>
+                <>
+                  <AlertCircle className="h-4 w-4 text-yellow-600" />
+                  <AlertTitle className="text-yellow-600">Setup Incomplete</AlertTitle>
                   <AlertDescription>
                     Please complete your Stripe account setup to start receiving payments.
                   </AlertDescription>
-                </Alert>
+                </>
               )}
+            </Alert>
 
+            {/* Account Details */}
+            <div className="space-y-4 rounded-lg border border-border/50 bg-background/50 p-4">
               <div className="grid gap-4">
                 <div>
-                  <Label className="text-muted-foreground">Email</Label>
-                  <p className="font-medium">{account.email}</p>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Email</Label>
+                  <p className="font-medium mt-1">{account.email}</p>
                 </div>
                 {account.business_name && (
                   <div>
-                    <Label className="text-muted-foreground">Business Name</Label>
-                    <p className="font-medium">{account.business_name}</p>
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Business Name</Label>
+                    <p className="font-medium mt-1">{account.business_name}</p>
                   </div>
                 )}
                 <div>
-                  <Label className="text-muted-foreground">Account ID</Label>
-                  <p className="font-mono text-sm">{account.stripe_account_id}</p>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Stripe Account ID</Label>
+                  <p className="font-mono text-sm mt-1 text-muted-foreground">{account.stripe_account_id}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Status</Label>
+                  <div className="mt-1">{getStatusBadge()}</div>
                 </div>
               </div>
-
-              {(!account.payouts_enabled || !account.charges_enabled) && (
-                <Button onClick={handleContinueOnboarding} disabled={loading} className="w-full">
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                  )}
-                  Continue Setup in Stripe
-                </Button>
-              )}
             </div>
-          ) : (
-            <div className="space-y-4">
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No Account Found</AlertTitle>
-                <AlertDescription>
-                  Create a contractor account to start receiving payments directly to your bank.
-                </AlertDescription>
-              </Alert>
 
-              <div className="grid gap-4">
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="contractor@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="business">Business Name (Optional)</Label>
-                  <Input
-                    id="business"
-                    placeholder="Your Business Name"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="country">Country</Label>
-                  <Select value={country} onValueChange={setCountry}>
-                    <SelectTrigger id="country">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="CA">Canada</SelectItem>
-                      <SelectItem value="US">United States</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Button onClick={handleCreateAccount} disabled={loading} className="w-full">
+            {/* Action Button */}
+            {(!account.payouts_enabled || !account.charges_enabled) && (
+              <Button 
+                onClick={handleContinueOnboarding} 
+                disabled={loading} 
+                className="w-full"
+                size="lg"
+              >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : (
                   <ExternalLink className="h-4 w-4 mr-2" />
                 )}
-                Create Contractor Account
+                Continue Setup in Stripe
               </Button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* No Account Alert */}
+            <Alert className="border-muted bg-muted/20">
+              <Info className="h-4 w-4" />
+              <AlertTitle>No Account Found</AlertTitle>
+              <AlertDescription>
+                Create a contractor account to start receiving payments directly to your bank.
+              </AlertDescription>
+            </Alert>
+
+            {/* Account Creation Form */}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="email" className="text-sm font-medium">
+                  Email Address
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="contractor@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1.5 bg-background/50"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="business" className="text-sm font-medium">
+                  Business Name (Optional)
+                </Label>
+                <Input
+                  id="business"
+                  placeholder="Your Business Name"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  className="mt-1.5 bg-background/50"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="country" className="text-sm font-medium">
+                  Country
+                </Label>
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger id="country" className="mt-1.5 bg-background/50">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="CA">Canada</SelectItem>
+                    <SelectItem value="US">United States</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+
+            {/* Create Account Button */}
+            <Button 
+              onClick={handleCreateAccount} 
+              disabled={loading} 
+              className="w-full"
+              size="lg"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <ExternalLink className="h-4 w-4 mr-2" />
+              )}
+              Create Contractor Account
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

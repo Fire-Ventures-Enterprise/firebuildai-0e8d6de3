@@ -47,32 +47,25 @@ export default function ContractorSettingsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
+        return <Badge variant="success">Completed</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return <Badge variant="secondary">Pending</Badge>;
       case "failed":
-        return <Badge className="bg-red-100 text-red-800">Failed</Badge>;
+        return <Badge variant="destructive">Failed</Badge>;
       default:
-        return <Badge>{status}</Badge>;
+        return <Badge variant="outline">{status}</Badge>;
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Contractor Settings</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your contractor account and view payment history
-        </p>
-      </div>
-
+    <div className="max-w-7xl mx-auto">
       <Tabs defaultValue="account" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="account">
+        <TabsList className="grid w-full grid-cols-2 max-w-md bg-card/50 border">
+          <TabsTrigger value="account" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Settings className="h-4 w-4 mr-2" />
             Account Setup
           </TabsTrigger>
-          <TabsTrigger value="payouts">
+          <TabsTrigger value="payouts" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <History className="h-4 w-4 mr-2" />
             Payout History
           </TabsTrigger>
@@ -83,7 +76,7 @@ export default function ContractorSettingsPage() {
         </TabsContent>
 
         <TabsContent value="payouts" className="mt-6">
-          <Card>
+          <Card className="bg-card/50 border-muted">
             <CardHeader>
               <CardTitle>Payout History</CardTitle>
               <CardDescription>
@@ -97,41 +90,43 @@ export default function ContractorSettingsPage() {
                 </div>
               ) : payouts.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  No payouts yet
+                  No payouts yet. Complete your account setup to start receiving payments.
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Invoice</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {payouts.map((payout) => (
-                      <TableRow key={payout.id}>
-                        <TableCell>
-                          {format(new Date(payout.created_at), "MMM d, yyyy")}
-                        </TableCell>
-                        <TableCell>
-                          {payout.invoices_enhanced?.invoice_number || "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          {payout.invoices_enhanced?.customer_name || "N/A"}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          ${payout.amount.toFixed(2)} {payout.currency}
-                        </TableCell>
-                        <TableCell>
-                          {getStatusBadge(payout.status)}
-                        </TableCell>
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Invoice</TableHead>
+                        <TableHead>Customer</TableHead>
+                        <TableHead className="text-right">Amount</TableHead>
+                        <TableHead>Status</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {payouts.map((payout) => (
+                        <TableRow key={payout.id}>
+                          <TableCell>
+                            {format(new Date(payout.created_at), "MMM d, yyyy")}
+                          </TableCell>
+                          <TableCell className="font-mono">
+                            {payout.invoices_enhanced?.invoice_number || "—"}
+                          </TableCell>
+                          <TableCell>
+                            {payout.invoices_enhanced?.customer_name || "—"}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            ${payout.amount.toFixed(2)} {payout.currency}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(payout.status)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </CardContent>
           </Card>
