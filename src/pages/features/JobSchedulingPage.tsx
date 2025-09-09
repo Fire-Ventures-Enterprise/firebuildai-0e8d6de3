@@ -10,7 +10,11 @@ import {
   Repeat,
   Bell,
   BarChart,
-  ArrowRight
+  ArrowRight,
+  Brain,
+  Cloud,
+  BarChart3,
+  Star
 } from "lucide-react";
 import { useEffect } from "react";
 
@@ -224,8 +228,261 @@ export const JobSchedulingPage = () => {
         </div>
       </section>
 
-      {/* Visual Demo Section */}
+      {/* AI-Powered Scheduling Assistant Section */}
       <section className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              AI-Powered Scheduling Assistant
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Let artificial intelligence optimize your schedule, coordinate your team, and keep clients happy with smart automation
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4">
+                <div className="p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg w-fit">
+                  <Brain className="h-8 w-8 text-purple-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Auto-Schedule Week</h3>
+              <p className="text-sm text-muted-foreground">
+                AI analyzes jobs, team availability, and travel time to create perfect weekly schedules
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4">
+                <div className="p-3 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg w-fit">
+                  <Cloud className="h-8 w-8 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Weather-Smart Rescheduling</h3>
+              <p className="text-sm text-muted-foreground">
+                Automatically reschedule outdoor work when bad weather is forecast
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4">
+                <div className="p-3 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-lg w-fit">
+                  <MapPin className="h-8 w-8 text-green-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Smart Route Optimization</h3>
+              <p className="text-sm text-muted-foreground">
+                Minimize travel time between jobs with intelligent routing
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4">
+                <div className="p-3 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-lg w-fit">
+                  <Clock className="h-8 w-8 text-orange-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Predictive Scheduling</h3>
+              <p className="text-sm text-muted-foreground">
+                Predict job durations based on historical data and buffer for delays
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Automated Client Communication Section */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              Automated Client Communication
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Keep clients informed every step of the way with intelligent notifications
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="mb-4 flex justify-center">
+                <div className="p-4 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-full">
+                  <Calendar className="h-10 w-10 text-purple-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Smart Confirmations</h3>
+              <p className="text-sm text-muted-foreground">
+                Automatic appointment confirmations with job details and arrival windows
+              </p>
+            </Card>
+            
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="mb-4 flex justify-center">
+                <div className="p-4 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-full">
+                  <MapPin className="h-10 w-10 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">En Route Notifications</h3>
+              <p className="text-sm text-muted-foreground">
+                Clients get notified when you're on your way with real-time ETA
+              </p>
+            </Card>
+            
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="mb-4 flex justify-center">
+                <div className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-full">
+                  <Bell className="h-10 w-10 text-green-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Progress Updates</h3>
+              <p className="text-sm text-muted-foreground">
+                Automated progress photos and milestone updates
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Advanced Team Coordination Section */}
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="mb-6">
+                <div className="p-3 bg-purple-500/10 rounded-lg w-fit mb-4">
+                  <Users className="h-8 w-8 text-purple-600" />
+                </div>
+                <h2 className="text-3xl font-bold mb-4">
+                  Advanced Team Coordination
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Efficiently manage multiple crews across different job sites with smart coordination tools
+                </p>
+              </div>
+              
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-purple-500 mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Multi-Crew Scheduling</p>
+                    <p className="text-sm text-muted-foreground">Coordinate multiple teams across different job sites</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-purple-500 mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Skill-Based Assignment</p>
+                    <p className="text-sm text-muted-foreground">Match jobs to crew members based on expertise</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-purple-500 mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Real-Time Availability</p>
+                    <p className="text-sm text-muted-foreground">Track who's available, on vacation, or assigned</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 p-8 rounded-lg">
+              <h3 className="text-lg font-semibold mb-6">Team Dashboard</h3>
+              <div className="space-y-4">
+                <Card className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-lg font-semibold">JM</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">John Martinez</p>
+                      <p className="text-sm text-muted-foreground">Plumbing Specialist</p>
+                    </div>
+                    <span className="px-3 py-1 bg-green-500/10 text-green-600 text-sm rounded-full">
+                      Available
+                    </span>
+                  </div>
+                </Card>
+                
+                <Card className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-lg font-semibold">SW</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">Sarah Wilson</p>
+                      <p className="text-sm text-muted-foreground">Electrical Lead</p>
+                    </div>
+                    <span className="px-3 py-1 bg-blue-500/10 text-blue-600 text-sm rounded-full">
+                      On Site
+                    </span>
+                  </div>
+                </Card>
+                
+                <Card className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-lg font-semibold">MR</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">Mike Rodriguez</p>
+                      <p className="text-sm text-muted-foreground">General Contractor</p>
+                    </div>
+                    <span className="px-3 py-1 bg-gray-500/10 text-gray-600 text-sm rounded-full">
+                      Off Today
+                    </span>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Smart Analytics & Insights Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-6">
+              <BarChart3 className="h-16 w-16 text-white/80" />
+            </div>
+            <h2 className="text-3xl font-bold mb-4">
+              Smart Analytics & Insights
+            </h2>
+            <p className="text-lg text-white/80 max-w-2xl mx-auto">
+              Make data-driven decisions with powerful analytics that help you optimize operations and maximize profits
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="p-6 bg-white/10 backdrop-blur border-white/20 text-center">
+              <p className="text-4xl font-bold mb-2">94%</p>
+              <p className="text-sm text-white/80">Schedule Efficiency</p>
+            </Card>
+            
+            <Card className="p-6 bg-white/10 backdrop-blur border-white/20 text-center">
+              <p className="text-4xl font-bold mb-2">$127</p>
+              <p className="text-sm text-white/80">Avg Profit/Hour</p>
+            </Card>
+            
+            <Card className="p-6 bg-white/10 backdrop-blur border-white/20 text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <span className="text-4xl font-bold">4.8</span>
+                <Star className="h-8 w-8 fill-yellow-400 text-yellow-400" />
+              </div>
+              <p className="text-sm text-white/80">Client Satisfaction</p>
+            </Card>
+            
+            <Card className="p-6 bg-white/10 backdrop-blur border-white/20 text-center">
+              <p className="text-4xl font-bold mb-2">23%</p>
+              <p className="text-sm text-white/80">Time Saved</p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Demo Section */}
+      <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-center mb-12">
             Visual Calendar Interface
@@ -260,11 +517,12 @@ export const JobSchedulingPage = () => {
       <section className="py-20 px-4 bg-gradient-to-r from-purple-500/10 to-purple-600/10">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Take Control of Your Schedule
+            Transform Your Scheduling with AI-Powered Intelligence
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Stop juggling spreadsheets and whiteboards. Start scheduling jobs efficiently with FireBuild.
-            Try it free for 30 days - no credit card required.
+            Stop juggling spreadsheets and whiteboards. Let AI optimize your schedule, coordinate your teams, 
+            and keep clients informed automatically. Experience the future of construction scheduling with 
+            FireBuild - try it free for 30 days, no credit card required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/signup">
