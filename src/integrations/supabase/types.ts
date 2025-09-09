@@ -957,64 +957,157 @@ export type Database = {
       }
       company_details: {
         Row: {
+          account_manager: string | null
           address: string | null
+          annual_revenue: string | null
+          banking_institution: string | null
+          bonding_company: string | null
+          bonding_limit: number | null
+          business_hours: Json | null
+          business_license_expiry: string | null
+          business_license_number: string | null
+          business_type: string | null
+          certifications: string[] | null
           city: string | null
           company_name: string | null
           country: string | null
           created_at: string
           default_work_hours: Json | null
+          description: string | null
           email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          employee_count: number | null
           enable_capacity_planning: boolean | null
+          founded_year: number | null
           frozen_zone_days: number | null
+          gst_number: string | null
+          hst_number: string | null
           id: string
+          industry: string | null
+          insurance_expiry_date: string | null
+          insurance_policy_number: string | null
+          insurance_provider: string | null
+          liability_coverage_limit: number | null
           logo_url: string | null
           payment_settings: Json | null
+          payment_terms: string | null
           phone: string | null
           postal_code: string | null
+          primary_color: string | null
+          pst_number: string | null
+          registration_number: string | null
+          secondary_color: string | null
+          service_areas: string[] | null
           state: string | null
+          tax_id: string | null
           updated_at: string
           user_id: string
           website: string | null
+          workers_comp_coverage: boolean | null
+          wsib_number: string | null
         }
         Insert: {
+          account_manager?: string | null
           address?: string | null
+          annual_revenue?: string | null
+          banking_institution?: string | null
+          bonding_company?: string | null
+          bonding_limit?: number | null
+          business_hours?: Json | null
+          business_license_expiry?: string | null
+          business_license_number?: string | null
+          business_type?: string | null
+          certifications?: string[] | null
           city?: string | null
           company_name?: string | null
           country?: string | null
           created_at?: string
           default_work_hours?: Json | null
+          description?: string | null
           email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          employee_count?: number | null
           enable_capacity_planning?: boolean | null
+          founded_year?: number | null
           frozen_zone_days?: number | null
+          gst_number?: string | null
+          hst_number?: string | null
           id?: string
+          industry?: string | null
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          liability_coverage_limit?: number | null
           logo_url?: string | null
           payment_settings?: Json | null
+          payment_terms?: string | null
           phone?: string | null
           postal_code?: string | null
+          primary_color?: string | null
+          pst_number?: string | null
+          registration_number?: string | null
+          secondary_color?: string | null
+          service_areas?: string[] | null
           state?: string | null
+          tax_id?: string | null
           updated_at?: string
           user_id: string
           website?: string | null
+          workers_comp_coverage?: boolean | null
+          wsib_number?: string | null
         }
         Update: {
+          account_manager?: string | null
           address?: string | null
+          annual_revenue?: string | null
+          banking_institution?: string | null
+          bonding_company?: string | null
+          bonding_limit?: number | null
+          business_hours?: Json | null
+          business_license_expiry?: string | null
+          business_license_number?: string | null
+          business_type?: string | null
+          certifications?: string[] | null
           city?: string | null
           company_name?: string | null
           country?: string | null
           created_at?: string
           default_work_hours?: Json | null
+          description?: string | null
           email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          employee_count?: number | null
           enable_capacity_planning?: boolean | null
+          founded_year?: number | null
           frozen_zone_days?: number | null
+          gst_number?: string | null
+          hst_number?: string | null
           id?: string
+          industry?: string | null
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          liability_coverage_limit?: number | null
           logo_url?: string | null
           payment_settings?: Json | null
+          payment_terms?: string | null
           phone?: string | null
           postal_code?: string | null
+          primary_color?: string | null
+          pst_number?: string | null
+          registration_number?: string | null
+          secondary_color?: string | null
+          service_areas?: string[] | null
           state?: string | null
+          tax_id?: string | null
           updated_at?: string
           user_id?: string
           website?: string | null
+          workers_comp_coverage?: boolean | null
+          wsib_number?: string | null
         }
         Relationships: []
       }
