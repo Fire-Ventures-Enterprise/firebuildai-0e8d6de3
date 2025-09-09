@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,9 +12,11 @@ import WorkOrdersListPage from "./pages/app/WorkOrdersListPage";
 import WorkOrderPortalPage from "./pages/portal/WorkOrderPortalPage";
 import { DeploymentInfo } from "./components/DeploymentInfo";
 import { R } from "./routes/routeMap";
+import { isLegacyDomain } from "./utils/domainDetection";
 
 // Marketing pages
 import { HomePage } from "./pages/marketing/HomePage";
+import { LegacyDomainPage } from "./pages/marketing/LegacyDomainPage";
 import TutorialsPage from "./pages/marketing/TutorialsPage";
 import AboutPage from "./pages/marketing/AboutPage";
 import { PricingPage } from "./pages/PricingPage";
@@ -106,18 +108,42 @@ import { legacyRedirects } from "./routes/legacyRedirects";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Legacy redirects */}
-            {legacyRedirects}
-            {/* Marketing Site */}
-            <Route path="/" element={<HomePage />} />
+const App = () => {
+  // Check if we're on the legacy .com domain
+  const [showLegacyPage, setShowLegacyPage] = useState(false);
+  
+  useEffect(() => {
+    setShowLegacyPage(isLegacyDomain());
+  }, []);
+
+  // If on legacy domain, show the redirect/marketing page
+  if (showLegacyPage) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <LegacyDomainPage />
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  // Otherwise show the normal app
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              {/* Legacy redirects */}
+              {legacyRedirects}
+              {/* Marketing Site */}
+              <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/help" element={<HelpPage />} />
             <Route path="/download" element={<DownloadAppPage />} />
@@ -470,6 +496,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
