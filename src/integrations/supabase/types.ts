@@ -3504,33 +3504,42 @@ export type Database = {
       notification_preferences: {
         Row: {
           browser_notifications: boolean | null
-          created_at: string
+          created_at: string | null
           email: string | null
           email_reminders: boolean | null
           id: string
+          phone_number: string | null
           sms_notifications: boolean | null
           source_page: string | null
+          updated_at: string | null
           user_agent: string | null
+          user_id: string | null
         }
         Insert: {
           browser_notifications?: boolean | null
-          created_at?: string
+          created_at?: string | null
           email?: string | null
           email_reminders?: boolean | null
           id?: string
+          phone_number?: string | null
           sms_notifications?: boolean | null
           source_page?: string | null
+          updated_at?: string | null
           user_agent?: string | null
+          user_id?: string | null
         }
         Update: {
           browser_notifications?: boolean | null
-          created_at?: string
+          created_at?: string | null
           email?: string | null
           email_reminders?: boolean | null
           id?: string
+          phone_number?: string | null
           sms_notifications?: boolean | null
           source_page?: string | null
+          updated_at?: string | null
           user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -4117,8 +4126,12 @@ export type Database = {
           full_name: string | null
           id: string
           is_subscribed: boolean
+          notify_browser: boolean | null
+          notify_email: boolean | null
           notify_on_change_order: boolean | null
           notify_on_invoice_override: boolean | null
+          notify_sms: boolean | null
+          phone_number: string | null
           subscription_status: string | null
           trial_ends_at: string
           trial_starts_at: string
@@ -4133,8 +4146,12 @@ export type Database = {
           full_name?: string | null
           id: string
           is_subscribed?: boolean
+          notify_browser?: boolean | null
+          notify_email?: boolean | null
           notify_on_change_order?: boolean | null
           notify_on_invoice_override?: boolean | null
+          notify_sms?: boolean | null
+          phone_number?: string | null
           subscription_status?: string | null
           trial_ends_at?: string
           trial_starts_at?: string
@@ -4149,8 +4166,12 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_subscribed?: boolean
+          notify_browser?: boolean | null
+          notify_email?: boolean | null
           notify_on_change_order?: boolean | null
           notify_on_invoice_override?: boolean | null
+          notify_sms?: boolean | null
+          phone_number?: string | null
           subscription_status?: string | null
           trial_ends_at?: string
           trial_starts_at?: string
