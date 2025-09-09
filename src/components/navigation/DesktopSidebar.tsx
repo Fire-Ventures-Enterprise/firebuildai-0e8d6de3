@@ -3,7 +3,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   Home, FileText, Users, Briefcase, DollarSign, BarChart3, Settings,
   Truck, Receipt, ShoppingCart, TrendingUp, Building2, UserCheck,
-  FileBarChart, HelpCircle, ChevronDown, ClipboardList, CalendarRange
+  FileBarChart, HelpCircle, ChevronDown, ClipboardList, CalendarRange,
+  Zap, BrainCircuit
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { R } from "@/routes/routeMap";
@@ -77,9 +78,10 @@ const navigationGroups: NavigationGroup[] = [
       { id: "jobs", label: "Jobs", icon: Briefcase, path: R.jobs, testId: "nav-jobs" },
       { id: "work-orders", label: "Work Orders", icon: ClipboardList, path: R.workOrders, testId: "nav-work-orders", badge: "NEW" },
       { id: "xactimate", label: "Xactimate", icon: FileText, path: "/app/xactimate", testId: "nav-xactimate", badge: "NEW" },
-      { id: "scheduling", label: "Scheduling", icon: FileText, path: R.scheduling, testId: "nav-scheduling" },
+      { id: "scheduling", label: "Scheduling", icon: CalendarRange, path: R.scheduling, testId: "nav-scheduling" },
+      { id: "ai-scheduler", label: "AI Scheduler", icon: BrainCircuit, path: "/products/ai-scheduling", testId: "nav-ai-scheduler", badge: "AI" },
       { id: "workflow", label: "Workflow Calendar", icon: CalendarRange, path: R.workflow, testId: "nav-workflow" },
-      { id: "workflow-sequencing", label: "AI Sequencing", icon: CalendarRange, path: "/app/workflow-sequencing", testId: "nav-workflow-sequencing", badge: "AI" },
+      { id: "workflow-sequencing", label: "AI Sequencing", icon: Zap, path: "/app/workflow-sequencing", testId: "nav-workflow-sequencing", badge: "AI" },
       { id: "fleet", label: "Fleet", icon: Truck, path: R.fleet, testId: "nav-fleet" },
       { id: "teams", label: "Teams", icon: UserCheck, path: R.teams, testId: "nav-teams" },
     ],
