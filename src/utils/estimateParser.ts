@@ -25,19 +25,22 @@ const LINE_ITEM_KEYWORDS = {
     'shingles', 'siding', 'insulation', 'plywood', 'studs', 'nails', 'screws',
     'wire', 'pipe', 'fitting', 'fixture', 'cabinet', 'countertop', 'door', 'window',
     'brick', 'stone', 'gravel', 'sand', 'cement', 'rebar', 'mesh', 'primer',
-    'caulk', 'adhesive', 'grout', 'mortar', 'panels', 'boards', 'sheets'
+    'caulk', 'adhesive', 'grout', 'mortar', 'panels', 'boards', 'sheets',
+    'quartz', 'granite', 'marble', 'laminate', 'vinyl', 'hardwood', 'sink', 'faucet',
+    'hardware', 'handles', 'hinges', 'appliance', 'light', 'switch', 'outlet'
   ],
   labor: [
     'install', 'installation', 'remove', 'removal', 'demolition', 'demo',
     'frame', 'framing', 'pour', 'pouring', 'lay', 'laying', 'paint', 'painting',
     'repair', 'replace', 'build', 'construct', 'excavate', 'grade', 'level',
     'mount', 'hang', 'wire', 'wiring', 'plumb', 'plumbing', 'finish', 'sand',
-    'prep', 'preparation', 'clean', 'cleanup', 'haul', 'dispose', 'labor hours'
+    'prep', 'preparation', 'clean', 'cleanup', 'haul', 'dispose', 'labor hours',
+    'supply and install', 'provide', 'connect', 'hook up', 'set up'
   ],
   equipment: [
     'crane', 'excavator', 'bulldozer', 'loader', 'compactor', 'generator',
     'compressor', 'scaffold', 'scaffolding', 'lift', 'saw', 'drill', 'mixer',
-    'pump', 'rental', 'equipment'
+    'pump', 'rental', 'equipment', 'tools'
   ],
   units: [
     'sq ft', 'sqft', 'sf', 'square feet', 'square foot',
@@ -48,14 +51,64 @@ const LINE_ITEM_KEYWORDS = {
     'piece', 'pcs', 'each', 'ea', 'unit', 'units',
     'hour', 'hours', 'hr', 'hrs', 'day', 'days',
     'sheet', 'sheets', 'roll', 'rolls', 'box', 'boxes',
-    'bag', 'bags', 'bundle', 'bundles', 'pack', 'packs'
+    'bag', 'bags', 'bundle', 'bundles', 'pack', 'packs',
+    'lot', 'ls', 'lump sum', 'allowance'
   ]
 };
 
-// Patterns for extracting quantities and prices
-const QUANTITY_PATTERN = /(\d+(?:\.\d+)?)\s*(?:x|×)?\s*(sq ft|sqft|sf|lin ft|lf|cubic yard|cy|yard|ton|pound|lbs|gallon|gal|piece|pcs|each|ea|unit|hour|hr|sheet|roll|box|bag|bundle|pack)/gi;
-const PRICE_PATTERN = /\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)\s*(?:per|\/|@)?\s*(sq ft|sqft|sf|lin ft|lf|hour|hr|each|ea|unit)?/gi;
-const MEASUREMENT_PATTERN = /(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)/gi;
+// Common pricing database for realistic estimates
+const PRICING_DATABASE = {
+  // Kitchen specific
+  'kitchen remodel': { min: 15000, max: 50000, unit: 'project' },
+  'kitchen demolition': { min: 800, max: 2500, unit: 'project' },
+  'cabinet': { min: 100, max: 500, unit: 'lf' },
+  'cabinetry': { min: 3000, max: 15000, unit: 'project' },
+  'upper cabinet': { min: 150, max: 400, unit: 'each' },
+  'lower cabinet': { min: 200, max: 500, unit: 'each' },
+  'countertop': { min: 40, max: 150, unit: 'sf' },
+  'quartz countertop': { min: 60, max: 120, unit: 'sf' },
+  'granite countertop': { min: 50, max: 100, unit: 'sf' },
+  'backsplash': { min: 10, max: 30, unit: 'sf' },
+  'tile backsplash': { min: 15, max: 40, unit: 'sf' },
+  'sink': { min: 200, max: 800, unit: 'each' },
+  'faucet': { min: 150, max: 600, unit: 'each' },
+  'dishwasher installation': { min: 150, max: 300, unit: 'each' },
+  'microwave installation': { min: 100, max: 200, unit: 'each' },
+  
+  // Plumbing
+  'plumbing': { min: 500, max: 2000, unit: 'project' },
+  'rough plumbing': { min: 2000, max: 5000, unit: 'project' },
+  'plumbing fixture': { min: 150, max: 500, unit: 'each' },
+  'shut-off valve': { min: 50, max: 150, unit: 'each' },
+  
+  // Electrical
+  'electrical': { min: 500, max: 2000, unit: 'project' },
+  'pot light': { min: 100, max: 200, unit: 'each' },
+  'led light': { min: 100, max: 200, unit: 'each' },
+  'undercabinet lighting': { min: 500, max: 1500, unit: 'project' },
+  'dimmer switch': { min: 50, max: 150, unit: 'each' },
+  'dedicated power': { min: 200, max: 400, unit: 'each' },
+  'outlet': { min: 100, max: 200, unit: 'each' },
+  
+  // General construction
+  'demolition': { min: 500, max: 3000, unit: 'project' },
+  'drywall': { min: 2, max: 4, unit: 'sf' },
+  'painting': { min: 2, max: 5, unit: 'sf' },
+  'flooring': { min: 3, max: 15, unit: 'sf' },
+  'tile': { min: 5, max: 20, unit: 'sf' },
+  
+  // Labor rates
+  'labor': { min: 50, max: 150, unit: 'hour' },
+  'electrician': { min: 75, max: 150, unit: 'hour' },
+  'plumber': { min: 75, max: 150, unit: 'hour' },
+  'carpenter': { min: 50, max: 100, unit: 'hour' },
+  
+  // Management and fees
+  'management fee': { min: 5, max: 15, unit: 'percent' },
+  'project management': { min: 5, max: 15, unit: 'percent' },
+  'permit': { min: 200, max: 1500, unit: 'project' },
+  'disposal': { min: 200, max: 800, unit: 'project' }
+};
 
 export class EstimateParser {
   /**
@@ -67,23 +120,74 @@ export class EstimateParser {
     const scopeLines: string[] = [];
     const noteLines: string[] = [];
     const suggestions: string[] = [];
+    
+    // Check if there's a total amount at the beginning (like "Kitchen Remodel $27,797.00")
+    let projectTotal = 0;
+    const totalMatch = rawText.match(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
+    if (totalMatch) {
+      projectTotal = parseFloat(totalMatch[1].replace(/,/g, ''));
+    }
+
+    // Track categories to avoid duplicates
+    const seenCategories = new Set<string>();
+    let isInExclusions = false;
+    let isInTerms = false;
 
     // Process each line
     lines.forEach((line) => {
       const trimmedLine = line.trim();
       
-      // Check if line contains line item indicators
-      if (this.isLineItem(trimmedLine)) {
-        const item = this.parseLineItem(trimmedLine);
-        if (item) {
+      // Skip empty lines and URLs
+      if (!trimmedLine || trimmedLine.startsWith('http')) return;
+      
+      // Check for section headers
+      if (trimmedLine.toLowerCase().includes('exclusion')) {
+        isInExclusions = true;
+        return;
+      }
+      if (trimmedLine.toLowerCase().includes('terms') || trimmedLine.toLowerCase().includes('condition')) {
+        isInTerms = true;
+        return;
+      }
+      
+      // Skip excluded items and terms
+      if (isInExclusions || isInTerms) {
+        noteLines.push(trimmedLine);
+        return;
+      }
+      
+      // Check if this is a major category or work item
+      if (this.isMajorWorkItem(trimmedLine) && !seenCategories.has(trimmedLine.toLowerCase())) {
+        const item = this.parseWorkItem(trimmedLine, projectTotal);
+        if (item && item.rate > 0) {
+          seenCategories.add(trimmedLine.toLowerCase());
           lineItems.push(item);
+        } else {
+          scopeLines.push(trimmedLine);
         }
+      } else if (this.isDetailedWorkDescription(trimmedLine)) {
+        // These are detailed descriptions that should go in scope
+        scopeLines.push(trimmedLine);
+      } else if (trimmedLine.startsWith('*') || trimmedLine.startsWith('-') || trimmedLine.startsWith('•')) {
+        // Bullet points are usually scope details
+        scopeLines.push(trimmedLine);
       } else if (this.isScopeDescription(trimmedLine)) {
         scopeLines.push(trimmedLine);
       } else {
         noteLines.push(trimmedLine);
       }
     });
+
+    // If we didn't find many line items but have a total, create a summary item
+    if (lineItems.length === 0 && projectTotal > 0) {
+      lineItems.push({
+        description: 'Complete Project - As per scope of work',
+        quantity: 1,
+        rate: projectTotal,
+        unit: 'project',
+        category: 'other'
+      });
+    }
 
     // Generate suggestions for common missing items
     suggestions.push(...this.generateSuggestions(lineItems));
@@ -97,6 +201,164 @@ export class EstimateParser {
   }
 
   /**
+   * Check if line is a major work item/category
+   */
+  private static isMajorWorkItem(line: string): boolean {
+    const lower = line.toLowerCase();
+    
+    // Common major categories in construction estimates
+    const majorCategories = [
+      'demolition', 'cabinetry', 'cabinet', 'countertop', 'backsplash',
+      'hardware', 'appliance', 'electrical', 'plumbing', 'hvac',
+      'flooring', 'painting', 'drywall', 'framing', 'roofing',
+      'windows', 'doors', 'siding', 'insulation', 'tile',
+      'management fee', 'project management', 'permit', 'inspection'
+    ];
+    
+    // Check if line starts with or contains a major category
+    return majorCategories.some(cat => {
+      // Check if it's a header (category name alone or with a dash/colon)
+      const isHeader = lower === cat || 
+                      lower.startsWith(cat + ' ') || 
+                      lower.startsWith(cat + ':') ||
+                      lower.startsWith(cat + ' -') ||
+                      lower.startsWith(cat + ' –');
+      
+      // Also check for "Supply and install [category]"
+      const isSupplyInstall = lower.includes('supply and install') && lower.includes(cat);
+      
+      return isHeader || isSupplyInstall;
+    });
+  }
+
+  /**
+   * Check if line is a detailed work description (not a line item)
+   */
+  private static isDetailedWorkDescription(line: string): boolean {
+    const lower = line.toLowerCase();
+    
+    // Patterns that indicate descriptive text rather than line items
+    const descriptivePatterns = [
+      'will be', 'to be', 'must be', 'should be',
+      'as per', 'according to', 'based on',
+      'includes', 'including', 'consists of',
+      'prior to', 'after', 'before', 'during',
+      'client', 'customer', 'owner',
+      'existing', 'new', 'current'
+    ];
+    
+    return descriptivePatterns.some(pattern => lower.includes(pattern));
+  }
+
+  /**
+   * Parse a work item and estimate pricing
+   */
+  private static parseWorkItem(line: string, projectTotal: number): ParsedLineItem | null {
+    const lower = line.toLowerCase();
+    let description = line;
+    let quantity = 1;
+    let rate = 0;
+    let unit = 'lot';
+    let category: 'material' | 'labor' | 'equipment' | 'other' = 'other';
+
+    // Clean up the description
+    description = description.replace(/[:\-–—]$/, '').trim();
+
+    // Try to find a specific price in the line
+    const priceMatch = line.match(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
+    if (priceMatch) {
+      rate = parseFloat(priceMatch[1].replace(/,/g, ''));
+      description = description.replace(priceMatch[0], '').trim();
+    }
+
+    // Check for percentage-based fees
+    const percentMatch = line.match(/(\d+(?:\.\d+)?)\s*%/);
+    if (percentMatch && projectTotal > 0) {
+      const percent = parseFloat(percentMatch[1]);
+      rate = (projectTotal * percent) / 100;
+      unit = 'project';
+    }
+
+    // If no price found, estimate based on the type of work
+    if (rate === 0) {
+      rate = this.estimatePriceForWork(lower, projectTotal);
+      
+      // Determine the unit based on the work type
+      if (lower.includes('cabinet')) {
+        unit = 'project';
+      } else if (lower.includes('countertop') || lower.includes('backsplash')) {
+        unit = 'project';
+      } else if (lower.includes('electrical') || lower.includes('plumbing')) {
+        unit = 'project';
+      }
+    }
+
+    // Categorize the item
+    if (LINE_ITEM_KEYWORDS.labor.some(keyword => lower.includes(keyword))) {
+      category = 'labor';
+    } else if (LINE_ITEM_KEYWORDS.materials.some(keyword => lower.includes(keyword))) {
+      category = 'material';
+    } else if (LINE_ITEM_KEYWORDS.equipment.some(keyword => lower.includes(keyword))) {
+      category = 'equipment';
+    }
+
+    // Only return if we have a meaningful rate
+    if (rate > 0) {
+      return {
+        description,
+        quantity,
+        rate,
+        unit,
+        category
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Estimate price for a work item based on industry standards
+   */
+  private static estimatePriceForWork(description: string, projectTotal: number): number {
+    const lower = description.toLowerCase();
+    
+    // Try to find a match in our pricing database
+    for (const [key, pricing] of Object.entries(PRICING_DATABASE)) {
+      if (lower.includes(key)) {
+        // Use a reasonable estimate within the range
+        const midPoint = (pricing.min + pricing.max) / 2;
+        
+        // For project-based items, return the midpoint
+        if (pricing.unit === 'project') {
+          return midPoint;
+        }
+        
+        // For percentage-based items, calculate based on project total
+        if (pricing.unit === 'percent' && projectTotal > 0) {
+          return (projectTotal * midPoint) / 100;
+        }
+        
+        // For unit-based items, estimate quantity and multiply
+        return midPoint;
+      }
+    }
+    
+    // If no match found, estimate based on project total
+    if (projectTotal > 0) {
+      // Major categories typically represent 10-30% of project cost
+      if (lower.includes('cabinet') || lower.includes('countertop')) {
+        return projectTotal * 0.25; // 25% for major items
+      } else if (lower.includes('electrical') || lower.includes('plumbing')) {
+        return projectTotal * 0.10; // 10% for systems
+      } else if (lower.includes('demolition') || lower.includes('disposal')) {
+        return projectTotal * 0.05; // 5% for demo/cleanup
+      }
+    }
+    
+    return 0;
+  }
+
+  /**
    * Quick parse for real-time suggestions as user types
    */
   static quickParse(text: string): ParsedLineItem[] {
@@ -104,8 +366,8 @@ export class EstimateParser {
     const lines = text.split('\n');
     
     lines.forEach(line => {
-      if (this.hasLineItemKeywords(line)) {
-        const item = this.parseLineItem(line);
+      if (this.isMajorWorkItem(line)) {
+        const item = this.parseWorkItem(line, 0);
         if (item) {
           items.push(item);
         }
@@ -116,172 +378,14 @@ export class EstimateParser {
   }
 
   /**
-   * Determines if a line is likely a line item
-   */
-  private static isLineItem(line: string): boolean {
-    const lowerLine = line.toLowerCase();
-    
-    // Check for quantity indicators
-    if (QUANTITY_PATTERN.test(line)) return true;
-    
-    // Check for price indicators
-    if (PRICE_PATTERN.test(line)) return true;
-    
-    // Check for measurement patterns (e.g., "10x12")
-    if (MEASUREMENT_PATTERN.test(line)) return true;
-    
-    // Check for line item keywords
-    return this.hasLineItemKeywords(lowerLine);
-  }
-
-  /**
-   * Checks if line contains keywords that indicate a line item
-   */
-  private static hasLineItemKeywords(line: string): boolean {
-    const lowerLine = line.toLowerCase();
-    
-    // Check material keywords
-    if (LINE_ITEM_KEYWORDS.materials.some(keyword => lowerLine.includes(keyword))) {
-      return true;
-    }
-    
-    // Check labor keywords
-    if (LINE_ITEM_KEYWORDS.labor.some(keyword => lowerLine.includes(keyword))) {
-      return true;
-    }
-    
-    // Check equipment keywords
-    if (LINE_ITEM_KEYWORDS.equipment.some(keyword => lowerLine.includes(keyword))) {
-      return true;
-    }
-    
-    return false;
-  }
-
-  /**
-   * Parses a single line item
-   */
-  private static parseLineItem(line: string): ParsedLineItem | null {
-    const item: ParsedLineItem = {
-      description: line,
-      quantity: 1,
-      rate: 0
-    };
-
-    // Extract quantity
-    const quantityMatch = line.match(/(\d+(?:\.\d+)?)\s*(sq ft|sqft|sf|lin ft|lf|hour|hr|each|ea|unit)?/i);
-    if (quantityMatch) {
-      item.quantity = parseFloat(quantityMatch[1]);
-      item.unit = quantityMatch[2] || undefined;
-    }
-
-    // Extract price/rate
-    const priceMatch = line.match(/\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/);
-    if (priceMatch) {
-      item.rate = parseFloat(priceMatch[1].replace(/,/g, ''));
-    }
-
-    // Clean up description
-    item.description = this.cleanDescription(line);
-
-    // Categorize the item
-    item.category = this.categorizeItem(line);
-
-    // If we couldn't extract meaningful data, try to be smarter
-    if (item.rate === 0) {
-      const estimatedRate = this.estimateRate(item.description, item.category);
-      if (estimatedRate > 0) {
-        item.rate = estimatedRate;
-      }
-    }
-
-    return item;
-  }
-
-  /**
-   * Cleans up the description by removing quantity and price information
-   */
-  private static cleanDescription(line: string): string {
-    let cleaned = line;
-    
-    // Remove price patterns
-    cleaned = cleaned.replace(/\$?\s*\d+(?:,\d{3})*(?:\.\d{2})?/g, '');
-    
-    // Remove quantity patterns but keep the item name
-    cleaned = cleaned.replace(/^\d+(?:\.\d+)?\s*(x|×)?\s*/i, '');
-    
-    // Remove common separators
-    cleaned = cleaned.replace(/\s*[-–—]\s*$/, '');
-    
-    return cleaned.trim();
-  }
-
-  /**
-   * Categorizes an item based on keywords
-   */
-  private static categorizeItem(line: string): 'material' | 'labor' | 'equipment' | 'other' {
-    const lowerLine = line.toLowerCase();
-    
-    if (LINE_ITEM_KEYWORDS.labor.some(keyword => lowerLine.includes(keyword))) {
-      return 'labor';
-    }
-    
-    if (LINE_ITEM_KEYWORDS.equipment.some(keyword => lowerLine.includes(keyword))) {
-      return 'equipment';
-    }
-    
-    if (LINE_ITEM_KEYWORDS.materials.some(keyword => lowerLine.includes(keyword))) {
-      return 'material';
-    }
-    
-    return 'other';
-  }
-
-  /**
-   * Estimates a rate based on common construction prices
-   */
-  private static estimateRate(description: string, category?: string): number {
-    const lower = description.toLowerCase();
-    
-    // Common material rates (per unit)
-    if (category === 'material') {
-      if (lower.includes('drywall')) return 12; // per sheet
-      if (lower.includes('lumber') || lower.includes('2x4')) return 8; // per piece
-      if (lower.includes('paint')) return 35; // per gallon
-      if (lower.includes('concrete')) return 150; // per cubic yard
-      if (lower.includes('tile')) return 3; // per sq ft
-      if (lower.includes('flooring')) return 4; // per sq ft
-    }
-    
-    // Common labor rates (per hour)
-    if (category === 'labor') {
-      if (lower.includes('electrician')) return 85;
-      if (lower.includes('plumber')) return 75;
-      if (lower.includes('carpenter')) return 65;
-      if (lower.includes('painter')) return 45;
-      if (lower.includes('general labor')) return 35;
-      return 50; // default hourly rate
-    }
-    
-    // Equipment rates (per day)
-    if (category === 'equipment') {
-      if (lower.includes('excavator')) return 800;
-      if (lower.includes('crane')) return 1500;
-      if (lower.includes('scaffold')) return 150;
-      return 200; // default equipment rate
-    }
-    
-    return 0;
-  }
-
-  /**
    * Checks if a line is likely scope description
    */
   private static isScopeDescription(line: string): boolean {
     const scopeKeywords = [
       'scope', 'work includes', 'project includes', 'will provide',
       'responsibilities', 'deliverables', 'phase', 'stage',
-      'remove and replace', 'existing', 'new construction'
+      'estimated start', 'estimated completion', 'schedule',
+      'warranty', 'guarantee', 'next steps'
     ];
     
     const lower = line.toLowerCase();
@@ -294,32 +398,33 @@ export class EstimateParser {
   private static generateSuggestions(items: ParsedLineItem[]): string[] {
     const suggestions: string[] = [];
     const hasCategories = {
-      material: false,
-      labor: false,
-      equipment: false,
+      permits: false,
       cleanup: false,
-      permits: false
+      inspection: false,
+      warranty: false
     };
 
     // Check what's already included
     items.forEach(item => {
       const lower = item.description.toLowerCase();
-      if (item.category === 'material') hasCategories.material = true;
-      if (item.category === 'labor') hasCategories.labor = true;
-      if (item.category === 'equipment') hasCategories.equipment = true;
-      if (lower.includes('clean') || lower.includes('disposal')) hasCategories.cleanup = true;
       if (lower.includes('permit')) hasCategories.permits = true;
+      if (lower.includes('clean') || lower.includes('disposal')) hasCategories.cleanup = true;
+      if (lower.includes('inspection')) hasCategories.inspection = true;
+      if (lower.includes('warranty')) hasCategories.warranty = true;
     });
 
     // Suggest missing common items
-    if (!hasCategories.cleanup) {
-      suggestions.push('Consider adding: Site cleanup and debris disposal');
-    }
     if (!hasCategories.permits) {
-      suggestions.push('Consider adding: Permits and inspections');
+      suggestions.push('Consider adding: Building permits and approvals');
     }
-    if (hasCategories.material && !hasCategories.labor) {
-      suggestions.push('Consider adding: Labor for installation');
+    if (!hasCategories.cleanup) {
+      suggestions.push('Consider adding: Final cleanup and debris disposal');
+    }
+    if (!hasCategories.inspection) {
+      suggestions.push('Consider adding: Final inspection and sign-off');
+    }
+    if (!hasCategories.warranty) {
+      suggestions.push('Consider adding: Warranty terms and duration');
     }
 
     return suggestions;
