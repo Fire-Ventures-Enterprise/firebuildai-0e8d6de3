@@ -18,6 +18,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import PaymentStagesForm from './PaymentStagesForm';
 import { AddCustomerDialog } from '@/components/shared/AddCustomerDialog';
+import { TemplateQuickApply } from '@/components/templates/TemplateQuickApply';
 
 interface EstimateFormProps {
   estimate?: any;
@@ -381,6 +382,15 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
         </TabsContent>
 
         <TabsContent value="items" className="space-y-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Line Items</h3>
+            <TemplateQuickApply 
+              targetType="estimate"
+              onApplyTemplate={(items) => {
+                setLineItems([...lineItems, ...items]);
+              }}
+            />
+          </div>
           <DraggableEstimateItems
             items={lineItems}
             onItemsChange={setLineItems}

@@ -2619,6 +2619,51 @@ export type Database = {
           },
         ]
       }
+      industry_presets: {
+        Row: {
+          base_markup: number | null
+          common_materials: Json | null
+          common_tasks: Json | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          industry_type: string
+          name: string
+          required_certifications: string[] | null
+          typical_overhead: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          base_markup?: number | null
+          common_materials?: Json | null
+          common_tasks?: Json | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          industry_type: string
+          name: string
+          required_certifications?: string[] | null
+          typical_overhead?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          base_markup?: number | null
+          common_materials?: Json | null
+          common_tasks?: Json | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          industry_type?: string
+          name?: string
+          required_certifications?: string[] | null
+          typical_overhead?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       invoice_adjustments: {
         Row: {
           created_at: string | null
@@ -5259,48 +5304,69 @@ export type Database = {
       templates: {
         Row: {
           category: string
+          common_materials: Json | null
           created_at: string
           description: string | null
+          difficulty_level: string | null
           display_order: number | null
           icon: string | null
           id: string
           industry: string | null
+          industry_type: string | null
           is_active: boolean | null
+          is_preset: boolean | null
           name: string
           options_schema: Json | null
           params_schema: Json | null
+          price_range: Json | null
+          required_tools: Json | null
+          typical_duration: string | null
           updated_at: string
           user_id: string
           version: string | null
         }
         Insert: {
           category?: string
+          common_materials?: Json | null
           created_at?: string
           description?: string | null
+          difficulty_level?: string | null
           display_order?: number | null
           icon?: string | null
           id?: string
           industry?: string | null
+          industry_type?: string | null
           is_active?: boolean | null
+          is_preset?: boolean | null
           name: string
           options_schema?: Json | null
           params_schema?: Json | null
+          price_range?: Json | null
+          required_tools?: Json | null
+          typical_duration?: string | null
           updated_at?: string
           user_id: string
           version?: string | null
         }
         Update: {
           category?: string
+          common_materials?: Json | null
           created_at?: string
           description?: string | null
+          difficulty_level?: string | null
           display_order?: number | null
           icon?: string | null
           id?: string
           industry?: string | null
+          industry_type?: string | null
           is_active?: boolean | null
+          is_preset?: boolean | null
           name?: string
           options_schema?: Json | null
           params_schema?: Json | null
+          price_range?: Json | null
+          required_tools?: Json | null
+          typical_duration?: string | null
           updated_at?: string
           user_id?: string
           version?: string | null

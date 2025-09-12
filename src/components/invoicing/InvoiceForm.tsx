@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddCustomerDialog } from "@/components/shared/AddCustomerDialog";
 import { DraggableInvoiceItems } from "./DraggableInvoiceItems";
+import { TemplateQuickApply } from "@/components/templates/TemplateQuickApply";
 
 interface InvoiceFormProps {
   open: boolean;
