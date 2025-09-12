@@ -147,10 +147,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, fullName?: string, companyName?: string) => {
     
     try {
+      // Always use the primary domain for redirects
+      const redirectUrl = `${window.location.origin.replace('firebuildai.com', 'firebuild.ai')}/`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
             company_name: companyName,
