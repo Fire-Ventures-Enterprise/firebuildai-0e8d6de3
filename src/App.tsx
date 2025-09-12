@@ -83,6 +83,7 @@ import WorkflowDashboardPage from "./pages/app/WorkflowDashboardPage";
 import CommunicationPage from "./pages/app/CommunicationPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
+import { CompanyOnboardingPage } from "./pages/app/CompanyOnboardingPage";
 
 // Analytics pages
 import AnalyticsPage from "./pages/AnalyticsPage";
@@ -246,6 +247,12 @@ const App = () => {
                 <AppLayout>
                   <ClientPortalPage />
                 </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/company-setup" element={
+              <ProtectedRoute>
+                <CompanyOnboardingPage />
               </ProtectedRoute>
             } />
             
