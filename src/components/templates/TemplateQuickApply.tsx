@@ -8,89 +8,58 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { IndustryTemplateSelector } from "./IndustryTemplateSelector";
+import { EnhancedIndustryTemplateSelector } from "./EnhancedIndustryTemplateSelector";
 import { FileText, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 interface TemplateQuickApplyProps {
   onApplyTemplate: (items: any[]) => void;
   targetType: 'estimate' | 'invoice';
 }
 
+interface EditableLineItem {
+  id: string;
+  name: string;
+  quantity: number;
+  rate: number;
+  unit: 'hour' | 'sqft' | 'linear_foot' | 'unit' | 'day' | 'project';
+  type: 'task' | 'material';
+  total: number;
+}
+
 export function TemplateQuickApply({ onApplyTemplate, targetType }: TemplateQuickApplyProps) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSelectTemplate = async (template: any) => {
+  const handleSelectTemplate = (template: any, lineItems: EditableLineItem[]) => {
     try {
-      setLoading(true);
-      
-      // Load template tasks
-      const { data: tasks, error: tasksError } = await supabase
-        .from("template_tasks")
-        .select("*")
-        .eq("template_id", template.id)
-        .order("sort_order");
-      
-      if (tasksError) throw tasksError;
-      
-      // Load industry preset for additional context
-      const { data: preset, error: presetError } = await supabase
-        .from("industry_presets")
-        .select("*")
-        .eq("industry_type", template.industry_type)
-        .single();
-      
-      if (presetError && presetError.code !== 'PGRST116') throw presetError;
-      
-      // Convert template tasks to line items
-      const items = tasks?.map((task, index) => ({
+      // Convert editable line items to the format expected by the form
+      const formattedItems = lineItems.map((item, index) => ({
         id: crypto.randomUUID(),
-        description: task.label,
-        quantity: 1,
-        rate: task.rate_per_unit || 0,
-        amount: task.rate_per_unit || 0,
-        unit_price: task.rate_per_unit || 0,
-        item_name: task.label,
+        description: `${item.name} (${item.quantity} ${
+          item.unit === 'hour' ? 'hrs' : 
+          item.unit === 'sqft' ? 'sq ft' : 
+          item.unit === 'linear_foot' ? 'linear ft' : 
+          item.unit === 'day' ? 'days' : 
+          item.unit === 'project' ? 'project' : 
+          'units'
+        })`,
+        item_name: item.name,
+        quantity: item.quantity,
+        rate: item.rate,
+        unit_price: item.rate,
+        amount: item.total,
         tax: false,
         sort_order: index,
-      })) || [];
+        unit: item.unit,
+        type: item.type
+      }));
       
-      // Add common materials if available
-      if (preset?.common_materials && Array.isArray(preset.common_materials)) {
-        const materialItems = preset.common_materials.map((material: any, index: number) => ({
-          id: crypto.randomUUID(),
-          description: `${material.name} - ${material.unit}`,
-          item_name: material.name,
-          quantity: 1,
-          rate: material.avg_cost || 0,
-          unit_price: material.avg_cost || 0,
-          amount: material.avg_cost || 0,
-          tax: false,
-          sort_order: items.length + index,
-        }));
-        items.push(...materialItems);
-      }
-      
-      // Apply markup if available
-      if (preset?.base_markup && preset.base_markup > 1) {
-        items.forEach(item => {
-          const markup = preset.base_markup;
-          item.rate = item.rate * markup;
-          item.unit_price = item.unit_price * markup;
-          item.amount = item.amount * markup;
-        });
-      }
-      
-      onApplyTemplate(items);
+      onApplyTemplate(formattedItems);
       setOpen(false);
-      toast.success(`Applied ${template.name} template with ${items.length} items`);
+      toast.success(`Applied ${template.name} template with ${formattedItems.length} customized items`);
     } catch (error) {
       console.error("Error applying template:", error);
       toast.error("Failed to apply template");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -110,7 +79,7 @@ export function TemplateQuickApply({ onApplyTemplate, targetType }: TemplateQuic
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">
-          <IndustryTemplateSelector onSelectTemplate={handleSelectTemplate} />
+          <EnhancedIndustryTemplateSelector onSelectTemplate={handleSelectTemplate} />
         </div>
       </DialogContent>
     </Dialog>
