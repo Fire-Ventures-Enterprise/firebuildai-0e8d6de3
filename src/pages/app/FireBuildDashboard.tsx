@@ -18,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
+import { seedDemoData } from '@/utils/seedData';
+import { useToast } from '@/hooks/use-toast';
 
 interface DashboardStats {
   totalEstimates: number;
@@ -39,6 +41,7 @@ interface RecentActivity {
 export default function FireBuildDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     totalEstimates: 0,
     totalInvoices: 0,
@@ -145,6 +148,32 @@ export default function FireBuildDashboard() {
       style: 'currency',
       currency: 'USD'
     }).format(amount);
+  };
+
+  const handleSeedData = async () => {
+    if (!user) return;
+    
+    try {
+      const success = await seedDemoData(user.id);
+      if (success) {
+        toast({
+          title: "Demo Data Added",
+          description: "Sample data has been added to your account",
+        });
+        loadDashboardData();
+      } else {
+        toast({
+          title: "Data Already Exists",
+          description: "Demo data has already been added",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add demo data",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
@@ -362,6 +391,20 @@ export default function FireBuildDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Demo Data Button - Only show if no data */}
+      {stats.totalEstimates === 0 && stats.totalInvoices === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="p-6 text-center">
+            <p className="text-muted-foreground mb-4">
+              Want to explore the app with sample data?
+            </p>
+            <Button onClick={handleSeedData} variant="outline">
+              Add Demo Data
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

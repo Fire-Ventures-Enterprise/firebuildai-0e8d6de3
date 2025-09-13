@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./layouts/AppLayout";
+import { MVPAppLayout } from "./layouts/MVPAppLayout";
 import WorkOrderDetailPage from "./pages/app/WorkOrderDetailPage";
 import WorkOrdersListPage from "./pages/app/WorkOrdersListPage";
 import WorkOrderPortalPage from "./pages/portal/WorkOrderPortalPage";
@@ -66,6 +67,7 @@ import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanySetupPage from "./pages/app/CompanySetupPage";
 import CompanyProfileSetup from "./pages/auth/CompanyProfileSetup";
 import FireBuildDashboard from "./pages/app/FireBuildDashboard";
+import MVPSettingsPage from "./pages/app/MVPSettingsPage";
 import TeamsPage from "./pages/app/TeamsPage";
 import ClientsPage from "./pages/app/ClientsPage";
 import SchedulingPage from "./pages/app/SchedulingPage";
@@ -220,17 +222,25 @@ const App = () => {
             
             <Route path="/app/dashboard" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <FireBuildDashboard />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/estimates" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <EstimatesPage />
-                </AppLayout>
+                </MVPAppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/settings-mvp" element={
+              <ProtectedRoute>
+                <MVPAppLayout>
+                  <MVPSettingsPage />
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
@@ -284,9 +294,9 @@ const App = () => {
             
             <Route path="/app/scheduling" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <SchedulingPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
@@ -300,9 +310,9 @@ const App = () => {
             
             <Route path="/app/jobs" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <JobsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
