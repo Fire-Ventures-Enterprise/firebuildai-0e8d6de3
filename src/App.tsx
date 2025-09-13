@@ -64,6 +64,8 @@ import { InvoicesPage } from "./pages/app/InvoicesPage";
 import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanySetupPage from "./pages/app/CompanySetupPage";
+import CompanyProfileSetup from "./pages/auth/CompanyProfileSetup";
+import FireBuildDashboard from "./pages/app/FireBuildDashboard";
 import TeamsPage from "./pages/app/TeamsPage";
 import ClientsPage from "./pages/app/ClientsPage";
 import SchedulingPage from "./pages/app/SchedulingPage";
@@ -197,6 +199,7 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/auth/company-setup" element={<CompanyProfileSetup />} />
             
             {/* Portal Routes - Public */}
             <Route path="/open/estimate/:token" element={<EstimateOpenPage />} />

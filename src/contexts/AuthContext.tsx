@@ -209,7 +209,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         toast.success('Welcome to FireBuild! Your 30-day free trial has started.');
-        navigate('/app/company-setup');
+        navigate('/auth/company-setup');
       }
     } catch (error: any) {
       if (error.message !== 'User already exists') {
@@ -239,9 +239,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', data.user.id)
         .single();
       
-      if (!companyDetails || !companyDetails.industry || !companyDetails.company_name) {
+      if (!companyDetails || !companyDetails.company_name) {
         toast.success('Welcome back! Please complete your company setup.');
-        navigate('/app/company-setup');
+        navigate('/auth/company-setup');
       } else {
         toast.success('Welcome back!');
         navigate(R.dashboard);
