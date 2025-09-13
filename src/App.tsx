@@ -221,7 +221,7 @@ const App = () => {
             <Route path="/app/dashboard" element={
               <ProtectedRoute>
                 <AppLayout>
-                  <DashboardPage />
+                  <FireBuildDashboard />
                 </AppLayout>
               </ProtectedRoute>
             } />
