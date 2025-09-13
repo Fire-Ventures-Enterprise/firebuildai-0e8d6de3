@@ -1,21 +1,41 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { HardHat, Loader2 } from 'lucide-react';
+import { HardHat, Loader2, CheckCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from '@/hooks/use-toast';
 
 export const LoginPage = () => {
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  // Check for email confirmation
+  useEffect(() => {
+    if (searchParams.get('confirmed') === 'true') {
+      toast({
+        title: "Email Confirmed!",
+        description: "Your email has been confirmed. You can now sign in.",
+      });
+    }
+    if (searchParams.get('error') === 'confirmation_failed') {
+      toast({
+        title: "Confirmation Failed",
+        description: "There was an issue confirming your email. Please try again or contact support.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams]);
 
   // Redirect if already logged in
   useEffect(() => {
