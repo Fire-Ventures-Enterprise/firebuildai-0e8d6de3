@@ -51,32 +51,44 @@ export default function ClientsPage() {
 
   const loadClients = async () => {
     try {
+      // Fetch customers first
       const { data: customersData, error } = await supabase
         .from('customers')
-        .select(`
-          *,
-          jobs!jobs_customer_id_fkey(
-            id,
-            created_at,
-            budget
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const formattedClients = customersData?.map(customer => ({
-        id: customer.id,
-        name: `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || customer.company_name || 'Unnamed',
-        email: customer.email || '',
-        phone: customer.phone || '',
-        address: `${customer.address || ''} ${customer.city || ''} ${customer.province || ''}`.trim() || undefined,
-        created_at: customer.created_at,
-        job_count: Array.isArray(customer.jobs) ? customer.jobs.length : 0,
-        total_revenue: Array.isArray(customer.jobs) ? customer.jobs.reduce((sum: number, job: any) => sum + (job.budget || 0), 0) : 0,
-        last_job_date: Array.isArray(customer.jobs) && customer.jobs.length > 0 ? customer.jobs[0].created_at : undefined,
-        status: (Array.isArray(customer.jobs) && customer.jobs.length > 0) ? 'active' : 'inactive' as 'active' | 'inactive'
-      })) || [];
+      // Fetch jobs separately (optional - only if jobs table exists)
+      let jobsData: any[] = [];
+      try {
+        const { data: jobs } = await supabase
+          .from('jobs')
+          .select('id, customer_id, created_at, budget');
+        
+        if (jobs) jobsData = jobs;
+      } catch (jobError) {
+        // Jobs table might not exist yet, continue without it
+        console.log('Jobs data not available');
+      }
+
+      const formattedClients = customersData?.map(customer => {
+        // Find jobs for this customer
+        const customerJobs = jobsData.filter(job => job.customer_id === customer.id);
+        
+        return {
+          id: customer.id,
+          name: `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || customer.company_name || 'Unnamed',
+          email: customer.email || '',
+          phone: customer.phone || '',
+          address: `${customer.address || ''} ${customer.city || ''} ${customer.province || ''}`.trim() || undefined,
+          created_at: customer.created_at,
+          job_count: customerJobs.length,
+          total_revenue: customerJobs.reduce((sum: number, job: any) => sum + (job.budget || 0), 0),
+          last_job_date: customerJobs.length > 0 ? customerJobs[0].created_at : undefined,
+          status: customerJobs.length > 0 ? 'active' : 'inactive' as 'active' | 'inactive'
+        };
+      }) || [];
 
       setClients(formattedClients);
     } catch (error) {
