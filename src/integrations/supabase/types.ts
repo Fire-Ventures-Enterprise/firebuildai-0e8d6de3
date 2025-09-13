@@ -1141,12 +1141,14 @@ export type Database = {
           created_at: string
           holidays: string[] | null
           id: string
+          logo_url: string | null
           name: string
           primary_industry: string
           secondary_industries: string[] | null
           services_enabled: Json | null
           updated_at: string
           user_id: string
+          website: string | null
           working_hours: Json | null
         }
         Insert: {
@@ -1154,12 +1156,14 @@ export type Database = {
           created_at?: string
           holidays?: string[] | null
           id?: string
+          logo_url?: string | null
           name: string
           primary_industry?: string
           secondary_industries?: string[] | null
           services_enabled?: Json | null
           updated_at?: string
           user_id: string
+          website?: string | null
           working_hours?: Json | null
         }
         Update: {
@@ -1167,12 +1171,14 @@ export type Database = {
           created_at?: string
           holidays?: string[] | null
           id?: string
+          logo_url?: string | null
           name?: string
           primary_industry?: string
           secondary_industries?: string[] | null
           services_enabled?: Json | null
           updated_at?: string
           user_id?: string
+          website?: string | null
           working_hours?: Json | null
         }
         Relationships: []
