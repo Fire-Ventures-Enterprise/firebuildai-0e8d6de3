@@ -1490,6 +1490,53 @@ export type Database = {
           },
         ]
       }
+      contractors: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          hourly_rate: number | null
+          id: string
+          name: string
+          notes: string | null
+          owner_id: string
+          phone: string | null
+          trade: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          hourly_rate?: number | null
+          id?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          phone?: string | null
+          trade: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          hourly_rate?: number | null
+          id?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string | null
+          trade?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contractors_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custom_services: {
         Row: {
           category: string
@@ -4363,6 +4410,93 @@ export type Database = {
         }
         Relationships: []
       }
+      project_contractors: {
+        Row: {
+          assigned_date: string | null
+          contractor_id: string | null
+          id: string
+          notes: string | null
+          project_id: string | null
+          status: string | null
+        }
+        Insert: {
+          assigned_date?: string | null
+          contractor_id?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          assigned_date?: string | null
+          contractor_id?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_contractors_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_contractors_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_notes: {
+        Row: {
+          attachments: Json | null
+          author_id: string
+          content: string
+          created_at: string | null
+          id: string
+          note_type: string | null
+          project_id: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          author_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          note_type?: string | null
+          project_id?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          note_type?: string | null
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_notes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_notes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_task_items: {
         Row: {
           created_at: string
@@ -4493,6 +4627,56 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          address: string
+          created_at: string | null
+          description: string | null
+          estimated_budget: number | null
+          id: string
+          name: string
+          owner_id: string
+          project_type: string
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          created_at?: string | null
+          description?: string | null
+          estimated_budget?: number | null
+          id?: string
+          name: string
+          owner_id: string
+          project_type: string
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          created_at?: string | null
+          description?: string | null
+          estimated_budget?: number | null
+          id?: string
+          name?: string
+          owner_id?: string
+          project_type?: string
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -5432,6 +5616,63 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      work_items: {
+        Row: {
+          contractor_id: string | null
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          order_index: number | null
+          priority: string | null
+          project_id: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          contractor_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          order_index?: number | null
+          priority?: string | null
+          project_id?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          contractor_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          order_index?: number | null
+          priority?: string | null
+          project_id?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_items_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       work_order_assignees: {
         Row: {
