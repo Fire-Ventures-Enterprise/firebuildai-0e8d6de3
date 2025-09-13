@@ -59,7 +59,7 @@ import { EstimatesPage } from "./pages/app/EstimatesPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
-import CompanyPage from "./pages/app/CompanyPage";
+import CompanySetupPage from "./pages/app/CompanySetupPage";
 import TeamsPage from "./pages/app/TeamsPage";
 import SchedulingPage from "./pages/app/SchedulingPage";
 import JobsPage from "./pages/app/JobsPage";
@@ -83,7 +83,7 @@ import WorkflowDashboardPage from "./pages/app/WorkflowDashboardPage";
 import CommunicationPage from "./pages/app/CommunicationPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
-import { CompanyOnboardingPage } from "./pages/app/CompanyOnboardingPage";
+
 
 // Analytics pages
 import AnalyticsPage from "./pages/AnalyticsPage";
@@ -252,14 +252,16 @@ const App = () => {
             
             <Route path="/app/company-setup" element={
               <ProtectedRoute>
-                <CompanyOnboardingPage />
+                <AppLayout>
+                  <CompanySetupPage />
+                </AppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/company" element={
               <ProtectedRoute>
                 <AppLayout>
-                  <CompanyPage />
+                  <CompanySetupPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
