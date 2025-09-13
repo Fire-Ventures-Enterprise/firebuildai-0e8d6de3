@@ -26,214 +26,209 @@ export interface DevelopmentBlock {
 export const DEVELOPMENT_BLOCKS: DevelopmentBlock[] = [
   {
     id: 'block-1',
-    name: 'Block 1: Foundation & Authentication',
+    name: 'Block 1: Foundation & Company Setup',
     startDate: '2025-09-13',
     endDate: '2025-09-14',
-    status: 'completed',
-    description: 'Core infrastructure setup with authentication and database',
+    status: 'current',
+    description: 'Authentication, database, and company profile setup',
     prerequisites: [],
     deliverables: [
-      'Supabase database configured',
-      'Authentication system working',
-      'Basic routing structure',
-      'Initial deployment'
+      'Supabase authentication working',
+      'Company profile setup (logo, name, contact)',
+      'Basic dashboard structure',
+      'Mobile-responsive foundation'
     ],
     tasks: [
-      { id: 'b1-t1', description: 'Initialize React + TypeScript project', completed: true, completedAt: '2025-09-13T10:00:00Z' },
-      { id: 'b1-t2', description: 'Configure Tailwind CSS and design system', completed: true, completedAt: '2025-09-13T11:00:00Z' },
-      { id: 'b1-t3', description: 'Set up Supabase backend', completed: true, completedAt: '2025-09-13T12:00:00Z' },
-      { id: 'b1-t4', description: 'Implement authentication flow', completed: true, completedAt: '2025-09-13T14:00:00Z' },
-      { id: 'b1-t5', description: 'Create basic routing structure', completed: true, completedAt: '2025-09-13T15:00:00Z' },
-      { id: 'b1-t6', description: 'Deploy initial version to Vercel', completed: true, completedAt: '2025-09-13T16:00:00Z' }
+      { id: 'b1-t1', description: 'Supabase auth configured', completed: true, completedAt: '2025-09-13T10:00:00Z' },
+      { id: 'b1-t2', description: 'Login/signup pages', completed: true, completedAt: '2025-09-13T11:00:00Z' },
+      { id: 'b1-t3', description: 'Company profile table & form', completed: false },
+      { id: 'b1-t4', description: 'Company branding upload (logo)', completed: false },
+      { id: 'b1-t5', description: 'Dashboard skeleton with navigation', completed: true, completedAt: '2025-09-13T14:00:00Z' },
+      { id: 'b1-t6', description: 'Settings page for company details', completed: false }
     ],
-    completionPercentage: 100
+    completionPercentage: 50
   },
   {
     id: 'block-2',
-    name: 'Block 2: Project Management Core',
+    name: 'Block 2: Estimates & Invoices Core',
     startDate: '2025-09-15',
     endDate: '2025-09-16',
-    status: 'current',
-    description: 'Complete project CRUD operations with mobile-responsive UI',
+    status: 'locked',
+    description: 'Build the core estimate/invoice creation and management system',
     prerequisites: ['Block 1 completed'],
     deliverables: [
-      'Projects table with RLS',
-      'Project create/edit/delete functionality',
-      'Project list view',
-      'Project detail view',
-      'Mobile-responsive layouts'
+      'Estimates/Invoices tables with RLS',
+      'Line items builder with auto-calc',
+      'Tax calculation',
+      'Company branding on documents',
+      'Save as draft functionality'
     ],
     tasks: [
-      { id: 'b2-t1', description: 'Create projects table with RLS policies', completed: true, completedAt: '2025-09-13T17:00:00Z' },
-      { id: 'b2-t2', description: 'Build project list component', completed: true, completedAt: '2025-09-13T18:00:00Z' },
-      { id: 'b2-t3', description: 'Build project detail view', completed: false },
-      { id: 'b2-t4', description: 'Implement project create/edit forms', completed: false },
-      { id: 'b2-t5', description: 'Add project delete with confirmation', completed: false },
-      { id: 'b2-t6', description: 'Test all CRUD operations', completed: false },
-      { id: 'b2-t7', description: 'Verify mobile responsiveness', completed: false }
+      { id: 'b2-t1', description: 'Create estimates table with RLS', completed: false },
+      { id: 'b2-t2', description: 'Create invoices table with RLS', completed: false },
+      { id: 'b2-t3', description: 'Build estimate/invoice form', completed: false },
+      { id: 'b2-t4', description: 'Line items component with calculations', completed: false },
+      { id: 'b2-t5', description: 'Add tax & total auto-calculation', completed: false },
+      { id: 'b2-t6', description: 'Company branding header/footer', completed: false },
+      { id: 'b2-t7', description: 'Save/edit draft functionality', completed: false }
     ],
-    completionPercentage: 28
+    completionPercentage: 0,
+    blockedBy: 'block-1'
   },
   {
     id: 'block-3',
-    name: 'Block 3: Contractor Management',
+    name: 'Block 3: PDF Export & Email',
     startDate: '2025-09-17',
-    endDate: '2025-09-18',
+    endDate: '2025-09-17',
     status: 'locked',
-    description: 'Complete contractor management system with project assignments',
+    description: 'PDF generation and email sending capabilities',
     prerequisites: ['Block 2 completed'],
     deliverables: [
-      'Contractors table with RLS',
-      'Contractor CRUD operations',
-      'Contractor-to-project assignment',
-      'Trade specialization tracking',
-      'Performance notes system'
+      'PDF export with branding',
+      'Email service configuration',
+      'Send estimate/invoice via email',
+      'Unique client links generation',
+      'Email templates'
     ],
     tasks: [
-      { id: 'b3-t1', description: 'Create contractors table with RLS', completed: false },
-      { id: 'b3-t2', description: 'Build contractor list view', completed: false },
-      { id: 'b3-t3', description: 'Build contractor detail/edit form', completed: false },
-      { id: 'b3-t4', description: 'Implement project assignment UI', completed: false },
-      { id: 'b3-t5', description: 'Add trade specialization tags', completed: false },
-      { id: 'b3-t6', description: 'Create performance notes system', completed: false },
-      { id: 'b3-t7', description: 'Test contractor-project relationships', completed: false }
+      { id: 'b3-t1', description: 'Setup react-pdf or similar', completed: false },
+      { id: 'b3-t2', description: 'Create PDF template with branding', completed: false },
+      { id: 'b3-t3', description: 'Configure email service (Resend/Postmark)', completed: false },
+      { id: 'b3-t4', description: 'Generate unique client tokens', completed: false },
+      { id: 'b3-t5', description: 'Build email templates', completed: false },
+      { id: 'b3-t6', description: 'Send functionality with tracking', completed: false }
     ],
     completionPercentage: 0,
     blockedBy: 'block-2'
   },
   {
     id: 'block-4',
-    name: 'Block 4: Work Items & Tasks',
-    startDate: '2025-09-19',
-    endDate: '2025-09-20',
+    name: 'Block 4: Jobs & Status Tracking',
+    startDate: '2025-09-18',
+    endDate: '2025-09-19',
     status: 'locked',
-    description: 'Task management system with assignments and progress tracking',
+    description: 'Job management system linked to estimates/invoices',
     prerequisites: ['Block 3 completed'],
     deliverables: [
-      'Work items table with RLS',
-      'Task creation and assignment',
-      'Due date management',
-      'Priority system',
-      'Progress tracking',
-      'Task completion workflow'
+      'Jobs table with RLS',
+      'Job status workflow',
+      'Link estimates/invoices to jobs',
+      'Job dashboard view',
+      'Status change tracking'
     ],
     tasks: [
-      { id: 'b4-t1', description: 'Create work_items table with RLS', completed: false },
-      { id: 'b4-t2', description: 'Build task list component', completed: false },
-      { id: 'b4-t3', description: 'Build task creation form', completed: false },
-      { id: 'b4-t4', description: 'Implement contractor assignment', completed: false },
-      { id: 'b4-t5', description: 'Add due date and priority fields', completed: false },
-      { id: 'b4-t6', description: 'Create progress tracking UI', completed: false },
-      { id: 'b4-t7', description: 'Implement task completion workflow', completed: false },
-      { id: 'b4-t8', description: 'Test task lifecycle', completed: false }
+      { id: 'b4-t1', description: 'Create jobs table with RLS', completed: false },
+      { id: 'b4-t2', description: 'Job status enum (Draft→Sent→Approved→In Progress→Completed)', completed: false },
+      { id: 'b4-t3', description: 'Link jobs to estimates/invoices', completed: false },
+      { id: 'b4-t4', description: 'Build jobs list view', completed: false },
+      { id: 'b4-t5', description: 'Job detail page', completed: false },
+      { id: 'b4-t6', description: 'Status update workflow', completed: false },
+      { id: 'b4-t7', description: 'Job progress tracking', completed: false }
     ],
     completionPercentage: 0,
     blockedBy: 'block-3'
   },
   {
     id: 'block-5',
-    name: 'Block 5: Communication System',
-    startDate: '2025-09-21',
-    endDate: '2025-09-22',
+    name: 'Block 5: Basic Scheduling',
+    startDate: '2025-09-20',
+    endDate: '2025-09-20',
     status: 'locked',
-    description: 'Notes, photos, and project communication features',
+    description: 'Simple calendar view and job scheduling',
     prerequisites: ['Block 4 completed'],
     deliverables: [
-      'Project notes table',
-      'Photo upload to Supabase Storage',
-      'Timeline view of updates',
-      'Basic notifications',
-      'Contractor mentions'
+      'Calendar component',
+      'Job scheduling table',
+      'Date picker for jobs',
+      'Drag-drop or click to schedule',
+      'Calendar view of scheduled jobs'
     ],
     tasks: [
-      { id: 'b5-t1', description: 'Create project_notes table', completed: false },
-      { id: 'b5-t2', description: 'Set up Supabase Storage bucket', completed: false },
-      { id: 'b5-t3', description: 'Build notes/comments UI', completed: false },
-      { id: 'b5-t4', description: 'Implement photo upload', completed: false },
-      { id: 'b5-t5', description: 'Create timeline view', completed: false },
-      { id: 'b5-t6', description: 'Add basic notifications', completed: false },
-      { id: 'b5-t7', description: 'Implement @mentions', completed: false }
+      { id: 'b5-t1', description: 'Add scheduling fields to jobs', completed: false },
+      { id: 'b5-t2', description: 'Integrate calendar component', completed: false },
+      { id: 'b5-t3', description: 'Date/time picker for scheduling', completed: false },
+      { id: 'b5-t4', description: 'Calendar view with jobs', completed: false },
+      { id: 'b5-t5', description: 'Basic drag-drop scheduling', completed: false }
     ],
     completionPercentage: 0,
     blockedBy: 'block-4'
   },
   {
     id: 'block-6',
-    name: 'Block 6: Mobile Optimization',
-    startDate: '2025-09-23',
-    endDate: '2025-09-23',
+    name: 'Block 6: Client Portal',
+    startDate: '2025-09-21',
+    endDate: '2025-09-22',
     status: 'locked',
-    description: 'PWA features and mobile-specific optimizations',
+    description: 'Public client portal for viewing and approving estimates/invoices',
     prerequisites: ['Block 5 completed'],
     deliverables: [
-      'PWA configuration',
-      'Offline viewing',
-      'Camera integration',
-      'Touch gestures',
-      'Mobile performance optimization'
+      'Token-based client access (no login)',
+      'Client view for estimates/invoices',
+      'Digital approval/signature',
+      'Deposit payment simulation',
+      'Client approval tracking'
     ],
     tasks: [
-      { id: 'b6-t1', description: 'Configure PWA manifest', completed: false },
-      { id: 'b6-t2', description: 'Implement service worker', completed: false },
-      { id: 'b6-t3', description: 'Add offline data caching', completed: false },
-      { id: 'b6-t4', description: 'Integrate camera for photos', completed: false },
-      { id: 'b6-t5', description: 'Optimize touch interactions', completed: false },
-      { id: 'b6-t6', description: 'Performance audit and fixes', completed: false }
+      { id: 'b6-t1', description: 'Create client portal routes', completed: false },
+      { id: 'b6-t2', description: 'Token validation middleware', completed: false },
+      { id: 'b6-t3', description: 'Client view templates', completed: false },
+      { id: 'b6-t4', description: 'Digital signature component', completed: false },
+      { id: 'b6-t5', description: 'Approval workflow', completed: false },
+      { id: 'b6-t6', description: 'Simulated payment button', completed: false },
+      { id: 'b6-t7', description: 'Update job status on approval', completed: false }
     ],
     completionPercentage: 0,
     blockedBy: 'block-5'
   },
   {
     id: 'block-7',
-    name: 'Block 7: Testing & Polish',
-    startDate: '2025-09-24',
-    endDate: '2025-09-24',
+    name: 'Block 7: Email Notifications',
+    startDate: '2025-09-23',
+    endDate: '2025-09-23',
     status: 'locked',
-    description: 'Comprehensive testing and bug fixes',
+    description: 'Automated email notifications for key events',
     prerequisites: ['Block 6 completed'],
     deliverables: [
-      'Unit tests for critical functions',
-      'Integration tests',
-      'Cross-browser testing',
-      'Mobile device testing',
-      'Bug fixes',
-      'Performance optimization'
+      'Email notification system',
+      'Estimate sent notification',
+      'Client approval notification',
+      'Payment received notification',
+      'Status change alerts'
     ],
     tasks: [
-      { id: 'b7-t1', description: 'Write unit tests', completed: false },
-      { id: 'b7-t2', description: 'Create integration tests', completed: false },
-      { id: 'b7-t3', description: 'Test on Chrome, Firefox, Safari', completed: false },
-      { id: 'b7-t4', description: 'Test on iOS and Android', completed: false },
-      { id: 'b7-t5', description: 'Fix identified bugs', completed: false },
-      { id: 'b7-t6', description: 'Optimize performance', completed: false }
+      { id: 'b7-t1', description: 'Create notification preferences', completed: false },
+      { id: 'b7-t2', description: 'Estimate sent email to client', completed: false },
+      { id: 'b7-t3', description: 'Approval notification to contractor', completed: false },
+      { id: 'b7-t4', description: 'Payment confirmation emails', completed: false },
+      { id: 'b7-t5', description: 'Status change notifications', completed: false }
     ],
     completionPercentage: 0,
     blockedBy: 'block-6'
   },
   {
     id: 'block-8',
-    name: 'Block 8: Launch Preparation',
-    startDate: '2025-09-25',
+    name: 'Block 8: Testing & Launch',
+    startDate: '2025-09-24',
     endDate: '2025-09-25',
     status: 'locked',
-    description: 'Final preparations for production launch',
+    description: 'Final testing, bug fixes, and production deployment',
     prerequisites: ['Block 7 completed'],
     deliverables: [
-      'Production environment setup',
-      'Security audit',
-      'Documentation',
-      'User onboarding flow',
-      'Monitoring setup',
-      'Launch checklist'
+      'Complete user flow testing',
+      'Mobile responsiveness check',
+      'Performance optimization',
+      'Security review',
+      'Production deployment',
+      'Contractor feedback system'
     ],
     tasks: [
-      { id: 'b8-t1', description: 'Configure production environment', completed: false },
-      { id: 'b8-t2', description: 'Run security audit', completed: false },
-      { id: 'b8-t3', description: 'Write user documentation', completed: false },
-      { id: 'b8-t4', description: 'Create onboarding flow', completed: false },
-      { id: 'b8-t5', description: 'Set up monitoring/analytics', completed: false },
-      { id: 'b8-t6', description: 'Complete launch checklist', completed: false },
-      { id: 'b8-t7', description: 'Deploy to production', completed: false }
+      { id: 'b8-t1', description: 'End-to-end flow testing', completed: false },
+      { id: 'b8-t2', description: 'Mobile device testing', completed: false },
+      { id: 'b8-t3', description: 'Performance optimization', completed: false },
+      { id: 'b8-t4', description: 'Security audit', completed: false },
+      { id: 'b8-t5', description: 'Bug fixes from testing', completed: false },
+      { id: 'b8-t6', description: 'Deploy to production', completed: false },
+      { id: 'b8-t7', description: 'Setup feedback collection', completed: false }
     ],
     completionPercentage: 0,
     blockedBy: 'block-7'
