@@ -48,7 +48,6 @@ export const DashboardPage = () => {
 
   return (
     <div className="space-y-6 md:space-y-8">
-      <TrialBanner />
       
       {/* Header Section with Better Spacing */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
