@@ -10,17 +10,21 @@ import {
   Clock,
   AlertCircle,
   TrendingUp,
-  Zap
+  Zap,
+  Code2,
+  Home
 } from 'lucide-react';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
 import { QuickActions } from '@/components/dashboard/QuickActions';
 import { RecentProjects } from '@/components/dashboard/RecentProjects';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
+import { BlockTracker } from '@/components/development/BlockTracker';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MVP_ROADMAP, getCurrentPhase } from '@/config/mvp-roadmap';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getCurrentBlock, getBlockProgress } from '@/config/development-blocks';
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 
 export function DashboardPage() {
@@ -38,7 +42,8 @@ export function DashboardPage() {
   const [recentProjects, setRecentProjects] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
 
-  const currentPhase = getCurrentPhase();
+  const currentBlock = getCurrentBlock();
+  const blockProgress = getBlockProgress();
 
   useEffect(() => {
     if (user) {
@@ -172,26 +177,26 @@ export function DashboardPage() {
                 Here's your project overview for today
               </p>
             </div>
-            {currentPhase && (
+            {currentBlock && (
               <Badge variant="outline" className="hidden md:flex items-center gap-1">
-                <Zap className="h-3 w-3" />
-                {currentPhase.name}
+                <Code2 className="h-3 w-3" />
+                {currentBlock.name}
               </Badge>
             )}
           </div>
 
           {/* Development Progress Card */}
-          {currentPhase && (
+          {currentBlock && (
             <Card className="p-4 bg-primary/5 border-primary/20 mb-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium">MVP Development Progress</h3>
                 <span className="text-xs text-muted-foreground">
-                  {currentPhase.name}
+                  {currentBlock.name}
                 </span>
               </div>
-              <Progress value={35} className="h-2 mb-2" />
+              <Progress value={blockProgress.overallProgress} className="h-2 mb-2" />
               <p className="text-xs text-muted-foreground">
-                35% Complete • Following Idea2MVP Methodology
+                Block {blockProgress.completedBlocks}/{blockProgress.totalBlocks} • {blockProgress.overallProgress}% Complete
               </p>
             </Card>
           )}
