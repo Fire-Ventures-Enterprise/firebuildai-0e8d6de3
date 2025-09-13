@@ -56,6 +56,10 @@ import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 // App pages
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
+
+// MVP pages
+import { ProjectsPage } from "./pages/mvp/ProjectsPage";
+import { ContractorsPage } from "./pages/mvp/ContractorsPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
