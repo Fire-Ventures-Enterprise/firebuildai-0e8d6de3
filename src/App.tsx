@@ -61,6 +61,7 @@ import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanySetupPage from "./pages/app/CompanySetupPage";
 import TeamsPage from "./pages/app/TeamsPage";
+import ClientsPage from "./pages/app/ClientsPage";
 import SchedulingPage from "./pages/app/SchedulingPage";
 import JobsPage from "./pages/app/JobsPage";
 import JobDetailsPage from "./pages/app/JobDetailsPage";
@@ -310,6 +311,14 @@ const App = () => {
               <ProtectedRoute>
                 <AppLayout>
                   <CreateJobPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/clients" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ClientsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
