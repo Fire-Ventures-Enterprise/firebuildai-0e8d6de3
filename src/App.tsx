@@ -334,9 +334,9 @@ const App = () => {
             
             <Route path="/app/clients" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ClientsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             

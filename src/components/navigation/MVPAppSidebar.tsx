@@ -3,7 +3,8 @@ import {
   LayoutDashboard, 
   FileText, 
   DollarSign, 
-  Calendar, 
+  Calendar,
+  Users,
   Settings,
   LogOut,
   Menu,
@@ -20,6 +21,11 @@ const navItems = [
     title: 'Dashboard',
     href: '/app/dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    title: 'Clients',
+    href: '/app/clients',
+    icon: Users,
   },
   {
     title: 'Jobs',
