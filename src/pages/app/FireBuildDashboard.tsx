@@ -188,22 +188,22 @@ export default function FireBuildDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
+    <div className="p-4 md:p-6 space-y-6">
+      {/* Header - Mobile responsive */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Welcome back! Here's your business overview
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="hidden sm:flex gap-2">
           <Button 
             onClick={() => navigate('/app/estimates/new')}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
-            New Estimate
+            <span className="hidden lg:inline">New Estimate</span>
           </Button>
           <Button 
             onClick={() => navigate('/app/invoices/new')}
@@ -211,13 +211,56 @@ export default function FireBuildDashboard() {
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
-            New Invoice
+            <span className="hidden lg:inline">New Invoice</span>
           </Button>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Quick Actions - Mobile shows first, larger on mobile */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 sm:hidden">
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/app/estimates/new')}
+        >
+          <CardContent className="p-4 text-center">
+            <FileText className="h-6 w-6 mx-auto mb-1 text-primary" />
+            <p className="font-semibold text-sm">Estimate</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/app/invoices/new')}
+        >
+          <CardContent className="p-4 text-center">
+            <DollarSign className="h-6 w-6 mx-auto mb-1 text-success" />
+            <p className="font-semibold text-sm">Invoice</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/app/jobs/new')}
+        >
+          <CardContent className="p-4 text-center">
+            <FolderOpen className="h-6 w-6 mx-auto mb-1 text-warning" />
+            <p className="font-semibold text-sm">Job</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate('/app/scheduling')}
+        >
+          <CardContent className="p-4 text-center">
+            <Calendar className="h-6 w-6 mx-auto mb-1 text-purple-500" />
+            <p className="font-semibold text-sm">Schedule</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Desktop Quick Actions - Hidden on mobile */}
+      <div className="hidden sm:grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card 
           className="cursor-pointer hover:shadow-md transition-shadow"
           onClick={() => navigate('/app/estimates/new')}
@@ -263,8 +306,8 @@ export default function FireBuildDashboard() {
         </Card>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Stats Grid - Mobile responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">

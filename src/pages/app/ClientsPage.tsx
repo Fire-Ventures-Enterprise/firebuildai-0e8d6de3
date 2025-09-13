@@ -101,24 +101,24 @@ export default function ClientsPage() {
   const activeClients = clients.filter(c => c.status === 'active').length;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="p-4 md:p-6 space-y-6">
+      {/* Header - Mobile responsive */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Clients</h1>
-          <p className="text-muted-foreground">Manage your customer relationships</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Clients</h1>
+          <p className="text-muted-foreground text-sm md:text-base">Manage your customer relationships</p>
         </div>
         <Button 
           onClick={() => setShowAddDialog(true)}
-          className="bg-gradient-primary shadow-elegant"
+          className="w-full sm:w-auto bg-gradient-primary shadow-elegant"
         >
           <UserPlus className="w-4 h-4 mr-2" />
           Add Client
         </Button>
       </div>
 
-      {/* Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Metrics - Mobile responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
@@ -159,8 +159,75 @@ export default function ClientsPage() {
         />
       </div>
 
-      {/* Clients Table */}
-      <Card>
+      {/* Clients - Mobile Card View */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          <Card className="p-4">
+            <p className="text-center text-muted-foreground">Loading clients...</p>
+          </Card>
+        ) : filteredClients.length === 0 ? (
+          <Card className="p-4">
+            <p className="text-center text-muted-foreground">No clients found</p>
+          </Card>
+        ) : (
+          filteredClients.map((client) => (
+            <Card key={client.id} className="p-4 space-y-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-semibold text-lg">{client.name}</p>
+                  {client.address && (
+                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                      <MapPin className="w-3 h-3" />
+                      {client.address}
+                    </p>
+                  )}
+                </div>
+                <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
+                  {client.status}
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-muted-foreground mb-1">Contact</p>
+                  <p className="flex items-center gap-1">
+                    <Mail className="w-3 h-3" />
+                    {client.email || '-'}
+                  </p>
+                  <p className="flex items-center gap-1 mt-1">
+                    <Phone className="w-3 h-3" />
+                    {client.phone || '-'}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-muted-foreground mb-1">Activity</p>
+                  <p className="flex items-center gap-1">
+                    <FileText className="w-3 h-3" />
+                    {client.job_count} jobs
+                  </p>
+                  <p className="flex items-center gap-1 mt-1">
+                    <DollarSign className="w-3 h-3" />
+                    ${client.total_revenue.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              
+              {client.last_job_date && (
+                <div className="pt-2 border-t">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    Last activity: {new Date(client.last_job_date).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Clients Table - Desktop Only */}
+      <Card className="hidden sm:block">
         <CardContent className="p-0">
           <Table>
             <TableHeader>

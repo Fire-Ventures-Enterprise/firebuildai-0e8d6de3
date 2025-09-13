@@ -1,16 +1,23 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { Home, FolderOpen, Users, CheckSquare, Plus } from 'lucide-react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Home, FileText, DollarSign, Calendar, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function MobileBottomNav() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
-    { path: '/mvp/dashboard', icon: Home, label: 'Home' },
-    { path: '/mvp/projects', icon: FolderOpen, label: 'Projects' },
-    { path: '/mvp/contractors', icon: Users, label: 'Contractors' },
-    { path: '/mvp/work-items', icon: CheckSquare, label: 'Tasks' },
+    { path: '/app/dashboard', icon: Home, label: 'Home' },
+    { path: '/app/jobs', icon: FileText, label: 'Jobs' },
+    { path: '/app/estimates', icon: DollarSign, label: 'Invoices' },
+    { path: '/app/scheduling', icon: Calendar, label: 'Calendar' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -35,18 +42,32 @@ export function MobileBottomNav() {
           </NavLink>
         ))}
         
-        {/* Floating Action Button */}
+        {/* Floating Action Button with Quick Actions */}
         <div className="flex items-center justify-center">
-          <Button
-            size="icon"
-            className="h-10 w-10 rounded-full shadow-lg bg-primary hover:bg-primary/90"
-            onClick={() => {
-              // This will be connected to quick actions modal
-              console.log('Quick action button clicked');
-            }}
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                className="h-10 w-10 rounded-full shadow-lg bg-primary hover:bg-primary/90"
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="mb-2">
+              <DropdownMenuItem onClick={() => navigate('/app/estimates/new')}>
+                New Estimate
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/app/invoices/new')}>
+                New Invoice
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/app/jobs/new')}>
+                New Job
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/app/clients')}>
+                New Client
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
