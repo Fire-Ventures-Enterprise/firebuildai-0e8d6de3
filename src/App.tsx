@@ -73,6 +73,9 @@ import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 // Feature pages (imported for LiDAR)
 import LiDARScanningPage from "./pages/features/LiDARScanningPage";
 
+// SEO Landing pages
+import LiDAREstimatingSoftwarePage from "./pages/seo/LiDAREstimatingSoftwarePage";
+
 // App pages
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
@@ -213,6 +216,9 @@ const App = () => {
             <Route path="/features/workflow" element={<FeaturesWorkflowPage />} />
             <Route path="/features/xactimate" element={<FeaturesXactimatePage />} />
             <Route path="/features/lidar-scanning" element={<LiDARScanningPage />} />
+            
+            {/* SEO Landing Pages */}
+            <Route path="/lidar-estimating-software" element={<LiDAREstimatingSoftwarePage />} />
             
             {/* Trade Pages */}
             <Route path="/trades/general-contractors" element={<GeneralContractorsPage />} />
