@@ -50,12 +50,12 @@ export const HomePage = () => {
             <div className="flex items-center gap-4">
               <Link to={R.login}>
                 <Button variant="ghost" size="lg" className="hidden sm:inline-flex text-base">
-                  Login
+                  Sign In
                 </Button>
               </Link>
               <Link to={R.signup}>
-                <Button size="lg" className="text-base px-6">
-                  Get Started Free
+                <Button size="lg" className="text-base px-6 bg-gradient-primary hover:opacity-90 shadow-lg">
+                  Start Free Trial
                 </Button>
               </Link>
               <Button variant="ghost" size="icon" className="lg:hidden">
