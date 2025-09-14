@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, BrainCircuit, FileSearch, BarChart3, Workflow, ArrowRight } from "lucide-react";
+import { Sparkles, BrainCircuit, FileSearch, BarChart3, Workflow, ArrowRight, Scan } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function ComingSoonSection() {
@@ -39,6 +39,14 @@ export function ComingSoonSection() {
       path: "/products/workflow-automation",
       color: "text-orange-500",
       bgColor: "bg-orange-50 dark:bg-orange-950/20"
+    },
+    {
+      name: "LiDAR Scanning",
+      description: "Instant room measurements with centimeter-level accuracy",
+      icon: Scan,
+      path: "/lidar-estimating-software",
+      color: "text-cyan-500",
+      bgColor: "bg-cyan-50 dark:bg-cyan-950/20"
     }
   ];
 
