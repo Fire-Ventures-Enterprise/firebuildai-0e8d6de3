@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { 
   FileText, 
   DollarSign, 
@@ -19,68 +19,36 @@ import {
 import { Link } from "react-router-dom";
 
 export function EstimatesInvoicesPage() {
-  useEffect(() => {
-    // SEO Meta Tags
-    document.title = "Contractor Estimating Software | Invoice App - FireBuildAI";
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Best estimating software for contractors. Create professional estimates & invoices in 60 seconds. Win more jobs, get paid faster. Start free trial.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Best estimating software for contractors. Create professional estimates & invoices in 60 seconds. Win more jobs, get paid faster. Start free trial.';
-      document.head.appendChild(meta);
-    }
-
-    // Open Graph Tags
-    const ogTags = [
-      { property: 'og:title', content: 'Contractor Estimating & Invoice Software | FireBuildAI' },
-      { property: 'og:description', content: 'Professional estimates in 60 seconds. Convert to invoices instantly. Get paid 3x faster.' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: 'https://firebuild.ai/products/estimates-invoices' }
-    ];
-
-    ogTags.forEach(tag => {
-      let element = document.querySelector(`meta[property="${tag.property}"]`);
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute('property', tag.property);
-        document.head.appendChild(element);
-      }
-      element.setAttribute('content', tag.content);
-    });
-
-    // Structured Data for SEO
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "FireBuildAI Estimates & Invoices",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web, iOS, Android",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-        "priceValidUntil": "2025-12-31"
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How quickly can I create a professional estimate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Create and send professional estimates in under 60 seconds using our AI-powered templates and smart pricing suggestions."
+        }
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "reviewCount": "2847"
+      {
+        "@type": "Question",
+        "name": "Can I convert estimates to invoices automatically?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, approved estimates convert to invoices with one click. Track payments, send reminders, and get paid 2x faster."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it work on mobile devices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, create estimates and invoices from any device. Our mobile app lets you work from job sites with offline mode."
+        }
       }
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(structuredData);
-    document.head.appendChild(script);
-
-    return () => {
-      const scriptTag = document.querySelector('script[type="application/ld+json"]');
-      if (scriptTag) scriptTag.remove();
-    };
-  }, []);
+    ]
+  };
 
   const stats = [
     { value: "60 sec", label: "Average estimate time" },
@@ -188,6 +156,13 @@ export function EstimatesInvoicesPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Contractor Estimating Software | Invoice App - FireBuild.AI"
+        description="Best estimating software for contractors. Create estimates in 60 seconds, get paid 3x faster. Free 30-day trial."
+        keywords="contractor estimating software, estimate and invoice app for contractors, construction estimating software, contractor invoice software"
+        canonicalUrl="https://firebuild.ai/products/estimates-invoices"
+        jsonLd={faqSchema}
+      />
       {/* Hero Section - H1 for SEO */}
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="absolute inset-0 bg-grid-white/5 bg-grid-pattern" />

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { 
   ClipboardList, 
   Users, 
@@ -19,19 +20,38 @@ import {
 import { Link } from "react-router-dom";
 
 export function WorkOrdersPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do work orders hide pricing from crew?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, work orders are no-price by default. Crew members see tasks and materials but never see your margins or customer pricing."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can crew members update work orders from phones?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, crew members scan QR codes to access mobile work orders. They can update progress, upload photos, and add notes in real-time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I track crew locations and time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GPS tracking shows crew locations in real-time. Automatic time tracking starts when crew arrives at job site via geofencing."
+        }
+      }
+    ]
+  };
+
   useEffect(() => {
-    // SEO Meta Tags
-    document.title = "Work Order Management Software | Digital Work Orders - FireBuildAI";
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Digital work order software for contractors. Dispatch crews, track progress, manage tasks. Real-time updates from the field. Try free today.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Digital work order software for contractors. Dispatch crews, track progress, manage tasks. Real-time updates from the field. Try free today.';
-      document.head.appendChild(meta);
-    }
 
     // Open Graph Tags
     const ogTags = [
@@ -210,6 +230,13 @@ export function WorkOrdersPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Digital Work Orders (No Pricing) | Contractor Software"
+        description="Digital work order software for contractors. Dispatch crews, track progress. No pricing shown to crew. Free trial."
+        keywords="digital work orders no pricing, contractor work order software, work order management, crew dispatch software"
+        canonicalUrl="https://firebuild.ai/products/work-orders"
+        jsonLd={faqSchema}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="absolute inset-0 bg-grid-white/5 bg-grid-pattern" />

@@ -4,10 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { SEOHead } from "@/components/seo/SEOHead";
 
 export default function LiDARScanningPage() {
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+  
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is LiDAR estimating available now?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LiDAR scanning is coming Q1 2025. Join the waitlist for early access and special pricing."
+        }
+      }
+    ]
+  };
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +38,13 @@ export default function LiDARScanningPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* SEO Metadata would be handled by React Helmet or similar */}
+      <SEOHead 
+        title="LiDAR Estimating Software | Construction Scanning - FireBuild.AI"
+        description="LiDAR scanning for instant measurements. Create estimates 10x faster. Coming Q1 2025. Join waitlist for early access."
+        keywords="lidar estimating software, construction lidar scanning, lidar measurement app"
+        canonicalUrl="https://firebuild.ai/features/lidar-scanning"
+        jsonLd={faqSchema}
+      />
       
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
