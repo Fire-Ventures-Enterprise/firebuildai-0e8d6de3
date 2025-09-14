@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ScrollToTop } from "./components/ScrollToTop";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./layouts/AppLayout";
 import { MVPAppLayout } from "./layouts/MVPAppLayout";
@@ -162,9 +163,10 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
+      <BrowserRouter>
+        <ScrollToTop />
+        <AuthProvider>
+          <Routes>
               {/* Legacy redirects */}
               {legacyRedirects}
               {/* Marketing Site */}
