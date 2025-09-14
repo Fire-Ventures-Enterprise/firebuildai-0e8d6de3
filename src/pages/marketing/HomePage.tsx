@@ -1,7 +1,7 @@
+import { useEffect } from "react";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { TrustBadges } from "@/components/marketing/TrustBadges";
 import { FeaturesSection } from "@/components/marketing/FeaturesSection";
-import { TradeSpecificSection } from "@/components/marketing/TradeSpecificSection";
 import { TestimonialsSection } from "@/components/marketing/TestimonialsSection";
 import { PricingSection } from "@/components/marketing/PricingSection";
 import { CTASection } from "@/components/marketing/CTASection";
@@ -10,17 +10,30 @@ import { NotificationPreferencesPopup } from "@/components/marketing/Notificatio
 import { MobileAppSection } from "@/components/marketing/MobileAppSection";
 import { ComingSoonSection } from "@/components/marketing/ComingSoonSection";
 import { MobileAppBanner } from "@/components/marketing/MobileAppBanner";
+import { TabbedTradeSection } from "@/components/marketing/TabbedTradeSection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { R } from "@/routes/routeMap";
 import { Logo } from "@/components/Logo";
+import { useTheme } from "next-themes";
 
 export const HomePage = () => {
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    // SEO meta tags
+    document.title = "FireBuild.ai - #1 Construction Management Software for Contractors";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Professional construction management software with estimates, invoices, work orders, and scheduling. Trusted by 5,000+ contractors. Start your 30-day free trial.');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
+      {/* Navigation Header with Dark Mode */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-12">
@@ -48,6 +61,20 @@ export const HomePage = () => {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Dark Mode Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="hidden sm:inline-flex"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+              
               <Link to={R.login}>
                 <Button variant="ghost" size="lg" className="hidden sm:inline-flex text-base">
                   Sign In
@@ -77,9 +104,9 @@ export const HomePage = () => {
         <FeaturesSection />
       </div>
       
-      {/* Trade Specific Section */}
+      {/* Trade Specific Section with Tabs */}
       <div id="trades">
-        <TradeSpecificSection />
+        <TabbedTradeSection />
       </div>
       
       {/* Testimonials */}
