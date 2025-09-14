@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GripVertical, Trash2, Plus } from "lucide-react";
 import {
@@ -76,12 +77,12 @@ function SortableItem({ id, index, item, onUpdate, onRemove, isDragging }: Sorta
       ref={setNodeRef}
       style={style}
       className={cn(
-        "grid grid-cols-12 gap-2 items-center p-2 bg-background border border-border rounded-lg transition-all",
+        "grid grid-cols-12 gap-3 items-start p-3 bg-background border border-border rounded-lg transition-all",
         isSortableDragging && "opacity-50 shadow-lg ring-2 ring-primary/20",
         isDragging && "invisible"
       )}
     >
-      <div className="col-span-1 flex items-center justify-center">
+      <div className="col-span-1 flex items-center justify-center pt-2">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -100,33 +101,34 @@ function SortableItem({ id, index, item, onUpdate, onRemove, isDragging }: Sorta
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="col-span-5">
-        <Input
-          placeholder="Description"
+      <div className="col-span-6">
+        <Textarea
+          placeholder="Enter item description..."
           value={item.description}
           onChange={(e) => onUpdate('description', e.target.value)}
-          className="h-9"
+          className="min-h-[60px] resize-none"
+          rows={2}
         />
       </div>
       <div className="col-span-2">
         <Input
           type="number"
-          placeholder="Qty"
+          placeholder="0"
           value={item.quantity}
           onChange={(e) => onUpdate('quantity', parseFloat(e.target.value) || 0)}
-          className="h-9"
+          className="h-12 text-center"
         />
       </div>
-      <div className="col-span-3">
+      <div className="col-span-2">
         <Input
           type="number"
-          placeholder="Rate"
+          placeholder="0.00"
           value={item.rate}
           onChange={(e) => onUpdate('rate', parseFloat(e.target.value) || 0)}
-          className="h-9"
+          className="h-12"
         />
       </div>
-      <div className="col-span-1 flex items-center justify-center">
+      <div className="col-span-1 flex items-center justify-center pt-2">
         <Button
           type="button"
           variant="ghost"
@@ -240,18 +242,28 @@ export function DraggableEstimateItems({ items, onItemsChange, onItemUpdate, onA
             </Button>
           </div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={itemsWithIds.map((item) => item.id!)}
-              strategy={verticalListSortingStrategy}
+          <>
+            {/* Column Headers */}
+            <div className="grid grid-cols-12 gap-3 pb-2 mb-3 border-b border-border">
+              <div className="col-span-1"></div>
+              <div className="col-span-6 text-sm font-medium text-muted-foreground">Description</div>
+              <div className="col-span-2 text-sm font-medium text-muted-foreground text-center">Quantity</div>
+              <div className="col-span-2 text-sm font-medium text-muted-foreground">Rate ($)</div>
+              <div className="col-span-1"></div>
+            </div>
+            
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
             >
-              <div className="space-y-2">
-                {itemsWithIds.map((item, index) => (
+              <SortableContext
+                items={itemsWithIds.map((item) => item.id!)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2">
+                  {itemsWithIds.map((item, index) => (
                   <SortableItem
                     key={item.id}
                     id={item.id!}
@@ -261,14 +273,15 @@ export function DraggableEstimateItems({ items, onItemsChange, onItemUpdate, onA
                     onRemove={() => onRemoveItem(index)}
                     isDragging={activeId === item.id}
                   />
-                ))}
-              </div>
-            </SortableContext>
-            
-            <DragOverlay>
-              {activeItem ? <DragOverlayItem item={activeItem} /> : null}
-            </DragOverlay>
-          </DndContext>
+                  ))}
+                </div>
+              </SortableContext>
+              
+              <DragOverlay>
+                {activeItem ? <DragOverlayItem item={activeItem} /> : null}
+              </DragOverlay>
+            </DndContext>
+          </>
         )}
       </CardContent>
     </Card>
