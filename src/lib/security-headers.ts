@@ -4,19 +4,19 @@
  */
 
 export const securityHeaders = {
-  // Balanced Content Security Policy - secure but SEO-friendly
+  // SEO-friendly Content Security Policy - allows crawlers while maintaining security
   'Content-Security-Policy': [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://js.stripe.com https://checkout.stripe.com https://www.googletagmanager.com https://www.google-analytics.com",
-    "style-src 'self' 'unsafe-inline'", // Required for Tailwind
-    "img-src 'self' data: https: blob:",
+    "default-src 'self' https:",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+    "style-src 'self' 'unsafe-inline' https:",
+    "img-src * data: blob:",
     "font-src 'self' data: https:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://checkout.stripe.com wss://*.supabase.co https://www.google-analytics.com",
+    "connect-src *",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
     "object-src 'none'",
     "base-uri 'self'",
-    "form-action 'self' https://checkout.stripe.com",
-    "frame-ancestors 'self'", // Allow embedding in own domain
+    "form-action 'self' https:",
+    "frame-ancestors *", // Allow any domain to embed (for SEO tools)
     "upgrade-insecure-requests"
   ].join('; '),
   

@@ -19,11 +19,10 @@
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "SAMEORIGIN"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(self), microphone=(), geolocation=(), payment=(self 'https://js.stripe.com' 'https://checkout.stripe.com')"
-    X-Robots-Tag = "index, follow"
+    X-Robots-Tag = "index, follow, max-image-preview:large"
+    Accept-CH = "DPR, Viewport-Width, Width"
 
 [functions]
   directory = "netlify/functions"
