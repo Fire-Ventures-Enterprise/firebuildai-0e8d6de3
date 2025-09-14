@@ -1,270 +1,241 @@
+import { useEffect } from "react";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { 
   HardHat, 
-  Check, 
+  CheckCircle2, 
   Users, 
-  FileText, 
-  Calendar, 
-  ArrowRight,
-  Briefcase,
-  BarChart3,
+  Calendar,
+  FileText,
+  TrendingUp,
   Shield,
   Clock,
-  DollarSign,
-  Layers
+  BarChart3,
+  Building
 } from "lucide-react";
-import { useEffect } from "react";
 
-export const GeneralContractorsPage = () => {
+export default function GeneralContractorsPage() {
   useEffect(() => {
-    document.title = "Construction Management Software for General Contractors | FireBuild.ai";
+    document.title = "General Contractor Software | FireBuild - Manage Multiple Subs & Projects";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Complete construction management software for general contractors. Manage projects, coordinate subcontractors, track progress, and deliver projects on time and budget.');
+      metaDescription.setAttribute('content', 'Complete construction management software for general contractors. Manage multiple subs, track progress, and deliver projects on time and budget.');
     }
   }, []);
 
   const benefits = [
-    "Complete project management from bid to completion",
-    "Subcontractor coordination and communication tools",
-    "Real-time progress tracking with photo documentation",
-    "Change order management and approval workflows",
-    "Budget tracking and cost control analytics",
-    "Document management for permits and contracts",
-    "Safety compliance and inspection tracking",
-    "Client portal for transparency and updates"
+    "Get paid 2x faster with online payments",
+    "Manage multiple subs and trades efficiently",
+    "Track project progress in real-time",
+    "Generate professional proposals and contracts",
+    "Automated payment reminders and collections",
+    "Integrate with QuickBooks and accounting software"
   ];
 
   const features = [
     {
-      icon: Briefcase,
-      title: "Project Management",
-      description: "Manage multiple projects simultaneously with Gantt charts, milestones, and critical path tracking."
+      icon: Users,
+      title: "Subcontractor Management",
+      description: "Track all your subs, manage contracts, and coordinate schedules from one central dashboard."
     },
     {
-      icon: Users,
-      title: "Subcontractor Coordination",
-      description: "Coordinate all trades efficiently with scheduling tools, communication hub, and payment tracking."
+      icon: Calendar,
+      title: "Project Scheduling",
+      description: "Visual project timelines with Gantt charts, resource allocation, and automated notifications."
     },
     {
       icon: FileText,
       title: "Document Control",
-      description: "Centralize all project documents, RFIs, submittals, and change orders in one secure location."
+      description: "Store and manage blueprints, permits, contracts, and change orders in one secure location."
     },
     {
       icon: BarChart3,
-      title: "Progress Tracking",
-      description: "Monitor project progress in real-time with daily reports, photo documentation, and percentage complete."
+      title: "Real-Time Analytics",
+      description: "Track project profitability, labor costs, and material expenses with detailed reporting."
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <MarketingLayout>
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
+      <section className="relative py-20 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-background to-background" />
+        
+        <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 rounded-full">
-                <HardHat className="h-4 w-4 text-orange-500" />
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 text-orange-500 mb-6">
+                <HardHat className="h-4 w-4" />
                 <span className="text-sm font-medium">General Contractors</span>
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-                Built for{" "}
-                <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                  General Contractors
+              <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                Manage Multiple Projects with{" "}
+                <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+                  Total Control
                 </span>
               </h1>
               
-              <p className="text-xl text-muted-foreground">
-                Complete construction management platform designed for GCs. Manage projects, 
-                coordinate subs, track progress, and deliver on time and budget.
+              <p className="text-xl text-muted-foreground mb-8">
+                Professional construction management software built for GCs. Coordinate subs, 
+                track progress, manage documents, and get paid faster with automated invoicing 
+                and instant payment processing.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link to="/signup">
-                  <Button size="lg" className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700">
+                  <Button size="lg" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:opacity-90">
                     Start Free Trial
-                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link to="/pricing">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline">
                     View Pricing
                   </Button>
                 </Link>
               </div>
               
-              <div className="flex items-center gap-6 pt-4">
-                <div>
-                  <p className="text-2xl font-bold text-foreground">30%</p>
-                  <p className="text-sm text-muted-foreground">Time Saved</p>
+              <div className="flex items-center gap-8 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="text-2xl font-bold text-orange-500">2x</div>
+                  <div className="text-muted-foreground">Faster payments</div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">95%</p>
-                  <p className="text-sm text-muted-foreground">On-Time Delivery</p>
+                <div className="flex items-center gap-2">
+                  <div className="text-2xl font-bold text-orange-500">70%</div>
+                  <div className="text-muted-foreground">Time saved</div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">25%</p>
-                  <p className="text-sm text-muted-foreground">Profit Increase</p>
+                <div className="flex items-center gap-2">
+                  <div className="text-2xl font-bold text-orange-500">$0</div>
+                  <div className="text-muted-foreground">Setup costs</div>
                 </div>
               </div>
             </div>
             
             <div className="relative">
-              <Card className="p-6 bg-gradient-to-br from-orange-500/5 to-orange-600/5 border-orange-500/20">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Active Projects</h3>
-                    <span className="text-sm bg-green-500/10 text-green-600 px-2 py-1 rounded">Live</span>
+              <div className="rounded-lg bg-card border shadow-xl overflow-hidden">
+                <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-4">
+                  <div className="flex items-center gap-3 text-white">
+                    <Building className="h-5 w-5" />
+                    <span className="font-semibold">Project Dashboard</span>
                   </div>
-                  
-                  <div className="space-y-3">
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-medium text-sm">Office Complex - Phase 2</p>
-                          <p className="text-xs text-muted-foreground">12 subs • $2.4M budget</p>
-                        </div>
-                        <span className="text-xs text-green-600">68% Complete</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div className="bg-orange-600 h-2 rounded-full" style={{ width: '68%' }}></div>
-                      </div>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="text-sm">Office Complex - Phase 2</span>
+                      <span className="text-sm font-semibold text-green-500">65% Complete</span>
                     </div>
-                    
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-medium text-sm">Retail Renovation</p>
-                          <p className="text-xs text-muted-foreground">8 subs • $850K budget</p>
-                        </div>
-                        <span className="text-xs text-blue-600">45% Complete</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: '45%' }}></div>
-                      </div>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="text-sm">Retail Center Renovation</span>
+                      <span className="text-sm font-semibold text-yellow-500">32% Complete</span>
                     </div>
-                    
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-medium text-sm">Multi-Family Housing</p>
-                          <p className="text-xs text-muted-foreground">15 subs • $5.2M budget</p>
-                        </div>
-                        <span className="text-xs text-yellow-600">12% Complete</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '12%' }}></div>
-                      </div>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="text-sm">Medical Building</span>
+                      <span className="text-sm font-semibold text-blue-500">Planning</span>
                     </div>
                   </div>
-                  
-                  <div className="pt-3 border-t grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <p className="text-2xl font-bold text-orange-600">6</p>
-                      <p className="text-xs text-muted-foreground">Active</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">42</p>
-                      <p className="text-xs text-muted-foreground">Subs</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">$12M</p>
-                      <p className="text-xs text-muted-foreground">Pipeline</p>
+                  <div className="mt-6 pt-4 border-t">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Active Subs</span>
+                      <span className="font-semibold">24 Teams</span>
                     </div>
                   </div>
                 </div>
-              </Card>
-              
-              <div className="absolute -top-4 -right-4 bg-orange-500 text-white p-3 rounded-full">
-                <HardHat className="h-6 w-6" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Why General Contractors Choose FireBuild
+      {/* Why GCs Love Our Software */}
+      <section className="py-20 px-6 bg-muted/30">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            Why General Contractors Love Our Software
           </h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
-                <p className="text-sm">{benefit}</p>
+                <CheckCircle2 className="h-5 w-5 text-orange-500 mt-0.5 shrink-0" />
+                <span className="text-muted-foreground">{benefit}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* Complete Solution */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">
-              Complete Construction Management Suite
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Complete Construction Management for GCs
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to manage complex construction projects from start to finish.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Everything you need to manage complex projects, coordinate multiple trades, 
+              and ensure profitable project delivery.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-orange-500/10 rounded-lg">
-                    <feature.icon className="h-6 w-6 text-orange-500" />
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <Card key={index} className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                      <Icon className="h-6 w-6 text-orange-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Key Capabilities */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Key Capabilities for GCs
+      {/* Core Capabilities */}
+      <section className="py-20 px-6 bg-muted/30">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            Built for How GCs Work
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <Card className="p-6 text-center">
-              <Calendar className="h-12 w-12 mx-auto mb-4 text-orange-500" />
-              <h3 className="text-lg font-semibold mb-2">Master Scheduling</h3>
+              <div className="h-16 w-16 rounded-full bg-orange-500/10 flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="h-8 w-8 text-orange-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Project Profitability</h3>
               <p className="text-sm text-muted-foreground">
-                Coordinate all trades with master schedules and critical path management
+                Track costs, change orders, and margins in real-time
               </p>
             </Card>
             
             <Card className="p-6 text-center">
-              <DollarSign className="h-12 w-12 mx-auto mb-4 text-orange-500" />
-              <h3 className="text-lg font-semibold mb-2">Budget Control</h3>
+              <div className="h-16 w-16 rounded-full bg-orange-500/10 flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-orange-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Risk Management</h3>
               <p className="text-sm text-muted-foreground">
-                Track costs, manage change orders, and maintain profit margins
+                Insurance tracking, compliance monitoring, and safety docs
               </p>
             </Card>
             
             <Card className="p-6 text-center">
-              <Shield className="h-12 w-12 mx-auto mb-4 text-orange-500" />
-              <h3 className="text-lg font-semibold mb-2">Risk Management</h3>
+              <div className="h-16 w-16 rounded-full bg-orange-500/10 flex items-center justify-center mx-auto mb-4">
+                <Clock className="h-8 w-8 text-orange-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Time Tracking</h3>
               <p className="text-sm text-muted-foreground">
-                Ensure compliance, track insurance, and manage safety protocols
+                Monitor labor hours, equipment usage, and productivity
               </p>
             </Card>
           </div>
@@ -272,30 +243,31 @@ export const GeneralContractorsPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-orange-500/10 to-orange-600/10">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Transform Your Construction Business?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join thousands of general contractors who deliver projects on time and on budget with FireBuild.
-            Start your 30-day free trial today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
-              <Button size="lg" className="min-w-[200px] bg-orange-600 hover:bg-orange-700">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/">
-              <Button size="lg" variant="outline" className="min-w-[200px]">
-                Back to Industries
-              </Button>
-            </Link>
-          </div>
+      <section className="py-20 px-6">
+        <div className="container mx-auto">
+          <Card className="p-12 text-center bg-gradient-to-br from-orange-500/10 via-background to-background border-orange-500/20">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Start Managing Projects More Efficiently Today
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Join thousands of general contractors who save 10+ hours per week while 
+              getting paid 2x faster with no credit card required.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/signup">
+                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:opacity-90">
+                  Start Free Trial
+                </Button>
+              </Link>
+              <Link to="/features">
+                <Button size="lg" variant="outline">
+                  See All Features
+                </Button>
+              </Link>
+            </div>
+          </Card>
         </div>
       </section>
-    </div>
+    </MarketingLayout>
   );
-};
+}
