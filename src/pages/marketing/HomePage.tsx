@@ -19,7 +19,6 @@ import { Logo } from "@/components/Logo";
 export const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
-      <MobileAppBanner />
       <EmailCapturePopup />
       <NotificationPreferencesPopup />
       {/* Navigation Header */}
