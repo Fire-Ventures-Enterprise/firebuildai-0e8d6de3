@@ -5,9 +5,8 @@ import {
   Users, 
   BarChart3, 
   Smartphone,
-  Clock,
-  Shield,
-  Zap
+  Workflow,
+  FileSearch
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -61,23 +60,21 @@ const features = [
     bgColor: "bg-pink-500/10",
     href: "/features/mobile",
   },
-];
-
-const additionalFeatures = [
   {
-    icon: Clock,
-    title: "Time Tracking",
-    description: "Track hours by job and crew member",
+    icon: Workflow,
+    title: "Workflow Automation",
+    description: "Automate follow-ups, approvals, and repetitive tasks to save hours weekly.",
+    color: "text-teal-500",
+    bgColor: "bg-teal-500/10",
+    href: "/features/workflow",
   },
   {
-    icon: Shield,
-    title: "Document Storage",
-    description: "Store permits, photos, and contracts",
-  },
-  {
-    icon: Zap,
-    title: "QuickBooks Sync",
-    description: "Seamless accounting integration",
+    icon: FileSearch,
+    title: "Xactimate Integration",
+    description: "Import and manage Xactimate estimates for restoration contractors.",
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-500/10",
+    href: "/features/xactimate",
   },
 ];
 
@@ -95,8 +92,8 @@ export const FeaturesSection = () => {
           </p>
         </div>
 
-        {/* Main Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {/* Main Features Grid - All 8 Features */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
             <Link key={index} to={feature.href}>
               <Card className="p-6 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 bg-gradient-card border-border/50 cursor-pointer h-full">
@@ -112,24 +109,6 @@ export const FeaturesSection = () => {
               </Card>
             </Link>
           ))}
-        </div>
-
-        {/* Additional Features */}
-        <div className="border-t border-border pt-12">
-          <p className="text-center text-muted-foreground mb-8">Plus many more features:</p>
-          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {additionalFeatures.map((feature, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <div className="p-2 rounded-full bg-primary/10">
-                  <feature.icon className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-foreground">{feature.title}</h4>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

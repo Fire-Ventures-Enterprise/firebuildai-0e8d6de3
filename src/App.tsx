@@ -44,6 +44,8 @@ import { JobSchedulingPage } from "./pages/features/JobSchedulingPage";
 import { CrewManagementPage } from "./pages/features/CrewManagementPage";
 import { AnalyticsPage as FeaturesAnalyticsPage } from "./pages/features/AnalyticsPage";
 import { MobileAppPage } from "./pages/features/MobileAppPage";
+import { WorkflowAutomationPage as FeaturesWorkflowPage } from "./pages/features/WorkflowAutomationPage";
+import { XactimatePage as FeaturesXactimatePage } from "./pages/features/XactimatePage";
 
 // Public pages
 import HelpPage from "./pages/HelpPage";
@@ -190,6 +192,8 @@ const App = () => {
             <Route path="/features/crew" element={<CrewManagementPage />} />
             <Route path="/features/analytics" element={<FeaturesAnalyticsPage />} />
             <Route path="/features/mobile" element={<MobileAppPage />} />
+            <Route path="/features/workflow" element={<FeaturesWorkflowPage />} />
+            <Route path="/features/xactimate" element={<FeaturesXactimatePage />} />
             
             {/* Product Landing Pages - Coming Soon */}
             <Route path="/products/ai-scheduling" element={<AISchedulingPage />} />
