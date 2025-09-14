@@ -70,6 +70,9 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 
+// Feature pages (imported for LiDAR)
+import LiDARScanningPage from "./pages/features/LiDARScanningPage";
+
 // App pages
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
@@ -209,6 +212,7 @@ const App = () => {
             <Route path="/features/mobile" element={<MobileAppPage />} />
             <Route path="/features/workflow" element={<FeaturesWorkflowPage />} />
             <Route path="/features/xactimate" element={<FeaturesXactimatePage />} />
+            <Route path="/features/lidar-scanning" element={<LiDARScanningPage />} />
             
             {/* Trade Pages */}
             <Route path="/trades/general-contractors" element={<GeneralContractorsPage />} />
