@@ -57,6 +57,7 @@ import PaintersPage from "./pages/trades/PaintersPage";
 import LandscapersPage from "./pages/trades/LandscapersPage";
 import CarpentersPage from "./pages/trades/CarpentersPage";
 import HVACPage from "./pages/trades/HVACPage";
+import WindowsPage from "./pages/trades/WindowsPage";
 
 // Public pages
 import HelpPage from "./pages/HelpPage";
@@ -214,8 +215,9 @@ const App = () => {
             <Route path="/trades/roofers" element={<RoofersPage />} />
             <Route path="/trades/painters" element={<PaintersPage />} />
             <Route path="/trades/landscapers" element={<LandscapersPage />} />
-            <Route path="/trades/carpenters" element={<CarpentersPage />} />
-            <Route path="/trades/hvac" element={<HVACPage />} />
+        <Route path="/trades/carpenters" element={<CarpentersPage />} />
+        <Route path="/trades/hvac" element={<HVACPage />} />
+        <Route path="/trades/windows" element={<WindowsPage />} />
             
             {/* Product Landing Pages - Coming Soon */}
             <Route path="/products/ai-scheduling" element={<AISchedulingPage />} />

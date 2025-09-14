@@ -1,4 +1,4 @@
-import { HardHat, Zap, Droplets, Home, Paintbrush, Trees, Hammer, Wind } from "lucide-react";
+import { HardHat, Zap, Droplets, Home, Paintbrush, Trees, Hammer, Wind, Frame } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -74,6 +74,15 @@ const trades = [
     bgColor: "bg-cyan-500/10",
     borderColor: "border-cyan-500/30",
     description: "Schedule maintenance, track equipment, and manage service agreements."
+  },
+  { 
+    id: "windows", 
+    name: "Window Sales & Install", 
+    icon: Frame,
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-500/10",
+    borderColor: "border-indigo-500/30",
+    description: "Manage window replacements, custom orders, and installation schedules efficiently."
   }
 ];
 
