@@ -60,6 +60,7 @@ import HVACPage from "./pages/trades/HVACPage";
 import WindowsPage from "./pages/trades/WindowsPage";
 import FlooringPage from "./pages/trades/FlooringPage";
 import DrywallPage from "./pages/trades/DrywallPage";
+import RestorationPage from "./pages/trades/RestorationPage";
 
 // Public pages
 import HelpPage from "./pages/HelpPage";
@@ -232,6 +233,7 @@ const App = () => {
         <Route path="/trades/windows" element={<WindowsPage />} />
         <Route path="/trades/flooring" element={<FlooringPage />} />
         <Route path="/trades/drywall" element={<DrywallPage />} />
+        <Route path="/trades/restoration" element={<RestorationPage />} />
             
             {/* Product Landing Pages - Coming Soon */}
             <Route path="/products/ai-scheduling" element={<AISchedulingPage />} />
