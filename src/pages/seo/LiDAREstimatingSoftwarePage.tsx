@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import firebuildLidarImage from "@/assets/firebuild-lidar-scanning.png";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 import {
   Accordion,
   AccordionContent,
@@ -97,31 +98,7 @@ export default function LiDAREstimatingSoftwarePage() {
         {JSON.stringify(faqStructuredData)}
       </script>
 
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-        {/* Navigation */}
-        <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                  FireBuild.ai
-                </span>
-              </Link>
-              <div className="flex items-center gap-4">
-                <Link to="/features">
-                  <Button variant="ghost">Features</Button>
-                </Link>
-                <Link to="/pricing">
-                  <Button variant="ghost">Pricing</Button>
-                </Link>
-                <Link to="/login">
-                  <Button>Get Started</Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-
+      <MarketingLayout>
         {/* Hero Section */}
         <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto max-w-7xl">
@@ -611,64 +588,7 @@ export default function LiDAREstimatingSoftwarePage() {
             </Card>
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="border-t py-12 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto max-w-7xl">
-            <div className="grid md:grid-cols-4 gap-8">
-              <div className="space-y-4">
-                <Link to="/" className="flex items-center space-x-2">
-                  <span className="text-xl font-bold">FireBuild.ai</span>
-                </Link>
-                <p className="text-sm text-muted-foreground">
-                  The future of contractor estimating with LiDAR technology.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-semibold">Features</h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/features/estimates" className="text-muted-foreground hover:text-foreground">Estimates</Link></li>
-                  <li><Link to="/features/invoicing" className="text-muted-foreground hover:text-foreground">Invoicing</Link></li>
-                  <li><Link to="/features/scheduling" className="text-muted-foreground hover:text-foreground">Scheduling</Link></li>
-                  <li><Link to="/lidar-estimating-software" className="text-muted-foreground hover:text-foreground">LiDAR Scanning</Link></li>
-                </ul>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-semibold">Resources</h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/tutorials" className="text-muted-foreground hover:text-foreground">Tutorials</Link></li>
-                  <li><Link to="/blog" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
-                  <li><Link to="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
-                  <li><Link to="/api-docs" className="text-muted-foreground hover:text-foreground">API Docs</Link></li>
-                </ul>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-semibold">Company</h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/about" className="text-muted-foreground hover:text-foreground">About</Link></li>
-                  <li><Link to="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
-                  <li><Link to="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
-                  <li><Link to="/careers" className="text-muted-foreground hover:text-foreground">Careers</Link></li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="mt-8 pt-8 border-t flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="text-sm text-muted-foreground">
-                © 2024 FireBuild.ai. All rights reserved.
-              </div>
-              <div className="flex gap-6 text-sm">
-                <Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms</Link>
-                <Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link>
-                <Link to="/status" className="text-muted-foreground hover:text-foreground">Status</Link>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </div>
+      </MarketingLayout>
     </>
   );
 }
