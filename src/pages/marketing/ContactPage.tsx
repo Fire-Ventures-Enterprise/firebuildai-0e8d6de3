@@ -92,22 +92,15 @@ export const ContactPage = () => {
                   <div className="flex items-center gap-3">
                     <Mail className="h-5 w-5 text-primary" />
                     <div>
-                      <p className="font-medium">Email</p>
-                      <p className="text-muted-foreground">support@firebuildai.com</p>
+                      <p className="font-medium">General Inquiries</p>
+                      <p className="text-muted-foreground">info@firebuild.ai</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Phone className="h-5 w-5 text-primary" />
+                    <Mail className="h-5 w-5 text-primary" />
                     <div>
-                      <p className="font-medium">Phone</p>
-                      <p className="text-muted-foreground">1-800-FIREBUILD</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="font-medium">Office</p>
-                      <p className="text-muted-foreground">123 Construction Ave<br />New York, NY 10001</p>
+                      <p className="font-medium">Support</p>
+                      <p className="text-muted-foreground">support@firebuild.ai</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
