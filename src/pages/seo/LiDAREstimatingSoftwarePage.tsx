@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import lidarScanningImage from "@/assets/lidar-scanning-ipad.jpg";
 import {
   Accordion,
   AccordionContent,
@@ -154,27 +155,23 @@ export default function LiDAREstimatingSoftwarePage() {
                 </div>
               </div>
 
-              {/* Hero Visual Placeholder */}
+              {/* Hero Visual - LiDAR Scanning in Action */}
               <div className="relative">
-                <Card className="aspect-[4/3] bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center space-y-4 p-8">
-                      <div className="h-32 w-32 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                        <Scan className="h-16 w-16 text-primary" />
-                      </div>
-                      <p className="text-lg font-semibold">Contractor Scanning Room</p>
-                      <p className="text-sm text-muted-foreground">Measurements overlay on walls/roof</p>
-                      <div className="flex gap-2 justify-center flex-wrap">
-                        <div className="px-3 py-1 rounded-full bg-primary/10 text-xs font-medium">
-                          Wall: 12' 6"
-                        </div>
-                        <div className="px-3 py-1 rounded-full bg-primary/10 text-xs font-medium">
-                          Ceiling: 9' 2"
-                        </div>
-                        <div className="px-3 py-1 rounded-full bg-primary/10 text-xs font-medium">
-                          Area: 384 sq ft
-                        </div>
-                      </div>
+                <Card className="aspect-[4/3] overflow-hidden border-2 border-primary/20">
+                  <img 
+                    src={lidarScanningImage} 
+                    alt="LiDAR scanning through iPad showing room measurements"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm rounded-lg p-4 border border-primary/20">
+                    <h3 className="text-lg font-semibold mb-2">Real-Time Measurement</h3>
+                    <div className="flex gap-3 text-sm">
+                      <span className="px-3 py-1 bg-primary/10 rounded-full flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        Active Scan
+                      </span>
+                      <span className="px-3 py-1 bg-primary/10 rounded-full">Wall: 12' 6"</span>
+                      <span className="px-3 py-1 bg-primary/10 rounded-full">Area: 384 sq ft</span>
                     </div>
                   </div>
                 </Card>
