@@ -78,3 +78,11 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## 🔒 Future Features (Disabled)
+
+**LiDAR Material Calculator**  
+Spec stored in `/docs/lidar-calculator-spec.json`.  
+- Purpose: auto-generate drywall takeoff & cost using ARKit/ARCore scans.  
+- Status: **DISABLED** – Do not scaffold UI, DB, or APIs until explicitly enabled.  
+- Use as a reference only; formulas & BOM logic are ready when feature is activated.

@@ -1,0 +1,52 @@
+{
+  "feature": "LiDAR Material Calculator",
+  "status": "disabled",
+  "purpose": "Use smartphone/tablet LiDAR (ARKit/ARCore) to measure walls, ceilings, and bulkheads, then auto-generate material takeoff and cost estimate.",
+  "inputs": {
+    "walls": {
+      "perimeter_ft": "number",
+      "height_ft": "number"
+    },
+    "bulkheads": [
+      {
+        "drop_ft": "number",
+        "length_ft": "number"
+      }
+    ],
+    "openings": {
+      "doors_windows_ft2": "number"
+    },
+    "waste_factor": {
+      "default": 0.10,
+      "type": "percentage"
+    }
+  },
+  "formulas": {
+    "wall_area_ft2": "perimeter_ft * height_ft",
+    "bulkhead_area_ft2": "(drop_ft * length_ft) * 2",
+    "total_area_ft2": "wall_area_ft2 + bulkhead_area_ft2 - doors_windows_ft2",
+    "drywall_sheets": "ceil(total_area_ft2 / 32) * (1 + waste_factor)",
+    "screws_count": "drywall_sheets * 36",
+    "screws_lbs": "ceil(screws_count / 300)",
+    "tape_length_ft": "total_area_ft2 * 0.7",
+    "mud_gallons": "(total_area_ft2 / 100) * 1.5",
+    "corner_bead_lf": "sum(outside_corners)",
+    "inside_corners_lf": "sum(inside_corners)"
+  },
+  "outputs": {
+    "bill_of_materials": [
+      "drywall_sheets",
+      "screws_lbs",
+      "tape_length_ft",
+      "mud_gallons",
+      "corner_bead_lf",
+      "inside_corners_lf"
+    ],
+    "cost_estimate": "Apply local SKU pricing per item, round to sellable units."
+  },
+  "notes": [
+    "Keep disabled until explicitly enabled.",
+    "Do not scaffold UI, DB tables, or API endpoints during MVP.",
+    "Future UX flow: Scan room with LiDAR → auto-detect planes → confirm geometry → generate BOM & costs."
+  ]
+}
