@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import lidarScanningImage from "@/assets/lidar-scanning-ipad.jpg";
+import firebuildLidarImage from "@/assets/firebuild-lidar-scanning.png";
 import {
   Accordion,
   AccordionContent,
@@ -159,7 +159,7 @@ export default function LiDAREstimatingSoftwarePage() {
               <div className="relative">
                 <Card className="aspect-[4/3] overflow-hidden border-2 border-primary/20">
                   <img 
-                    src={lidarScanningImage} 
+                    src={firebuildLidarImage} 
                     alt="LiDAR scanning through iPad showing room measurements"
                     className="w-full h-full object-cover"
                   />
