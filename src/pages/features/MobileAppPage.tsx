@@ -285,4 +285,4 @@ export const MobileAppPage = () => {
       </div>
     </MarketingLayout>
   );
-};
+}

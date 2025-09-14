@@ -283,4 +283,4 @@ export const WorkflowAutomationPage = () => {
       </div>
     </MarketingLayout>
   );
-};
+}

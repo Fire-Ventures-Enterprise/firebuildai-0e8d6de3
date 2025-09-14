@@ -267,4 +267,4 @@ export const InvoicePaymentsPage = () => {
       </div>
     </MarketingLayout>
   );
-};
+}

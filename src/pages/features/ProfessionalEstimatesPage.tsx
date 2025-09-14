@@ -228,4 +228,4 @@ export const ProfessionalEstimatesPage = () => {
       </div>
     </MarketingLayout>
   );
-};
+}
