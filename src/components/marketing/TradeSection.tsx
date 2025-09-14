@@ -1,4 +1,4 @@
-import { HardHat, Zap, Droplets, Home, Paintbrush, Trees, Hammer, Wind, Frame } from "lucide-react";
+import { HardHat, Zap, Droplets, Home, Paintbrush, Trees, Hammer, Wind, Frame, Layers, Package } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -83,6 +83,24 @@ const trades = [
     bgColor: "bg-indigo-500/10",
     borderColor: "border-indigo-500/30",
     description: "Manage window replacements, custom orders, and installation schedules efficiently."
+  },
+  { 
+    id: "flooring", 
+    name: "Flooring", 
+    icon: Layers,
+    color: "text-teal-500",
+    bgColor: "bg-teal-500/10",
+    borderColor: "border-teal-500/30",
+    description: "Track flooring installations, material estimates, and finishing schedules."
+  },
+  { 
+    id: "drywall", 
+    name: "Drywall", 
+    icon: Package,
+    color: "text-slate-500",
+    bgColor: "bg-slate-500/10",
+    borderColor: "border-slate-500/30",
+    description: "Manage drywall installation, taping, finishing, and texture applications."
   }
 ];
 
