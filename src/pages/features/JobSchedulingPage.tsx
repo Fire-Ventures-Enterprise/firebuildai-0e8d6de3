@@ -17,6 +17,7 @@ import {
   Star
 } from "lucide-react";
 import { useEffect } from "react";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 
 export const JobSchedulingPage = () => {
   useEffect(() => {
@@ -539,6 +540,7 @@ export const JobSchedulingPage = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 };

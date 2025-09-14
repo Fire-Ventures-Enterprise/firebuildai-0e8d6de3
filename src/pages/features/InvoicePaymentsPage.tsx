@@ -13,6 +13,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useEffect } from "react";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 
 export const InvoicePaymentsPage = () => {
   useEffect(() => {
@@ -262,6 +263,7 @@ export const InvoicePaymentsPage = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 };

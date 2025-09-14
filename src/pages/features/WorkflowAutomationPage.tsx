@@ -16,6 +16,7 @@ import {
   Bell
 } from "lucide-react";
 import { useEffect } from "react";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 
 export const WorkflowAutomationPage = () => {
   useEffect(() => {
@@ -278,6 +279,7 @@ export const WorkflowAutomationPage = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 };

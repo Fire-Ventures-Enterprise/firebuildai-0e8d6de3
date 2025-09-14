@@ -19,6 +19,7 @@ import {
   Bell
 } from "lucide-react";
 import { useEffect } from "react";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 
 export const MobileAppPage = () => {
   useEffect(() => {
@@ -280,6 +281,7 @@ export const MobileAppPage = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 };
