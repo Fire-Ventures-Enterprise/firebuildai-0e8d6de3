@@ -10,7 +10,7 @@ import { NotificationPreferencesPopup } from "@/components/marketing/Notificatio
 import { MobileAppSection } from "@/components/marketing/MobileAppSection";
 import { ComingSoonSection } from "@/components/marketing/ComingSoonSection";
 import { MobileAppBanner } from "@/components/marketing/MobileAppBanner";
-import { TabbedTradeSection } from "@/components/marketing/TabbedTradeSection";
+import { TradeSection } from "@/components/marketing/TradeSection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu, Moon, Sun } from "lucide-react";
@@ -104,9 +104,9 @@ export const HomePage = () => {
         <FeaturesSection />
       </div>
       
-      {/* Trade Specific Section with Tabs */}
+      {/* Trade Specific Section */}
       <div id="trades">
-        <TabbedTradeSection />
+        <TradeSection />
       </div>
       
       {/* Testimonials */}
