@@ -1,26 +1,13 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { 
   UserPlus, 
   Users,
-  Search, 
-  Mail, 
-  Phone, 
-  MapPin,
-  FileText,
-  DollarSign,
-  Calendar
+  Search,
+  ChevronRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
@@ -40,6 +27,7 @@ interface Client {
 }
 
 export default function ClientsPage() {
+  const navigate = useNavigate();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -129,200 +117,38 @@ export default function ClientsPage() {
         </Button>
       </div>
 
-      {/* Metrics - Mobile responsive */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{clients.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Clients</CardTitle>
-            <UserPlus className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeClients}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
         <Input
-          placeholder="Search clients by name, email, or phone..."
+          placeholder="Search clients..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
         />
       </div>
 
-      {/* Clients - Mobile Card View */}
-      <div className="sm:hidden space-y-3">
-        {loading ? (
-          <Card className="p-4">
+      {/* Clients List - Simple Clickable Names */}
+      <Card>
+        <CardContent className="p-6">
+          {loading ? (
             <p className="text-center text-muted-foreground">Loading clients...</p>
-          </Card>
-        ) : filteredClients.length === 0 ? (
-          <Card className="p-4">
+          ) : filteredClients.length === 0 ? (
             <p className="text-center text-muted-foreground">No clients found</p>
-          </Card>
-        ) : (
-          filteredClients.map((client) => (
-            <Card key={client.id} className="p-4 space-y-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold text-lg">{client.name}</p>
-                  {client.address && (
-                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                      <MapPin className="w-3 h-3" />
-                      {client.address}
-                    </p>
-                  )}
+          ) : (
+            <div className="space-y-2">
+              {filteredClients.map((client) => (
+                <div
+                  key={client.id}
+                  onClick={() => navigate(`/app/customers/${client.id}`)}
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                >
+                  <span className="font-medium">{client.name}</span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </div>
-                <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
-                  {client.status}
-                </Badge>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-muted-foreground mb-1">Contact</p>
-                  <p className="flex items-center gap-1">
-                    <Mail className="w-3 h-3" />
-                    {client.email || '-'}
-                  </p>
-                  <p className="flex items-center gap-1 mt-1">
-                    <Phone className="w-3 h-3" />
-                    {client.phone || '-'}
-                  </p>
-                </div>
-                
-                <div>
-                  <p className="text-muted-foreground mb-1">Activity</p>
-                  <p className="flex items-center gap-1">
-                    <FileText className="w-3 h-3" />
-                    {client.job_count} jobs
-                  </p>
-                  <p className="flex items-center gap-1 mt-1">
-                    <DollarSign className="w-3 h-3" />
-                    ${client.total_revenue.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-              
-              {client.last_job_date && (
-                <div className="pt-2 border-t">
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    Last activity: {new Date(client.last_job_date).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
-            </Card>
-          ))
-        )}
-      </div>
-
-      {/* Clients Table - Desktop Only */}
-      <Card className="hidden sm:block">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Jobs</TableHead>
-                <TableHead>Revenue</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Activity</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    Loading clients...
-                  </TableCell>
-                </TableRow>
-              ) : filteredClients.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No clients found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredClients.map((client) => (
-                  <TableRow key={client.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{client.name}</p>
-                        {client.address && (
-                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                            <MapPin className="w-3 h-3" />
-                            {client.address}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <p className="text-sm flex items-center gap-1">
-                          <Mail className="w-3 h-3" />
-                          {client.email || '-'}
-                        </p>
-                        <p className="text-sm flex items-center gap-1">
-                          <Phone className="w-3 h-3" />
-                          {client.phone || '-'}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <FileText className="w-4 h-4 text-muted-foreground" />
-                        {client.job_count}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        {client.total_revenue.toLocaleString()}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
-                        {client.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {client.last_job_date ? (
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="w-3 h-3" />
-                          {new Date(client.last_job_date).toLocaleDateString()}
-                        </div>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 

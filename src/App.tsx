@@ -70,6 +70,7 @@ import FireBuildDashboard from "./pages/app/FireBuildDashboard";
 import MVPSettingsPage from "./pages/app/MVPSettingsPage";
 import TeamsPage from "./pages/app/TeamsPage";
 import ClientsPage from "./pages/app/ClientsPage";
+import CustomerDetailsPage from "./pages/app/CustomerDetailsPage";
 import SchedulingPage from "./pages/app/SchedulingPage";
 import JobsPage from "./pages/app/JobsPage";
 import JobDetailsPage from "./pages/app/JobDetailsPage";
@@ -336,6 +337,14 @@ const App = () => {
               <ProtectedRoute>
                 <MVPAppLayout>
                   <ClientsPage />
+                </MVPAppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/customers/:id" element={
+              <ProtectedRoute>
+                <MVPAppLayout>
+                  <CustomerDetailsPage />
                 </MVPAppLayout>
               </ProtectedRoute>
             } />
