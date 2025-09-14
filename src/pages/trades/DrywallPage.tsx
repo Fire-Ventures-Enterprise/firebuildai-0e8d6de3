@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Package, Calculator, Clock, DollarSign, Briefcase, Users, Smartphone, BarChart3, Zap, Shield } from "lucide-react";
+import { ArrowRight, Check, Package, Calculator, Clock, DollarSign, Briefcase, Users, Smartphone, BarChart3, Zap, Shield, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -44,29 +44,50 @@ export default function DrywallPage() {
               <div className="bg-card rounded-xl shadow-2xl p-8 border border-slate-500/20">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b">
-                    <h3 className="font-semibold">Quick Estimate Preview</h3>
-                    <DollarSign className="h-5 w-5 text-slate-500" />
+                    <h3 className="font-semibold">AI Material Calculator</h3>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-slate-500" />
+                      <Calculator className="h-5 w-5 text-slate-500" />
+                    </div>
                   </div>
-                  <div className="space-y-4">
+                  <div className="bg-muted/30 rounded-lg p-3 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Sparkles className="h-4 w-4 text-slate-500" />
+                      <span className="text-muted-foreground">AI analyzing project: 2,400 sq ft walls</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Project Type</span>
-                      <span className="font-semibold">Commercial</span>
+                      <span className="text-sm text-muted-foreground">Drywall Sheets (4x8)</span>
+                      <span className="font-semibold">87 sheets</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Wall Coverage</span>
-                      <span className="font-semibold">5,000 sq ft</span>
+                      <span className="text-sm text-muted-foreground">Joint Compound</span>
+                      <span className="font-semibold">15 buckets (5 gal)</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Finish Level</span>
-                      <span className="font-semibold">Level 4</span>
+                      <span className="text-sm text-muted-foreground">Paper Tape</span>
+                      <span className="font-semibold">8 rolls (500 ft)</span>
                     </div>
-                    <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">Estimate Range</span>
-                      <span className="text-xl font-bold text-slate-500">$15,000 - $22,000</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Corner Beads</span>
+                      <span className="font-semibold">42 pieces (8 ft)</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Drywall Screws</span>
+                      <span className="font-semibold">12 lbs (1¼")</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Mesh Tape</span>
+                      <span className="font-semibold">3 rolls (300 ft)</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-3 border-t">
+                      <span className="font-semibold">Total Material Cost</span>
+                      <span className="text-xl font-bold text-slate-500">$3,247</span>
                     </div>
                   </div>
                   <Button className="w-full bg-slate-500 hover:bg-slate-600 text-white">
-                    Create Professional Estimate
+                    Generate Complete List
                   </Button>
                 </div>
               </div>
