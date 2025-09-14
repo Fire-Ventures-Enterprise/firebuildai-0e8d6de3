@@ -44,29 +44,29 @@ export default function FlooringPage() {
               <div className="bg-card rounded-xl shadow-2xl p-8 border border-teal-500/20">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b">
-                    <h3 className="font-semibold">Material Calculator</h3>
-                    <Calculator className="h-5 w-5 text-teal-500" />
+                    <h3 className="font-semibold">Quick Estimate Preview</h3>
+                    <DollarSign className="h-5 w-5 text-teal-500" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Room Area</span>
-                      <span className="font-semibold">450 sq ft</span>
+                      <span className="text-muted-foreground">Project Type</span>
+                      <span className="font-semibold">Residential</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Material Type</span>
-                      <span className="font-semibold">Luxury Vinyl</span>
+                      <span className="text-muted-foreground">Area Coverage</span>
+                      <span className="font-semibold">2,500 sq ft</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Waste Factor</span>
-                      <span className="font-semibold">10%</span>
+                      <span className="text-muted-foreground">Timeline</span>
+                      <span className="font-semibold">3-5 days</span>
                     </div>
                     <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">Total Needed</span>
-                      <span className="text-xl font-bold text-teal-500">495 sq ft</span>
+                      <span className="font-semibold">Estimate Range</span>
+                      <span className="text-xl font-bold text-teal-500">$8,500 - $12,000</span>
                     </div>
                   </div>
                   <Button className="w-full bg-teal-500 hover:bg-teal-600 text-white">
-                    Generate Estimate
+                    Create Professional Estimate
                   </Button>
                 </div>
               </div>

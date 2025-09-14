@@ -44,29 +44,29 @@ export default function DrywallPage() {
               <div className="bg-card rounded-xl shadow-2xl p-8 border border-slate-500/20">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b">
-                    <h3 className="font-semibold">Drywall Calculator</h3>
-                    <Calculator className="h-5 w-5 text-slate-500" />
+                    <h3 className="font-semibold">Quick Estimate Preview</h3>
+                    <DollarSign className="h-5 w-5 text-slate-500" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Wall Area</span>
-                      <span className="font-semibold">2,400 sq ft</span>
+                      <span className="text-muted-foreground">Project Type</span>
+                      <span className="font-semibold">Commercial</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Sheet Size</span>
-                      <span className="font-semibold">4x8 ft</span>
+                      <span className="text-muted-foreground">Wall Coverage</span>
+                      <span className="font-semibold">5,000 sq ft</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Waste Factor</span>
-                      <span className="font-semibold">15%</span>
+                      <span className="text-muted-foreground">Finish Level</span>
+                      <span className="font-semibold">Level 4</span>
                     </div>
                     <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">Sheets Needed</span>
-                      <span className="text-xl font-bold text-slate-500">87 sheets</span>
+                      <span className="font-semibold">Estimate Range</span>
+                      <span className="text-xl font-bold text-slate-500">$15,000 - $22,000</span>
                     </div>
                   </div>
                   <Button className="w-full bg-slate-500 hover:bg-slate-600 text-white">
-                    Generate Material List
+                    Create Professional Estimate
                   </Button>
                 </div>
               </div>
