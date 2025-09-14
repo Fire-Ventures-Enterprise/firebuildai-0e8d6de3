@@ -8,9 +8,9 @@ import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 export const ContactPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className="min-h-screen bg-gradient-hero overflow-x-hidden">
       {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center justify-between">
             <Link to={R.home} className="text-2xl font-bold text-primary">
