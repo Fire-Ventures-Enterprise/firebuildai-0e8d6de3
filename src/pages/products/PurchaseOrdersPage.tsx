@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,67 +19,28 @@ import {
 import { Link } from "react-router-dom";
 
 export function PurchaseOrdersPage() {
-  useEffect(() => {
-    // SEO Meta Tags
-    document.title = "Purchase Order Software for Contractors | PO Management - FireBuildAI";
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Construction purchase order software that saves 30% on materials. Track POs, manage vendors, control costs. Automated approvals. Try free.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Construction purchase order software that saves 30% on materials. Track POs, manage vendors, control costs. Automated approvals. Try free.';
-      document.head.appendChild(meta);
-    }
-
-    // Open Graph Tags
-    const ogTags = [
-      { property: 'og:title', content: 'Purchase Order Management Software | FireBuildAI' },
-      { property: 'og:description', content: 'Save 30% on material costs. Automated PO approvals, vendor management, real-time tracking.' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: 'https://firebuild.ai/products/purchase-orders' }
-    ];
-
-    ogTags.forEach(tag => {
-      let element = document.querySelector(`meta[property="${tag.property}"]`);
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute('property', tag.property);
-        document.head.appendChild(element);
-      }
-      element.setAttribute('content', tag.content);
-    });
-
-    // Structured Data
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "FireBuildAI Purchase Order Management",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web, iOS, Android",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much can I save on material costs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most contractors save 30% on material costs by tracking spending patterns, comparing vendor prices, and eliminating duplicate orders."
+        }
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "reviewCount": "1923"
+      {
+        "@type": "Question",
+        "name": "How fast can I create a PO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Create purchase orders in 15 seconds with pre-filled vendor info and automatic calculations on any device."
+        }
       }
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(structuredData);
-    document.head.appendChild(script);
-
-    return () => {
-      const scriptTag = document.querySelector('script[type="application/ld+json"]');
-      if (scriptTag) scriptTag.remove();
-    };
-  }, []);
+    ]
+  };
 
   const stats = [
     { value: "30%", label: "Average cost savings" },
@@ -188,6 +148,12 @@ export function PurchaseOrdersPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Purchase Order Software for Contractors | PO Management"
+        description="Construction purchase order software that saves 30% on materials. Track POs, manage vendors, control costs. Try free."
+        canonicalUrl="https://firebuild.ai/products/purchase-orders"
+        jsonLd={faqSchema}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="absolute inset-0 bg-grid-white/5 bg-grid-pattern" />

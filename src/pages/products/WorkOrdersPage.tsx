@@ -233,7 +233,6 @@ export function WorkOrdersPage() {
       <SEOHead 
         title="Digital Work Orders (No Pricing) | Contractor Software"
         description="Digital work order software for contractors. Dispatch crews, track progress. No pricing shown to crew. Free trial."
-        keywords="digital work orders no pricing, contractor work order software, work order management, crew dispatch software"
         canonicalUrl="https://firebuild.ai/products/work-orders"
         jsonLd={faqSchema}
       />

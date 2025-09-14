@@ -159,7 +159,6 @@ export function EstimatesInvoicesPage() {
       <SEOHead 
         title="Contractor Estimating Software | Invoice App - FireBuild.AI"
         description="Best estimating software for contractors. Create estimates in 60 seconds, get paid 3x faster. Free 30-day trial."
-        keywords="contractor estimating software, estimate and invoice app for contractors, construction estimating software, contractor invoice software"
         canonicalUrl="https://firebuild.ai/products/estimates-invoices"
         jsonLd={faqSchema}
       />

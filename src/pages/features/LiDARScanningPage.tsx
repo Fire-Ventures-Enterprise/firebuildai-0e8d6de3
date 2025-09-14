@@ -41,7 +41,6 @@ export default function LiDARScanningPage() {
       <SEOHead 
         title="LiDAR Estimating Software | Construction Scanning - FireBuild.AI"
         description="LiDAR scanning for instant measurements. Create estimates 10x faster. Coming Q1 2025. Join waitlist for early access."
-        keywords="lidar estimating software, construction lidar scanning, lidar measurement app"
         canonicalUrl="https://firebuild.ai/features/lidar-scanning"
         jsonLd={faqSchema}
       />

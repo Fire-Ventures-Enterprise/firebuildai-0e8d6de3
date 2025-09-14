@@ -55,7 +55,6 @@ export const HomePage = () => {
       <SEOHead 
         title="FireBuild.AI - Contractor Estimating Software | Job Management"
         description="Professional contractor software for estimates, invoices & job management. Create estimates in 5 min. Start free 30-day trial."
-        keywords="contractor estimating software, contractor invoice software, contractor job management software, construction management platform"
         canonicalUrl="https://firebuild.ai"
         jsonLd={faqSchema}
       />
