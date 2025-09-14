@@ -1,4 +1,4 @@
-import { HardHat, Zap, Droplets, Home, Paintbrush, Trees, Hammer, Wind, Frame, Layers, Package } from "lucide-react";
+import { HardHat, Zap, Droplets, Home, Paintbrush, Trees, Hammer, Wind, Frame, Layers, Package, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -101,6 +101,15 @@ const trades = [
     bgColor: "bg-slate-500/10",
     borderColor: "border-slate-500/30",
     description: "Manage drywall installation, taping, finishing, and texture applications."
+  },
+  { 
+    id: "restoration", 
+    name: "Restoration Services", 
+    icon: Shield,
+    color: "text-red-600",
+    bgColor: "bg-red-600/10",
+    borderColor: "border-red-600/30",
+    description: "Emergency cleanup, water damage, fire restoration, and insurance claims management."
   }
 ];
 
