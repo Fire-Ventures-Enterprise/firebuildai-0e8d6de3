@@ -48,6 +48,16 @@ import { MobileAppPage } from "./pages/features/MobileAppPage";
 import { WorkflowAutomationPage as FeaturesWorkflowPage } from "./pages/features/WorkflowAutomationPage";
 import { XactimatePage as FeaturesXactimatePage } from "./pages/features/XactimatePage";
 
+// Trade pages
+import GeneralContractorsPage from "./pages/trades/GeneralContractorsPage";
+import ElectriciansPage from "./pages/trades/ElectriciansPage";
+import PlumbersPage from "./pages/trades/PlumbersPage";
+import RoofersPage from "./pages/trades/RoofersPage";
+import PaintersPage from "./pages/trades/PaintersPage";
+import LandscapersPage from "./pages/trades/LandscapersPage";
+import CarpentersPage from "./pages/trades/CarpentersPage";
+import HVACPage from "./pages/trades/HVACPage";
+
 // Public pages
 import HelpPage from "./pages/HelpPage";
 
@@ -196,6 +206,16 @@ const App = () => {
             <Route path="/features/mobile" element={<MobileAppPage />} />
             <Route path="/features/workflow" element={<FeaturesWorkflowPage />} />
             <Route path="/features/xactimate" element={<FeaturesXactimatePage />} />
+            
+            {/* Trade Pages */}
+            <Route path="/trades/general-contractors" element={<GeneralContractorsPage />} />
+            <Route path="/trades/electricians" element={<ElectriciansPage />} />
+            <Route path="/trades/plumbers" element={<PlumbersPage />} />
+            <Route path="/trades/roofers" element={<RoofersPage />} />
+            <Route path="/trades/painters" element={<PaintersPage />} />
+            <Route path="/trades/landscapers" element={<LandscapersPage />} />
+            <Route path="/trades/carpenters" element={<CarpentersPage />} />
+            <Route path="/trades/hvac" element={<HVACPage />} />
             
             {/* Product Landing Pages - Coming Soon */}
             <Route path="/products/ai-scheduling" element={<AISchedulingPage />} />

@@ -1,264 +1,241 @@
+import { useEffect } from "react";
+import { MarketingLayout } from "@/layouts/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { 
   Trees, 
-  Check, 
-  Calendar, 
-  MapPin, 
-  Truck, 
-  ArrowRight,
-  Leaf,
+  CheckCircle2, 
+  MapPin,
+  Calendar,
   Cloud,
-  Sun,
-  Flower,
-  Sprout,
-  Mountain
+  Truck,
+  Camera,
+  Leaf,
+  BarChart3,
+  Smartphone
 } from "lucide-react";
-import { useEffect } from "react";
 
-export const LandscapersPage = () => {
+export default function LandscapersPage() {
   useEffect(() => {
-    document.title = "Landscaping Business Software - Project Management | FireBuild.ai";
+    document.title = "Landscaping Software | FireBuild - Design, Schedule & Maintain";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Landscaping business software with seasonal scheduling, route optimization, and equipment tracking. Manage landscaping projects, maintenance contracts, and grow your business.');
+      metaDescription.setAttribute('content', 'Complete landscaping business software. Design projects, schedule maintenance, track seasonal work, manage crews, and get paid faster.');
     }
   }, []);
 
   const benefits = [
-    "Seasonal scheduling with automatic transitions",
-    "Route optimization for maintenance crews",
-    "Equipment tracking and maintenance schedules",
-    "Plant database with care instructions",
-    "Irrigation system management",
-    "Snow removal route planning",
-    "Chemical application tracking",
-    "Recurring maintenance contracts"
+    "Get paid 2x faster with online payments",
+    "Seasonal scheduling and route optimization",
+    "Design tools with plant databases",
+    "Maintenance contract management",
+    "Weather-based scheduling adjustments",
+    "Material and equipment tracking"
   ];
 
   const features = [
     {
-      icon: Calendar,
-      title: "Seasonal Scheduling",
-      description: "Automatically adjust schedules for spring cleanup, summer maintenance, fall cleanup, and winter services."
-    },
-    {
       icon: MapPin,
       title: "Route Optimization",
-      description: "Optimize daily routes for maintenance crews to minimize travel time and maximize efficiency."
-    },
-    {
-      icon: Truck,
-      title: "Equipment Tracking",
-      description: "Track mowers, trucks, and equipment with maintenance schedules and usage logs."
+      description: "Plan efficient routes for maintenance crews with GPS tracking and automated scheduling."
     },
     {
       icon: Leaf,
-      title: "Service Management",
-      description: "Manage lawn care, pruning, fertilization, and all seasonal landscaping services."
+      title: "Plant Database",
+      description: "Access comprehensive plant information, care requirements, and seasonal planning tools."
+    },
+    {
+      icon: Calendar,
+      title: "Seasonal Planning",
+      description: "Schedule spring cleanups, summer maintenance, fall preparations, and winter services."
+    },
+    {
+      icon: Cloud,
+      title: "Weather Integration",
+      description: "Automatic rescheduling based on weather conditions with customer notifications."
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <MarketingLayout>
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
+      <section className="relative py-20 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-background to-background" />
+        
+        <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full">
-                <Trees className="h-4 w-4 text-green-500" />
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-500 mb-6">
+                <Trees className="h-4 w-4" />
                 <span className="text-sm font-medium">Landscapers</span>
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-                Software for{" "}
-                <span className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent">
-                  Landscaping Businesses
+              <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                Grow Your Landscaping Business with{" "}
+                <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
+                  Smart Software
                 </span>
               </h1>
               
-              <p className="text-xl text-muted-foreground">
-                Complete landscaping business management with seasonal scheduling, route optimization, 
-                and equipment tracking. Grow your landscaping business efficiently.
+              <p className="text-xl text-muted-foreground mb-8">
+                Professional landscaping software for design, scheduling, and maintenance. 
+                Manage seasonal work, track crews, handle contracts, and get paid instantly 
+                with integrated payment processing.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link to="/signup">
-                  <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700">
+                  <Button size="lg" className="bg-gradient-to-r from-green-500 to-emerald-500 hover:opacity-90">
                     Start Free Trial
-                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link to="/pricing">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline">
                     View Pricing
                   </Button>
                 </Link>
               </div>
               
-              <div className="flex items-center gap-6 pt-4">
-                <div>
-                  <p className="text-2xl font-bold text-foreground">35%</p>
-                  <p className="text-sm text-muted-foreground">More Properties</p>
+              <div className="flex items-center gap-8 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="text-2xl font-bold text-green-500">2x</div>
+                  <div className="text-muted-foreground">Faster payments</div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">25%</p>
-                  <p className="text-sm text-muted-foreground">Less Drive Time</p>
+                <div className="flex items-center gap-2">
+                  <div className="text-2xl font-bold text-green-500">70%</div>
+                  <div className="text-muted-foreground">Time saved</div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">90%</p>
-                  <p className="text-sm text-muted-foreground">Customer Retention</p>
+                <div className="flex items-center gap-2">
+                  <div className="text-2xl font-bold text-green-500">$0</div>
+                  <div className="text-muted-foreground">Setup costs</div>
                 </div>
               </div>
             </div>
             
             <div className="relative">
-              <Card className="p-6 bg-gradient-to-br from-green-500/5 to-green-600/5 border-green-500/20">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Today's Routes</h3>
-                    <Sun className="h-4 w-4 text-yellow-500" />
+              <div className="rounded-lg bg-card border shadow-xl overflow-hidden">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-4">
+                  <div className="flex items-center gap-3 text-white">
+                    <Trees className="h-5 w-5" />
+                    <span className="font-semibold">Schedule Overview</span>
                   </div>
-                  
-                  <div className="space-y-3">
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-sm">Route A - Residential</span>
-                        <span className="text-xs bg-green-500/10 text-green-600 px-2 py-1 rounded">Active</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">12 properties • Mowing & trimming</p>
-                      <div className="mt-2 flex items-center gap-4">
-                        <span className="text-xs">Progress</span>
-                        <div className="flex-1 bg-muted rounded-full h-1.5">
-                          <div className="bg-green-600 h-1.5 rounded-full" style={{ width: '58%' }}></div>
-                        </div>
-                        <span className="text-xs">7/12</span>
-                      </div>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="text-sm">Weekly Lawn Maintenance</span>
+                      <span className="text-sm font-semibold text-green-500">8 Properties</span>
                     </div>
-                    
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-sm">Route B - Commercial</span>
-                        <span className="text-xs bg-blue-500/10 text-blue-600 px-2 py-1 rounded">Starting</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">6 properties • Full service</p>
-                      <p className="text-xs text-muted-foreground mt-1">Crew: Team 2 • ETA: 1:00 PM</p>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="text-sm">Garden Installation</span>
+                      <span className="text-sm font-semibold text-yellow-500">In Progress</span>
                     </div>
-                    
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-sm">Installation - Smith Residence</span>
-                        <span className="text-xs bg-yellow-500/10 text-yellow-600 px-2 py-1 rounded">PM</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">New landscape design • 3:00 PM start</p>
-                      <p className="text-xs text-green-600 mt-1">Materials delivered ✓</p>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="text-sm">Spring Cleanup</span>
+                      <span className="text-sm font-semibold text-blue-500">Scheduled</span>
                     </div>
                   </div>
-                  
-                  <div className="pt-3 border-t grid grid-cols-3 gap-2 text-center">
-                    <div>
-                      <p className="text-lg font-bold text-green-600">28</p>
-                      <p className="text-xs text-muted-foreground">Properties</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold">3</p>
-                      <p className="text-xs text-muted-foreground">Crews</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold">142mi</p>
-                      <p className="text-xs text-muted-foreground">Total Route</p>
+                  <div className="mt-6 pt-4 border-t">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Active Contracts</span>
+                      <span className="font-semibold">42 Clients</span>
                     </div>
                   </div>
                 </div>
-              </Card>
-              
-              <div className="absolute -top-4 -right-4 bg-green-500 text-white p-3 rounded-full">
-                <Trees className="h-6 w-6" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Built for Professional Landscapers
+      {/* Why Landscapers Love Our Software */}
+      <section className="py-20 px-6 bg-muted/30">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            Why Landscapers Love Our Software
           </h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
-                <p className="text-sm">{benefit}</p>
+                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                <span className="text-muted-foreground">{benefit}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* Complete Solution */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">
-              Landscaping-Specific Features
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Complete Landscaping Business Management
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Tools designed for lawn care, landscaping, and snow removal businesses.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Everything you need to design landscapes, schedule maintenance, 
+              manage seasonal work, and grow your landscaping business.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-green-500/10 rounded-lg">
-                    <feature.icon className="h-6 w-6 text-green-500" />
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <Card key={index} className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
+                      <Icon className="h-6 w-6 text-green-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Service Types */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            All Landscaping Services Supported
+      {/* Core Capabilities */}
+      <section className="py-20 px-6 bg-muted/30">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            Built for Landscaping Professionals
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <Card className="p-6 text-center">
-              <Sprout className="h-12 w-12 mx-auto mb-4 text-green-500" />
-              <h3 className="text-lg font-semibold mb-2">Lawn Care</h3>
+              <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+                <Truck className="h-8 w-8 text-green-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Crew Management</h3>
               <p className="text-sm text-muted-foreground">
-                Mowing, fertilization, aeration, and seasonal treatments
+                Track crew locations, equipment, and daily job assignments
               </p>
             </Card>
             
             <Card className="p-6 text-center">
-              <Flower className="h-12 w-12 mx-auto mb-4 text-green-500" />
-              <h3 className="text-lg font-semibold mb-2">Landscape Design</h3>
+              <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+                <Camera className="h-8 w-8 text-green-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Project Photos</h3>
               <p className="text-sm text-muted-foreground">
-                Installation, hardscaping, and irrigation systems
+                Document before/after transformations and seasonal changes
               </p>
             </Card>
             
             <Card className="p-6 text-center">
-              <Mountain className="h-12 w-12 mx-auto mb-4 text-green-500" />
-              <h3 className="text-lg font-semibold mb-2">Snow Removal</h3>
+              <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-8 w-8 text-green-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Business Analytics</h3>
               <p className="text-sm text-muted-foreground">
-                Commercial and residential snow plowing and salting
+                Track revenue by service type, season, and customer segments
               </p>
             </Card>
           </div>
@@ -266,30 +243,31 @@ export const LandscapersPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-green-500/10 to-green-600/10">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Grow Your Landscaping Business Today
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join landscapers who service 35% more properties with FireBuild.
-            Start your 30-day free trial today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
-              <Button size="lg" className="min-w-[200px] bg-green-600 hover:bg-green-700">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/">
-              <Button size="lg" variant="outline" className="min-w-[200px]">
-                Back to Industries
-              </Button>
-            </Link>
-          </div>
+      <section className="py-20 px-6">
+        <div className="container mx-auto">
+          <Card className="p-12 text-center bg-gradient-to-br from-green-500/10 via-background to-background border-green-500/20">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Start Growing Your Landscaping Business Today
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Join thousands of landscaping contractors who save 10+ hours per week while 
+              getting paid 2x faster with no credit card required.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/signup">
+                <Button size="lg" className="bg-gradient-to-r from-green-500 to-emerald-500 hover:opacity-90">
+                  Start Free Trial
+                </Button>
+              </Link>
+              <Link to="/features">
+                <Button size="lg" variant="outline">
+                  See All Features
+                </Button>
+              </Link>
+            </div>
+          </Card>
         </div>
       </section>
-    </div>
+    </MarketingLayout>
   );
-};
+}
