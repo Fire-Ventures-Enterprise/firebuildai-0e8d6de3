@@ -80,6 +80,9 @@ import DashboardHome from "./pages/dashboard/DashboardHome";
 import ProjectsPage from "./pages/dashboard/ProjectsPage";
 import ProjectDetailsPage from "./pages/dashboard/ProjectDetailsPage";
 import ProposalsPage from "./pages/dashboard/ProposalsPage";
+import ProjectsListPage from "./pages/dashboard/ProjectsListPage";
+import CreateProjectPage from "./pages/dashboard/CreateProjectPage";
+import ProjectDetailPage from "./pages/dashboard/ProjectDetailPage";
 
 // Feature pages (imported for LiDAR)
 import LiDARScanningPage from "./pages/features/LiDARScanningPage";

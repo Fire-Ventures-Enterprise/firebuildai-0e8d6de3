@@ -32,7 +32,7 @@ export default function ProjectsListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Fetch projects
+  // Fetch projects with related counts
   const { data: projects, isLoading, error } = useQuery({
     queryKey: ['projects', statusFilter],
     queryFn: async () => {
@@ -168,92 +168,65 @@ export default function ProjectsListPage() {
                   <TableHead>Location</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Budget</TableHead>
-                  <TableHead>Progress</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProjects.map((project) => {
-                  const estimatesCount = project.estimates?.[0]?.count || 0;
-                  const proposalsCount = project.proposals?.[0]?.count || 0;
-                  const invoicesCount = project.invoices_enhanced?.[0]?.count || 0;
-                  const workOrdersCount = project.work_orders?.[0]?.count || 0;
-                  
-                  return (
-                    <TableRow
-                      key={project.id}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => navigate(`/dashboard/projects/${project.id}`)}
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(project.status)}
-                          <div>
-                            <p className="font-medium">{project.name}</p>
-                            <p className="text-sm text-muted-foreground">{project.type}</p>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <p>{project.address}</p>
-                          <p className="text-muted-foreground">
-                            {project.city}, {project.province}
+                {filteredProjects.map((project) => (
+                  <TableRow
+                    key={project.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => navigate(`/dashboard/projects/${project.id}`)}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(project.status)}
+                        <div>
+                          <p className="font-medium">{project.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {project.project_type || 'General'}
                           </p>
                         </div>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(project.status)}</TableCell>
-                      <TableCell>
-                        {project.budget ? 
-                          `$${project.budget.toLocaleString()}` : 
-                          <span className="text-muted-foreground">TBD</span>
-                        }
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          {estimatesCount > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {estimatesCount} Est
-                            </Badge>
-                          )}
-                          {proposalsCount > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {proposalsCount} Prop
-                            </Badge>
-                          )}
-                          {invoicesCount > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {invoicesCount} Inv
-                            </Badge>
-                          )}
-                          {workOrdersCount > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {workOrdersCount} WO
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {format(new Date(project.created_at), 'MMM d, yyyy')}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/dashboard/projects/${project.id}`);
-                          }}
-                        >
-                          View
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <p>{project.address}</p>
+                        <p className="text-muted-foreground">
+                          {project.city && project.province ? 
+                            `${project.city}, ${project.province}` : 
+                            'Location TBD'
+                          }
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(project.status)}</TableCell>
+                    <TableCell>
+                      {project.budget || project.estimated_budget ? 
+                        `$${(project.budget || project.estimated_budget).toLocaleString()}` : 
+                        <span className="text-muted-foreground">TBD</span>
+                      }
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">
+                        {format(new Date(project.created_at), 'MMM d, yyyy')}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/dashboard/projects/${project.id}`);
+                        }}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>

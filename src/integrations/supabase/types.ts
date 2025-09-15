@@ -4826,42 +4826,57 @@ export type Database = {
       projects: {
         Row: {
           address: string
+          budget: number | null
+          city: string | null
           created_at: string | null
           description: string | null
           estimated_budget: number | null
           id: string
           name: string
           owner_id: string
+          postal_code: string | null
           project_type: string
+          province: string | null
           start_date: string | null
           status: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           address: string
+          budget?: number | null
+          city?: string | null
           created_at?: string | null
           description?: string | null
           estimated_budget?: number | null
           id?: string
           name: string
           owner_id: string
+          postal_code?: string | null
           project_type: string
+          province?: string | null
           start_date?: string | null
           status?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           address?: string
+          budget?: number | null
+          city?: string | null
           created_at?: string | null
           description?: string | null
           estimated_budget?: number | null
           id?: string
           name?: string
           owner_id?: string
+          postal_code?: string | null
           project_type?: string
+          province?: string | null
           start_date?: string | null
           status?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
