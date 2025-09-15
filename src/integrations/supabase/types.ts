@@ -6823,6 +6823,34 @@ export type Database = {
     }
     Enums: {
       chat_role: "member" | "manager" | "owner"
+      estimate_status:
+        | "draft"
+        | "sent"
+        | "viewed"
+        | "accepted"
+        | "declined"
+        | "expired"
+      invoice_status: "draft" | "sent" | "partial" | "paid" | "overdue"
+      payment_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "refunded"
+      project_status:
+        | "planning"
+        | "active"
+        | "on_hold"
+        | "completed"
+        | "cancelled"
+      proposal_status: "draft" | "sent" | "viewed" | "signed" | "expired"
+      user_role: "project_owner" | "contractor" | "subcontractor"
+      work_order_status:
+        | "pending"
+        | "assigned"
+        | "in_progress"
+        | "completed"
+        | "verified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -6951,6 +6979,38 @@ export const Constants = {
   public: {
     Enums: {
       chat_role: ["member", "manager", "owner"],
+      estimate_status: [
+        "draft",
+        "sent",
+        "viewed",
+        "accepted",
+        "declined",
+        "expired",
+      ],
+      invoice_status: ["draft", "sent", "partial", "paid", "overdue"],
+      payment_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "refunded",
+      ],
+      project_status: [
+        "planning",
+        "active",
+        "on_hold",
+        "completed",
+        "cancelled",
+      ],
+      proposal_status: ["draft", "sent", "viewed", "signed", "expired"],
+      user_role: ["project_owner", "contractor", "subcontractor"],
+      work_order_status: [
+        "pending",
+        "assigned",
+        "in_progress",
+        "completed",
+        "verified",
+      ],
     },
   },
 } as const
