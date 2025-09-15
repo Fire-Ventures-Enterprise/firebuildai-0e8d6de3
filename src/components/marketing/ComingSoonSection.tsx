@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sparkles, BrainCircuit, FileSearch, BarChart3, Workflow, ArrowRight, Scan } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export function ComingSoonSection() {
   const navigate = useNavigate();
