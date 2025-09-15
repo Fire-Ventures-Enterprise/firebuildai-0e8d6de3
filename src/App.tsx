@@ -432,49 +432,49 @@ const App = () => {
             
             <Route path="/app/invoices" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <InvoicesPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/invoices/:id" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <InvoiceDetailPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/client-portal" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ClientPortalPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/company-setup" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <CompanySetupPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/company" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <CompanySetupPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/teams" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <TeamsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
@@ -488,9 +488,9 @@ const App = () => {
             
             <Route path="/app/workflow" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <WorkflowDashboardPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
@@ -504,17 +504,17 @@ const App = () => {
             
             <Route path="/app/jobs/:jobId" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <JobDetailsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/jobs/create" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <CreateJobPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
@@ -536,49 +536,49 @@ const App = () => {
             
             <Route path="/app/purchase-orders" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <PurchaseOrdersPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/purchase-orders/create" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <CreatePurchaseOrderPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/contractors/tracking" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ContractorTrackingPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/contractors/settings" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ContractorSettingsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/work-orders" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <WorkOrdersListPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/work-orders/:id" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <WorkOrderDetailPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
@@ -586,140 +586,140 @@ const App = () => {
             
             <Route path="/app/workflow-sequencing" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <WorkflowSequencingPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/workflow-test" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <WorkflowTestPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/contractor-settings" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ContractorSettingsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/finance/expenses" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ExpensesPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/expenses/new" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ExpensesNewPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/fleet" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <FleetPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/finance/vendors" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <VendorsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/analytics" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <AnalyticsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/job-performance" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <JobPerformancePage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/team-performance" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <TeamPerformancePage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/client-reports" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <ClientReportsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/clients/messages" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <div className="p-8">
                     <h1 className="text-3xl font-bold">Client Messages</h1>
                     <p className="text-muted-foreground mt-2">Client messaging system coming soon...</p>
                   </div>
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/communication" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <CommunicationPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/financial-analytics" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <FinancialAnalyticsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/banking-settings" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <BankingSettingsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/xactimate" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <XactimatePage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/app/settings" element={
               <ProtectedRoute>
-                <AppLayout>
+                <MVPAppLayout>
                   <SettingsPage />
-                </AppLayout>
+                </MVPAppLayout>
               </ProtectedRoute>
             } />
             
