@@ -4458,6 +4458,192 @@ export type Database = {
           },
         ]
       }
+      project_estimates: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          estimate_number: string | null
+          id: string
+          markup_percentage: number | null
+          notes: string | null
+          project_id: string
+          status: Database["public"]["Enums"]["estimate_status"] | null
+          subtotal: number | null
+          tax_amount: number | null
+          tax_rate: number | null
+          total_amount: number | null
+          total_labor: number | null
+          total_materials: number | null
+          updated_at: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          estimate_number?: string | null
+          id?: string
+          markup_percentage?: number | null
+          notes?: string | null
+          project_id: string
+          status?: Database["public"]["Enums"]["estimate_status"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total_amount?: number | null
+          total_labor?: number | null
+          total_materials?: number | null
+          updated_at?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          estimate_number?: string | null
+          id?: string
+          markup_percentage?: number | null
+          notes?: string | null
+          project_id?: string
+          status?: Database["public"]["Enums"]["estimate_status"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total_amount?: number | null
+          total_labor?: number | null
+          total_materials?: number | null
+          updated_at?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_estimates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_estimates_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_invoices: {
+        Row: {
+          balance_due: number | null
+          created_at: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string | null
+          notes: string | null
+          paid_amount: number | null
+          payment_terms: string | null
+          project_id: string
+          proposal_id: string | null
+          status: Database["public"]["Enums"]["invoice_status"] | null
+          subtotal: number | null
+          tax_amount: number | null
+          total_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          balance_due?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          notes?: string | null
+          paid_amount?: number | null
+          payment_terms?: string | null
+          project_id: string
+          proposal_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          balance_due?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          notes?: string | null
+          paid_amount?: number | null
+          payment_terms?: string | null
+          project_id?: string
+          proposal_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_proposal_id"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_invoices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_messages: {
+        Row: {
+          attachments: Json | null
+          content: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          project_id: string
+          sender_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          content: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          project_id: string
+          sender_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          project_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_notes: {
         Row: {
           attachments: Json | null
@@ -5946,6 +6132,92 @@ export type Database = {
           {
             foreignKeyName: "work_orders_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_orders_mvp: {
+        Row: {
+          assigned_to: string | null
+          completion_notes: string | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          invoice_id: string | null
+          materials_list: Json | null
+          order_number: string | null
+          progress_percentage: number | null
+          project_id: string
+          scope_description: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["work_order_status"] | null
+          updated_at: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          materials_list?: Json | null
+          order_number?: string | null
+          progress_percentage?: number | null
+          project_id: string
+          scope_description: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["work_order_status"] | null
+          updated_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          materials_list?: Json | null
+          order_number?: string | null
+          progress_percentage?: number | null
+          project_id?: string
+          scope_description?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["work_order_status"] | null
+          updated_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_orders_mvp_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_mvp_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "project_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_mvp_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_mvp_verified_by_fkey"
+            columns: ["verified_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

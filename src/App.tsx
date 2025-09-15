@@ -70,6 +70,14 @@ import { SignUpPage } from "./pages/auth/SignUpPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
+import AuthPage from "./pages/auth/AuthPage";
+
+// MVP Dashboard
+import { MVPAuthProvider } from "./contexts/MVPAuthContext";
+import { ProtectedRoute as MVPProtectedRoute } from "./components/auth/ProtectedRoute";
+import MVPDashboardLayout from "./layouts/MVPDashboardLayout";
+import DashboardHome from "./pages/dashboard/DashboardHome";
+import ProjectsPage from "./pages/dashboard/ProjectsPage";
 
 // Feature pages (imported for LiDAR)
 import LiDARScanningPage from "./pages/features/LiDARScanningPage";
@@ -247,6 +255,30 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/auth/company-setup" element={<CompanyProfileSetup />} />
+            
+            {/* MVP Dashboard Auth */}
+            <Route path="/auth" element={<AuthPage />} />
+            
+            {/* MVP Dashboard Routes - Protected */}
+            <Route path="/dashboard" element={
+              <MVPAuthProvider>
+                <ProtectedRoute>
+                  <MVPDashboardLayout>
+                    <DashboardHome />
+                  </MVPDashboardLayout>
+                </ProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/projects" element={
+              <MVPAuthProvider>
+                <ProtectedRoute>
+                  <MVPDashboardLayout>
+                    <ProjectsPage />
+                  </MVPDashboardLayout>
+                </ProtectedRoute>
+              </MVPAuthProvider>
+            } />
             
             {/* Portal Routes - Public */}
             <Route path="/open/estimate/:token" element={<EstimateOpenPage />} />
