@@ -276,7 +276,17 @@ const App = () => {
               <MVPAuthProvider>
                 <MVPProtectedRoute>
                   <MVPDashboardLayout>
-                    <ProjectsPage />
+                    <ProjectsListPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/projects/new" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <CreateProjectPage />
                   </MVPDashboardLayout>
                 </MVPProtectedRoute>
               </MVPAuthProvider>
@@ -286,7 +296,67 @@ const App = () => {
               <MVPAuthProvider>
                 <MVPProtectedRoute>
                   <MVPDashboardLayout>
-                    <ProjectDetailsPage />
+                    <ProjectDetailPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/estimates" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <EstimatesPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/estimates/new" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <EstimatesPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/invoices" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <InvoicesPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/invoices/new" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <InvoicesPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/work-orders" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <WorkOrdersListPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/work-orders/new" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <WorkOrdersListPage />
                   </MVPDashboardLayout>
                 </MVPProtectedRoute>
               </MVPAuthProvider>

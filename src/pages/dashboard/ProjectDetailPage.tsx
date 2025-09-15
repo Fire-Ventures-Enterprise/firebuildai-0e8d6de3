@@ -41,6 +41,7 @@ export default function ProjectDetailPage() {
   const { data: estimates = [] } = useQuery({
     queryKey: ['project-estimates', id],
     queryFn: async () => {
+      if (!id) return [];
       const { data, error } = await supabase
         .from('estimates')
         .select('*')
@@ -57,6 +58,7 @@ export default function ProjectDetailPage() {
   const { data: proposals = [] } = useQuery({
     queryKey: ['project-proposals', id],
     queryFn: async () => {
+      if (!id) return [];
       const { data, error } = await supabase
         .from('proposals')
         .select('*')
@@ -73,6 +75,7 @@ export default function ProjectDetailPage() {
   const { data: invoices = [] } = useQuery({
     queryKey: ['project-invoices', id],
     queryFn: async () => {
+      if (!id) return [];
       const { data, error } = await supabase
         .from('invoices_enhanced')
         .select('*')
@@ -89,6 +92,7 @@ export default function ProjectDetailPage() {
   const { data: workOrders = [] } = useQuery({
     queryKey: ['project-work-orders', id],
     queryFn: async () => {
+      if (!id) return [];
       const { data, error } = await supabase
         .from('work_orders')
         .select('*')
@@ -208,7 +212,7 @@ export default function ProjectDetailPage() {
           <div className="flex flex-wrap gap-2">
             {estimates.length === 0 && (
               <Button 
-                onClick={() => navigate(`/app/estimates?project=${id}`)}
+                onClick={() => navigate(`/dashboard/estimates/new?project=${id}`)}
                 className="gap-2"
               >
                 <FileText className="h-4 w-4" />
@@ -226,7 +230,7 @@ export default function ProjectDetailPage() {
             )}
             {proposals.some((p: any) => p.accepted_at) && invoices.length === 0 && (
               <Button 
-                onClick={() => navigate(`/app/invoices?project=${id}`)}
+                onClick={() => navigate(`/dashboard/invoices/new?project=${id}`)}
                 className="gap-2"
               >
                 <FileCheck className="h-4 w-4" />
@@ -235,7 +239,7 @@ export default function ProjectDetailPage() {
             )}
             {invoices.length > 0 && workOrders.length === 0 && (
               <Button 
-                onClick={() => navigate(`/app/work-orders?project=${id}`)}
+                onClick={() => navigate(`/dashboard/work-orders/new?project=${id}`)}
                 className="gap-2"
               >
                 <ClipboardList className="h-4 w-4" />
@@ -315,7 +319,7 @@ export default function ProjectDetailPage() {
                 <CardDescription>Manage project estimates</CardDescription>
               </div>
               <Button 
-                onClick={() => navigate(`/app/estimates?project=${id}`)}
+                onClick={() => navigate(`/dashboard/estimates/new?project=${id}`)}
                 size="sm"
                 className="gap-2"
               >
@@ -330,11 +334,11 @@ export default function ProjectDetailPage() {
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {estimates.map((estimate) => (
+                  {estimates.map((estimate: any) => (
                     <div 
                       key={estimate.id}
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => navigate(`/app/estimates/${estimate.id}`)}
+                      onClick={() => navigate(`/dashboard/estimates/${estimate.id}`)}
                     >
                       <div>
                         <p className="font-medium">{estimate.estimate_number}</p>
@@ -378,7 +382,7 @@ export default function ProjectDetailPage() {
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {proposals.map((proposal) => (
+                  {proposals.map((proposal: any) => (
                     <div 
                       key={proposal.id}
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50"
@@ -386,7 +390,7 @@ export default function ProjectDetailPage() {
                       <div>
                         <p className="font-medium">Proposal #{proposal.id.slice(0, 8)}</p>
                         <p className="text-sm text-muted-foreground">
-                          {proposal.status} • Expires {proposal.expires_at ? format(new Date(proposal.expires_at), 'MMM d, yyyy') : 'N/A'}
+                          {proposal.status} • Expires {proposal.expires_at || proposal.expiration_date ? format(new Date(proposal.expires_at || proposal.expiration_date), 'MMM d, yyyy') : 'N/A'}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -413,7 +417,7 @@ export default function ProjectDetailPage() {
                 <CardDescription>Manage project invoices</CardDescription>
               </div>
               <Button 
-                onClick={() => navigate(`/app/invoices?project=${id}`)}
+                onClick={() => navigate(`/dashboard/invoices/new?project=${id}`)}
                 size="sm"
                 className="gap-2"
               >
@@ -428,11 +432,11 @@ export default function ProjectDetailPage() {
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {invoices.map((invoice) => (
+                  {invoices.map((invoice: any) => (
                     <div 
                       key={invoice.id}
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => navigate(`/app/invoices/${invoice.id}`)}
+                      onClick={() => navigate(`/dashboard/invoices/${invoice.id}`)}
                     >
                       <div>
                         <p className="font-medium">{invoice.invoice_number}</p>
@@ -459,7 +463,7 @@ export default function ProjectDetailPage() {
                 <CardDescription>Manage work assignments</CardDescription>
               </div>
               <Button 
-                onClick={() => navigate(`/app/work-orders?project=${id}`)}
+                onClick={() => navigate(`/dashboard/work-orders/new?project=${id}`)}
                 size="sm"
                 className="gap-2"
               >
@@ -478,7 +482,7 @@ export default function ProjectDetailPage() {
                     <div 
                       key={order.id}
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => navigate(`/app/work-orders/${order.id}`)}
+                      onClick={() => navigate(`/dashboard/work-orders/${order.id}`)}
                     >
                       <div>
                         <p className="font-medium">{order.title}</p>
