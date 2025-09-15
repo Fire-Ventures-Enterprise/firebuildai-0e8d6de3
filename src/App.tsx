@@ -98,6 +98,7 @@ import { InvoicesPage } from "./pages/app/InvoicesPage";
 import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
 import ClientPortalPage from "./pages/app/ClientPortalPage";
 import CompanySetupPage from "./pages/app/CompanySetupPage";
+import CalendarPage from "./pages/app/CalendarPage";
 import CompanyProfileSetup from "./pages/auth/CompanyProfileSetup";
 import FireBuildDashboard from "./pages/app/FireBuildDashboard";
 import MVPSettingsPage from "./pages/app/MVPSettingsPage";
@@ -409,6 +410,14 @@ const App = () => {
               <ProtectedRoute>
                 <MVPAppLayout>
                   <CreateProjectPage />
+                </MVPAppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/calendar" element={
+              <ProtectedRoute>
+                <MVPAppLayout>
+                  <CalendarPage />
                 </MVPAppLayout>
               </ProtectedRoute>
             } />

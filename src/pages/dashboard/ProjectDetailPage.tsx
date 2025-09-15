@@ -33,31 +33,35 @@ export default function ProjectDetailPage() {
       setLoading(true);
       try {
         // Fetch project
-        const { data: projectData, error: projectError } = await supabase
+        const projectResult = await supabase
           .from('projects')
           .select('*')
           .eq('id', id)
           .single();
         
-        if (projectError) throw projectError;
-        setProject(projectData);
+        if (projectResult.error) throw projectResult.error;
+        setProject(projectResult.data);
 
-        // Fetch related data - simplified queries to avoid TypeScript issues
-        try {
-          const [estimatesRes, proposalsRes, invoicesRes, workOrdersRes] = await Promise.all([
-            supabase.from('estimates').select('*').eq('project_id', id),
-            supabase.from('proposals').select('*').eq('project_id', id),
-            supabase.from('invoices_enhanced').select('*').eq('project_id', id),
-            supabase.from('work_orders').select('*').eq('project_id', id)
-          ]);
-          
-          setEstimates(estimatesRes.data || []);
-          setProposals(proposalsRes.data || []);
-          setInvoices(invoicesRes.data || []);
-          setWorkOrders(workOrdersRes.data || []);
-        } catch (err) {
-          console.error('Error fetching related data:', err);
-        }
+        // Use direct REST API calls to avoid TypeScript issues
+        const session = await supabase.auth.getSession();
+        const token = session.data.session?.access_token || '';
+        
+        const headers = {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12cnh3a3lpbGhiaGJhb3hmdnlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5OTY0MTYsImV4cCI6MjA3MTU3MjQxNn0.Ohw0P7MLTdgpjzWAweBwIMtifi4A1EIeubHem9qZEo8',
+          'Authorization': `Bearer ${token}`
+        };
+
+        const [estRes, propRes, invRes, woRes] = await Promise.all([
+          fetch(`https://mvrxwkyilhbhbaoxfvyp.supabase.co/rest/v1/estimates?project_id=eq.${id}`, { headers }),
+          fetch(`https://mvrxwkyilhbhbaoxfvyp.supabase.co/rest/v1/proposals?project_id=eq.${id}`, { headers }),
+          fetch(`https://mvrxwkyilhbhbaoxfvyp.supabase.co/rest/v1/invoices_enhanced?project_id=eq.${id}`, { headers }),
+          fetch(`https://mvrxwkyilhbhbaoxfvyp.supabase.co/rest/v1/work_orders?project_id=eq.${id}`, { headers })
+        ]);
+        
+        setEstimates(await estRes.json() || []);
+        setProposals(await propRes.json() || []);
+        setInvoices(invoicesData.data || []);
+        setWorkOrders(workOrdersData.data || []);
 
       } catch (error) {
         console.error('Error fetching data:', error);
