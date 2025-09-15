@@ -155,6 +155,7 @@ Example:
               onClick={handleParse}
               disabled={!inputText || isProcessing}
               className="flex items-center gap-2"
+              type="button"
             >
               <Wand2 className={cn("h-4 w-4", isProcessing && "animate-spin")} />
               {isProcessing ? 'Processing...' : 'Parse Estimate'}
@@ -162,7 +163,11 @@ Example:
             
             <Button
               variant="outline"
-              onClick={() => setInputText(exampleText)}
+              onClick={() => {
+                console.log('Loading example text...');
+                setInputText(exampleText);
+              }}
+              type="button"
             >
               Load Example
             </Button>
@@ -175,6 +180,7 @@ Example:
                 setSuggestions([]);
                 setShowPreview(false);
               }}
+              type="button"
             >
               Clear
             </Button>
