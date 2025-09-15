@@ -78,6 +78,7 @@ import { ProtectedRoute as MVPProtectedRoute } from "./components/auth/Protected
 import MVPDashboardLayout from "./layouts/MVPDashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import ProjectsPage from "./pages/dashboard/ProjectsPage";
+import ProjectDetailsPage from "./pages/dashboard/ProjectDetailsPage";
 
 // Feature pages (imported for LiDAR)
 import LiDARScanningPage from "./pages/features/LiDARScanningPage";
@@ -272,6 +273,16 @@ const App = () => {
                 <MVPProtectedRoute>
                   <MVPDashboardLayout>
                     <ProjectsPage />
+                  </MVPDashboardLayout>
+                </MVPProtectedRoute>
+              </MVPAuthProvider>
+            } />
+            
+            <Route path="/dashboard/projects/:id" element={
+              <MVPAuthProvider>
+                <MVPProtectedRoute>
+                  <MVPDashboardLayout>
+                    <ProjectDetailsPage />
                   </MVPDashboardLayout>
                 </MVPProtectedRoute>
               </MVPAuthProvider>
