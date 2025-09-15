@@ -405,6 +405,14 @@ const App = () => {
               </ProtectedRoute>
             } />
             
+            <Route path="/app/estimates/new" element={
+              <ProtectedRoute>
+                <MVPAppLayout>
+                  <CreateProjectPage />
+                </MVPAppLayout>
+              </ProtectedRoute>
+            } />
+            
             <Route path="/app/settings-mvp" element={
               <ProtectedRoute>
                 <MVPAppLayout>

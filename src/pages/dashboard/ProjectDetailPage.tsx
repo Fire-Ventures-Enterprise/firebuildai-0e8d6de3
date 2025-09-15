@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -20,92 +19,62 @@ export default function ProjectDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [project, setProject] = useState<any>(null);
+  const [estimates, setEstimates] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [workOrders, setWorkOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch project details
-  const { data: project, isLoading: projectLoading } = useQuery({
-    queryKey: ['project', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('id', id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!id,
-  });
+  useEffect(() => {
+    if (!id) return;
 
-  // Fetch estimates
-  const { data: estimates = [] } = useQuery({
-    queryKey: ['project-estimates', id],
-    queryFn: async () => {
-      if (!id) return [];
-      const { data, error } = await supabase
-        .from('estimates')
-        .select('*')
-        .eq('project_id', id)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!id,
-  });
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch project
+        const { data: projectData, error: projectError } = await supabase
+          .from('projects')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (projectError) throw projectError;
+        setProject(projectData);
 
-  // Fetch proposals
-  const { data: proposals = [] } = useQuery({
-    queryKey: ['project-proposals', id],
-    queryFn: async () => {
-      if (!id) return [];
-      const { data, error } = await supabase
-        .from('proposals')
-        .select('*')
-        .eq('project_id', id)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!id,
-  });
+        // Fetch related data - simplified queries to avoid TypeScript issues
+        try {
+          const [estimatesRes, proposalsRes, invoicesRes, workOrdersRes] = await Promise.all([
+            supabase.from('estimates').select('*').eq('project_id', id),
+            supabase.from('proposals').select('*').eq('project_id', id),
+            supabase.from('invoices_enhanced').select('*').eq('project_id', id),
+            supabase.from('work_orders').select('*').eq('project_id', id)
+          ]);
+          
+          setEstimates(estimatesRes.data || []);
+          setProposals(proposalsRes.data || []);
+          setInvoices(invoicesRes.data || []);
+          setWorkOrders(workOrdersRes.data || []);
+        } catch (err) {
+          console.error('Error fetching related data:', err);
+        }
 
-  // Fetch invoices
-  const { data: invoices = [] } = useQuery({
-    queryKey: ['project-invoices', id],
-    queryFn: async () => {
-      if (!id) return [];
-      const { data, error } = await supabase
-        .from('invoices_enhanced')
-        .select('*')
-        .eq('project_id', id)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!id,
-  });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load project details",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Fetch work orders
-  const { data: workOrders = [] } = useQuery({
-    queryKey: ['project-work-orders', id],
-    queryFn: async () => {
-      if (!id) return [];
-      const { data, error } = await supabase
-        .from('work_orders')
-        .select('*')
-        .eq('project_id', id)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!id,
-  });
+    fetchData();
+  }, [id, toast]);
 
-  if (projectLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -474,24 +443,24 @@ export default function ProjectDetailPage() {
             <CardContent>
               {workOrders.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">
-                  No work orders yet. Create work orders after invoice approval.
+                  No work orders yet. Create invoices first to generate work orders.
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {workOrders.map((order) => (
+                  {workOrders.map((workOrder: any) => (
                     <div 
-                      key={order.id}
+                      key={workOrder.id}
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => navigate(`/dashboard/work-orders/${order.id}`)}
+                      onClick={() => navigate(`/dashboard/work-orders/${workOrder.id}`)}
                     >
                       <div>
-                        <p className="font-medium">{order.title}</p>
+                        <p className="font-medium">{workOrder.order_number}</p>
                         <p className="text-sm text-muted-foreground">
-                          {order.status} • {order.service_address}
+                          {workOrder.status} • Scheduled for {workOrder.scheduled_date ? format(new Date(workOrder.scheduled_date), 'MMM d, yyyy') : 'TBD'}
                         </p>
                       </div>
-                      <Badge variant={order.status === 'completed' ? 'default' : 'secondary'}>
-                        {order.status}
+                      <Badge variant={workOrder.status === 'completed' ? 'default' : workOrder.status === 'in_progress' ? 'secondary' : 'outline'}>
+                        {workOrder.status}
                       </Badge>
                     </div>
                   ))}
