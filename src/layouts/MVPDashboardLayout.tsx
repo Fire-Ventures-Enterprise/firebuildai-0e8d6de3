@@ -1,9 +1,13 @@
-import { Outlet } from 'react-router-dom';
+import React from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { MVPDashboardSidebar } from '@/components/navigation/MVPDashboardSidebar';
 import { MVPDashboardHeader } from '@/components/navigation/MVPDashboardHeader';
 
-export default function MVPDashboardLayout() {
+interface MVPDashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function MVPDashboardLayout({ children }: MVPDashboardLayoutProps) {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full">
@@ -12,7 +16,7 @@ export default function MVPDashboardLayout() {
           <MVPDashboardHeader />
           <main className="flex-1 overflow-y-auto bg-background">
             <div className="container mx-auto p-6">
-              <Outlet />
+              {children}
             </div>
           </main>
         </div>

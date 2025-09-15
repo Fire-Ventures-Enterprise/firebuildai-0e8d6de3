@@ -88,9 +88,6 @@ import LiDAREstimatingSoftwarePage from "./pages/seo/LiDAREstimatingSoftwarePage
 // App pages
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
-
-// MVP pages
-import { ProjectsPage } from "./pages/mvp/ProjectsPage";
 import { ContractorsPage } from "./pages/mvp/ContractorsPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
@@ -262,21 +259,21 @@ const App = () => {
             {/* MVP Dashboard Routes - Protected */}
             <Route path="/dashboard" element={
               <MVPAuthProvider>
-                <ProtectedRoute>
+                <MVPProtectedRoute>
                   <MVPDashboardLayout>
                     <DashboardHome />
                   </MVPDashboardLayout>
-                </ProtectedRoute>
+                </MVPProtectedRoute>
               </MVPAuthProvider>
             } />
             
             <Route path="/dashboard/projects" element={
               <MVPAuthProvider>
-                <ProtectedRoute>
+                <MVPProtectedRoute>
                   <MVPDashboardLayout>
                     <ProjectsPage />
                   </MVPDashboardLayout>
-                </ProtectedRoute>
+                </MVPProtectedRoute>
               </MVPAuthProvider>
             } />
             
