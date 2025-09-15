@@ -60,8 +60,8 @@ export default function ProjectDetailPage() {
         
         setEstimates(await estRes.json() || []);
         setProposals(await propRes.json() || []);
-        setInvoices(invoicesData.data || []);
-        setWorkOrders(workOrdersData.data || []);
+        setInvoices(await invRes.json() || []);
+        setWorkOrders(await woRes.json() || []);
 
       } catch (error) {
         console.error('Error fetching data:', error);
