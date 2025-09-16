@@ -24,6 +24,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Logo } from '@/components/Logo';
 
 const coreNavItems = [
   {
@@ -158,7 +159,7 @@ export function MVPAppSidebar() {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center border-b px-6">
-            <h2 className="text-xl font-bold">🔥 FireBuild.ai</h2>
+            <Logo width={150} height={40} />
           </div>
 
           {/* Navigation */}

@@ -2,6 +2,7 @@ import { MVPAppSidebar } from '@/components/navigation/MVPAppSidebar';
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/Logo';
 
 export function MVPAppLayout({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
@@ -16,7 +17,7 @@ export function MVPAppLayout({ children }: { children: React.ReactNode }) {
         {/* Mobile Header with logo */}
         <div className="lg:hidden sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b">
           <div className="flex items-center h-14 px-4 pl-14">
-            <h2 className="text-lg font-bold">🔥 FireBuild.ai</h2>
+            <Logo width={120} height={35} />
           </div>
         </div>
         

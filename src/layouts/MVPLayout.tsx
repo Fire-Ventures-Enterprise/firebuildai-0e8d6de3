@@ -13,6 +13,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { Logo } from "@/components/Logo";
 
 interface MVPLayoutProps {
   children: ReactNode;
@@ -39,7 +40,7 @@ export function MVPLayout({ children }: MVPLayoutProps) {
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-background border-b">
         <div className="flex items-center justify-between px-4 h-16">
-          <h1 className="text-xl font-bold text-primary">FireBuild.ai</h1>
+          <Logo width={150} height={40} />
           <Button
             variant="ghost"
             size="icon"
@@ -91,7 +92,7 @@ export function MVPLayout({ children }: MVPLayoutProps) {
       <aside className="hidden lg:flex lg:fixed lg:inset-y-0 lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-card border-r">
           <div className="flex items-center h-16 px-6 border-b">
-            <h1 className="text-xl font-bold text-primary">FireBuild.ai</h1>
+            <Logo width={150} height={40} />
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navigation.map((item) => {

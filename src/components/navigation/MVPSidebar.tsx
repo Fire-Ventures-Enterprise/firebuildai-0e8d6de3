@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/components/Logo";
 
 interface MVPSidebarProps {
   className?: string;
@@ -56,7 +57,7 @@ export const MVPSidebar = ({ className }: MVPSidebarProps) => {
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
           {!collapsed && (
-            <h2 className="text-lg font-semibold text-foreground">FireBuild.ai</h2>
+            <Logo width={150} height={40} />
           )}
           <Button
             variant="ghost"

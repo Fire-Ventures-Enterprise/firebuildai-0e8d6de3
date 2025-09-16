@@ -24,6 +24,7 @@ import {
   Building2,
   ClipboardList,
 } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 const navItems = [
   {
@@ -82,11 +83,12 @@ export function MVPDashboardSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b">
         <div className="flex items-center gap-2 px-2 py-4">
-          <Building2 className="h-8 w-8 text-primary shrink-0" />
-          {!isCollapsed && (
+          {isCollapsed ? (
+            <Building2 className="h-8 w-8 text-primary shrink-0" />
+          ) : (
             <div>
-              <h2 className="text-lg font-semibold">FireBuild.ai</h2>
-              <p className="text-xs text-muted-foreground">Contractor Dashboard</p>
+              <Logo width={150} height={40} />
+              <p className="text-xs text-muted-foreground mt-1">Contractor Dashboard</p>
             </div>
           )}
         </div>
