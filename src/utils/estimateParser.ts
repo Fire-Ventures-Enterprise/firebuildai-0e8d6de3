@@ -420,9 +420,7 @@ export class EstimateParser {
     if (paymentSchedule.length === 0) {
       suggestions.push('Consider adding: Payment schedule with deposit requirements');
     }
-    if (termsAndConditions.length === 0) {
-      suggestions.push('Consider adding: Terms and conditions for the project');
-    }
+    // Note: Terms and conditions are not a priced item, so we don't suggest them as missing items
     
     // Detect project type and provide intelligent suggestions
     const projectType = this.detectProjectType(rawText, lineItems);
