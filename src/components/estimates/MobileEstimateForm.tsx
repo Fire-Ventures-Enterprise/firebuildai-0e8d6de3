@@ -27,14 +27,14 @@ export default function MobileEstimateForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
         side="bottom" 
-        className="h-[95vh] p-0 overflow-hidden"
+        className="h-[95vh] p-0 flex flex-col"
       >
-        <SheetHeader className="px-6 py-4 border-b">
+        <SheetHeader className="px-6 py-4 border-b flex-shrink-0">
           <SheetTitle>
             {estimate ? 'Edit Estimate' : 'New Estimate'}
           </SheetTitle>
         </SheetHeader>
-        <div className="overflow-y-auto flex-1 px-6 pb-6 -webkit-overflow-scrolling-touch">
+        <div className="flex-1 overflow-y-auto px-6 pb-6" style={{ WebkitOverflowScrolling: 'touch' }}>
           <EstimateForm
             estimate={estimate}
             onSave={(data) => {
