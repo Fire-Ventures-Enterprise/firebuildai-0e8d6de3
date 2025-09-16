@@ -21,12 +21,16 @@ interface SmartEstimateInputProps {
   onItemsExtracted: (items: any[]) => void;
   onScopeExtracted: (scope: string) => void;
   onNotesExtracted: (notes: string) => void;
+  onPaymentScheduleExtracted?: (schedule: any[]) => void;
+  onTermsExtracted?: (terms: string) => void;
 }
 
 export function SmartEstimateInput({ 
   onItemsExtracted, 
   onScopeExtracted, 
-  onNotesExtracted 
+  onNotesExtracted,
+  onPaymentScheduleExtracted,
+  onTermsExtracted 
 }: SmartEstimateInputProps) {
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -76,6 +80,16 @@ export function SmartEstimateInput({
       onItemsExtracted(formattedItems);
       onScopeExtracted(result.scopeOfWork);
       onNotesExtracted(result.notes);
+      
+      // Extract payment schedule if available
+      if (result.paymentSchedule && onPaymentScheduleExtracted) {
+        onPaymentScheduleExtracted(result.paymentSchedule);
+      }
+      
+      // Extract terms if available
+      if (result.termsAndConditions && onTermsExtracted) {
+        onTermsExtracted(result.termsAndConditions);
+      }
       
       setIsProcessing(false);
     }, 500);
