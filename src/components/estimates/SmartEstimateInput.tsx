@@ -147,7 +147,8 @@ export function SmartEstimateInput({
       };
     });
     
-    const updatedItems = [...parsedItems, ...newItems];
+    // Insert items in the correct sequence based on construction workflow
+    const updatedItems = insertItemsInSequence(parsedItems, newItems);
     setParsedItems(updatedItems);
     
     // Re-process with added items
@@ -165,6 +166,79 @@ export function SmartEstimateInput({
       title: "Items added",
       description: `${items.length} missing items have been added to your estimate`,
     });
+  };
+
+  // Helper function to insert items in the correct construction sequence
+  const insertItemsInSequence = (existingItems: any[], newItems: any[]) => {
+    const result = [...existingItems];
+    
+    // Define construction sequence order (from start to finish)
+    const sequenceOrder = [
+      // Site prep and foundation
+      'permit', 'demolition', 'excavation', 'grading', 'footings', 'foundation', 'concrete',
+      // Structural
+      'framing', 'frame', 'studs', 'trusses', 'sheathing', 'roofing', 'roof',
+      // Exterior
+      'siding', 'exterior', 'windows', 'doors', 'garage door',
+      // MEP (Mechanical, Electrical, Plumbing) - Rough-in
+      'plumbing rough', 'electrical rough', 'hvac rough', 'rough-in',
+      // Insulation and drywall
+      'insulation', 'drywall', 'tape', 'texture',
+      // MEP - Finish
+      'plumbing finish', 'electrical finish', 'hvac finish', 'fixtures',
+      // Interior finishes
+      'painting', 'paint', 'flooring', 'floor', 'trim', 'cabinets', 'countertops',
+      // Final
+      'landscaping', 'cleanup', 'clean', 'final', 'inspection'
+    ];
+    
+    // Function to get sequence position based on item description
+    const getSequencePosition = (description: string) => {
+      const lowerDesc = description.toLowerCase();
+      
+      // Check for exact matches first
+      for (let i = 0; i < sequenceOrder.length; i++) {
+        if (lowerDesc.includes(sequenceOrder[i])) {
+          return i * 10; // Multiply by 10 to allow fine-tuning
+        }
+      }
+      
+      // Special handling for garage door openers (after garage doors)
+      if (lowerDesc.includes('garage door opener')) {
+        return sequenceOrder.indexOf('garage door') * 10 + 1;
+      }
+      
+      // Special handling for site work
+      if (lowerDesc.includes('site') || lowerDesc.includes('excavat')) {
+        return 20; // Early in the sequence
+      }
+      
+      return sequenceOrder.length * 10; // Put at end if no match
+    };
+    
+    // Sort new items by sequence
+    const sortedNewItems = [...newItems].sort((a, b) => {
+      return getSequencePosition(a.description) - getSequencePosition(b.description);
+    });
+    
+    // Insert each new item in the appropriate position
+    for (const newItem of sortedNewItems) {
+      const newItemPosition = getSequencePosition(newItem.description);
+      
+      // Find the right insertion point
+      let insertIndex = result.length;
+      for (let i = 0; i < result.length; i++) {
+        const existingPosition = getSequencePosition(result[i].description);
+        if (existingPosition > newItemPosition) {
+          insertIndex = i;
+          break;
+        }
+      }
+      
+      result.splice(insertIndex, 0, newItem);
+    }
+    
+    return result;
   };
 
   const handleProceedWithout = () => {
