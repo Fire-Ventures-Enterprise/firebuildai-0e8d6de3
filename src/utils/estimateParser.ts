@@ -424,12 +424,12 @@ export class EstimateParser {
       suggestions.push('Consider adding: Terms and conditions for the project');
     }
     
-    const hasPermits = lineItems.some(item => 
-      item.description.toLowerCase().includes('permit')
-    );
-    if (!hasPermits) {
-      suggestions.push('Consider adding: Building permits if required');
-    }
+    // Detect project type and provide intelligent suggestions
+    const projectType = this.detectProjectType(rawText, lineItems);
+    const missingSuggestions = this.getMissingItemSuggestions(projectType, lineItems);
+    
+    // Add missing item suggestions
+    suggestions.push(...missingSuggestions);
     
     // Sort line items by construction sequence
     const sortedLineItems = this.sortByConstructionSequence(lineItems);
@@ -747,6 +747,131 @@ export class EstimateParser {
       const unit = item.unit ? ` ${item.unit}` : '';
       const rate = item.rate > 0 ? ` @ $${item.rate.toFixed(2)}` : '';
       return `${item.quantity}${unit} - ${item.description}${rate}`;
+    });
+  }
+
+  /**
+   * Detect the type of construction project based on content
+   */
+  private static detectProjectType(text: string, lineItems: ParsedLineItem[]): string {
+    const lowerText = text.toLowerCase();
+    const allDescriptions = lineItems.map(item => item.description.toLowerCase()).join(' ');
+    const combined = lowerText + ' ' + allDescriptions;
+    
+    if (combined.includes('garage') && (combined.includes('detached') || combined.includes('2 car') || combined.includes('2-car'))) {
+      return 'detached-garage';
+    }
+    if (combined.includes('bathroom') && (combined.includes('remodel') || combined.includes('renovation'))) {
+      return 'bathroom-remodel';
+    }
+    if (combined.includes('kitchen') && (combined.includes('remodel') || combined.includes('renovation'))) {
+      return 'kitchen-remodel';
+    }
+    if (combined.includes('deck') || combined.includes('patio')) {
+      return 'deck-patio';
+    }
+    if (combined.includes('roof') && (combined.includes('replace') || combined.includes('new'))) {
+      return 'roofing';
+    }
+    if (combined.includes('addition') || combined.includes('extension')) {
+      return 'home-addition';
+    }
+    if (combined.includes('basement') && (combined.includes('finish') || combined.includes('remodel'))) {
+      return 'basement-finishing';
+    }
+    if (combined.includes('new construction') || combined.includes('new home')) {
+      return 'new-construction';
+    }
+    
+    return 'general-construction';
+  }
+
+  /**
+   * Get suggestions for missing items based on project type
+   */
+  private static getMissingItemSuggestions(projectType: string, lineItems: ParsedLineItem[]): string[] {
+    const suggestions: string[] = [];
+    const existingItems = lineItems.map(item => item.description.toLowerCase()).join(' ');
+    
+    // Define required items for each project type with proper type
+    type ProjectRequirement = { check: string; suggest: string };
+    const projectRequirements: Record<string, ProjectRequirement[]> = {
+      'detached-garage': [
+        { check: 'permit', suggest: '⚠️ Building permits (required for detached structures)' },
+        { check: 'excavat', suggest: '⚠️ Site excavation and grading' },
+        { check: 'foundation', suggest: '⚠️ Foundation/footings' },
+        { check: 'concrete', suggest: '⚠️ Concrete slab' },
+        { check: 'fram', suggest: '⚠️ Wall and roof framing' },
+        { check: 'sheath', suggest: '⚠️ Roof/wall sheathing' },
+        { check: 'roofing', suggest: '⚠️ Roofing materials and installation' },
+        { check: 'soffit', suggest: '⚠️ Soffit and fascia boards' },
+        { check: 'eaves', suggest: '⚠️ Eaves and ventilation' },
+        { check: 'siding', suggest: '⚠️ Exterior siding' },
+        { check: 'window', suggest: '⚠️ Windows' },
+        { check: 'door', suggest: '⚠️ Entry and garage doors' },
+        { check: 'electrical', suggest: '⚠️ Electrical wiring and fixtures' },
+        { check: 'lighting', suggest: '⚠️ Interior and exterior lighting' },
+        { check: 'garage door opener', suggest: 'Garage door opener installation' },
+        { check: 'driveway', suggest: 'Driveway extension or resurfacing' },
+        { check: 'gutter', suggest: 'Gutters and downspouts' },
+        { check: 'paint', suggest: 'Interior/exterior painting or staining' },
+        { check: 'insulation', suggest: 'Wall and ceiling insulation' },
+        { check: 'drywall', suggest: 'Interior drywall and finishing' }
+      ],
+      'bathroom-remodel': [
+        { check: 'permit', suggest: '⚠️ Building permits (required for plumbing/electrical)' },
+        { check: 'demo', suggest: '⚠️ Demolition and disposal' },
+        { check: 'plumb', suggest: '⚠️ Plumbing rough-in and fixtures' },
+        { check: 'electrical', suggest: '⚠️ Electrical and GFCI outlets' },
+        { check: 'ventilation', suggest: '⚠️ Exhaust fan and ventilation' },
+        { check: 'waterproof', suggest: '⚠️ Waterproofing membrane' },
+        { check: 'tile', suggest: 'Tile work (floor and walls)' },
+        { check: 'vanity', suggest: 'Vanity and countertop' },
+        { check: 'toilet', suggest: 'Toilet installation' },
+        { check: 'shower', suggest: 'Shower/tub installation' },
+        { check: 'mirror', suggest: 'Mirrors and accessories' },
+        { check: 'paint', suggest: 'Painting and finishing' }
+      ],
+      'kitchen-remodel': [
+        { check: 'permit', suggest: '⚠️ Building permits' },
+        { check: 'demo', suggest: '⚠️ Demolition and disposal' },
+        { check: 'plumb', suggest: '⚠️ Plumbing for sink and appliances' },
+        { check: 'electrical', suggest: '⚠️ Electrical and outlet upgrades' },
+        { check: 'cabinet', suggest: '⚠️ Cabinet installation' },
+        { check: 'counter', suggest: '⚠️ Countertops' },
+        { check: 'backsplash', suggest: 'Backsplash tile' },
+        { check: 'appliance', suggest: 'Appliance installation' },
+        { check: 'sink', suggest: 'Sink and faucet' },
+        { check: 'lighting', suggest: 'Lighting fixtures' },
+        { check: 'floor', suggest: 'Flooring' },
+        { check: 'paint', suggest: 'Painting' }
+      ]
+    };
+    
+    // Get requirements for this project type
+    const requirements = projectRequirements[projectType] || [];
+    
+    // Check each requirement
+    requirements.forEach(req => {
+      if (!existingItems.includes(req.check)) {
+        suggestions.push(req.suggest);
+      }
+    });
+    
+    // Add general checks for all projects
+    if (!existingItems.includes('cleanup') && !existingItems.includes('final')) {
+      suggestions.push('Final cleanup and debris removal');
+    }
+    
+    if (!existingItems.includes('inspection') && projectType !== 'general-construction') {
+      suggestions.push('Final inspection and sign-off');
+    }
+    
+    // Sort suggestions with critical items (⚠️) first
+    return suggestions.sort((a, b) => {
+      if (a.startsWith('⚠️') && !b.startsWith('⚠️')) return -1;
+      if (!a.startsWith('⚠️') && b.startsWith('⚠️')) return 1;
+      return 0;
     });
   }
 }
