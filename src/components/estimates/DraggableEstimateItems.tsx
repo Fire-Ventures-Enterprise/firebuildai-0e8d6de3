@@ -77,67 +77,124 @@ function SortableItem({ id, index, item, onUpdate, onRemove, isDragging }: Sorta
       ref={setNodeRef}
       style={style}
       className={cn(
-        "grid grid-cols-12 gap-3 items-start p-3 bg-background border border-border rounded-lg transition-all",
+        "bg-background border border-border rounded-lg transition-all",
         isSortableDragging && "opacity-50 shadow-lg ring-2 ring-primary/20",
         isDragging && "invisible"
       )}
     >
-      <div className="col-span-1 flex items-center justify-center pt-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="cursor-grab hover:bg-muted p-1 rounded touch-none"
-                {...attributes}
-                {...listeners}
-              >
-                <GripVertical className="h-4 w-4 text-muted-foreground" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Drag to reorder</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      {/* Desktop layout */}
+      <div className="hidden md:grid grid-cols-12 gap-3 items-start p-3">
+        <div className="col-span-1 flex items-center justify-center pt-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="cursor-grab hover:bg-muted p-1 rounded touch-none"
+                  {...attributes}
+                  {...listeners}
+                >
+                  <GripVertical className="h-4 w-4 text-muted-foreground" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Drag to reorder</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="col-span-6">
+          <Textarea
+            placeholder="Enter item description..."
+            value={item.description}
+            onChange={(e) => onUpdate('description', e.target.value)}
+            className="min-h-[60px] resize-none"
+            rows={2}
+          />
+        </div>
+        <div className="col-span-2">
+          <Input
+            type="number"
+            placeholder="0"
+            value={item.quantity}
+            onChange={(e) => onUpdate('quantity', parseFloat(e.target.value) || 0)}
+            className="h-12 text-center"
+          />
+        </div>
+        <div className="col-span-2">
+          <Input
+            type="number"
+            placeholder="0.00"
+            value={item.rate}
+            onChange={(e) => onUpdate('rate', parseFloat(e.target.value) || 0)}
+            className="h-12"
+          />
+        </div>
+        <div className="col-span-1 flex items-center justify-center pt-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onRemove}
+            className="h-9 w-9 p-0 hover:bg-destructive/10 hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-      <div className="col-span-6">
-        <Textarea
-          placeholder="Enter item description..."
-          value={item.description}
-          onChange={(e) => onUpdate('description', e.target.value)}
-          className="min-h-[60px] resize-none"
-          rows={2}
-        />
-      </div>
-      <div className="col-span-2">
-        <Input
-          type="number"
-          placeholder="0"
-          value={item.quantity}
-          onChange={(e) => onUpdate('quantity', parseFloat(e.target.value) || 0)}
-          className="h-12 text-center"
-        />
-      </div>
-      <div className="col-span-2">
-        <Input
-          type="number"
-          placeholder="0.00"
-          value={item.rate}
-          onChange={(e) => onUpdate('rate', parseFloat(e.target.value) || 0)}
-          className="h-12"
-        />
-      </div>
-      <div className="col-span-1 flex items-center justify-center pt-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onRemove}
-          className="h-9 w-9 p-0 hover:bg-destructive/10 hover:text-destructive"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+
+      {/* Mobile layout */}
+      <div className="md:hidden p-3 space-y-3">
+        <div className="flex items-start gap-2">
+          <button
+            type="button"
+            className="cursor-grab hover:bg-muted p-1 rounded touch-none flex-shrink-0 mt-1"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-4 w-4 text-muted-foreground" />
+          </button>
+          <div className="flex-1">
+            <Textarea
+              placeholder="Enter item description..."
+              value={item.description}
+              onChange={(e) => onUpdate('description', e.target.value)}
+              className="min-h-[60px] resize-none mb-2"
+              rows={2}
+            />
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="text-xs text-muted-foreground mb-1 block">Qty</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={item.quantity}
+                  onChange={(e) => onUpdate('quantity', parseFloat(e.target.value) || 0)}
+                  className="h-10"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-xs text-muted-foreground mb-1 block">Rate</label>
+                <Input
+                  type="number"
+                  placeholder="0.00"
+                  value={item.rate}
+                  onChange={(e) => onUpdate('rate', parseFloat(e.target.value) || 0)}
+                  className="h-10"
+                />
+              </div>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onRemove}
+            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive flex-shrink-0 mt-1"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -145,26 +202,37 @@ function SortableItem({ id, index, item, onUpdate, onRemove, isDragging }: Sorta
 
 function DragOverlayItem({ item }: { item: EstimateItem }) {
   return (
-    <div className="grid grid-cols-12 gap-2 items-center p-2 bg-background border-2 border-primary rounded-lg shadow-xl opacity-90">
-      <div className="col-span-1 flex items-center justify-center">
-        <GripVertical className="h-4 w-4 text-primary" />
+    <div className="bg-background border-2 border-primary rounded-lg shadow-xl opacity-90">
+      {/* Desktop layout */}
+      <div className="hidden md:grid grid-cols-12 gap-2 items-center p-2">
+        <div className="col-span-1 flex items-center justify-center">
+          <GripVertical className="h-4 w-4 text-primary" />
+        </div>
+        <div className="col-span-5">
+          <div className="h-9 bg-muted rounded px-3 flex items-center">
+            {item.description || "Item"}
+          </div>
+        </div>
+        <div className="col-span-2">
+          <div className="h-9 bg-muted rounded px-3 flex items-center">
+            {item.quantity}
+          </div>
+        </div>
+        <div className="col-span-3">
+          <div className="h-9 bg-muted rounded px-3 flex items-center">
+            ${item.rate.toFixed(2)}
+          </div>
+        </div>
+        <div className="col-span-1" />
       </div>
-      <div className="col-span-5">
-        <div className="h-9 bg-muted rounded px-3 flex items-center">
-          {item.description || "Item"}
+      {/* Mobile layout */}
+      <div className="md:hidden p-2 flex items-center gap-2">
+        <GripVertical className="h-4 w-4 text-primary flex-shrink-0" />
+        <div className="flex-1 bg-muted rounded px-2 py-1">
+          <div className="text-sm font-medium truncate">{item.description || 'Item'}</div>
+          <div className="text-xs text-muted-foreground">Qty: {item.quantity} × ${item.rate.toFixed(2)}</div>
         </div>
       </div>
-      <div className="col-span-2">
-        <div className="h-9 bg-muted rounded px-3 flex items-center">
-          {item.quantity}
-        </div>
-      </div>
-      <div className="col-span-3">
-        <div className="h-9 bg-muted rounded px-3 flex items-center">
-          ${item.rate.toFixed(2)}
-        </div>
-      </div>
-      <div className="col-span-1" />
     </div>
   );
 }
