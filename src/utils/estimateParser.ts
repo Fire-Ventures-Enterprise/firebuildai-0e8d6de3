@@ -3,6 +3,8 @@
  * Automatically identifies and separates line items from content using keywords and patterns
  */
 
+import { sortByProjectSequence, detectProjectType as detectProjectTypeFromSequencer } from './constructionSequencer';
+
 interface ParsedLineItem {
   description: string;
   quantity: number;
@@ -423,14 +425,14 @@ export class EstimateParser {
     // Note: Terms and conditions are not a priced item, so we don't suggest them as missing items
     
     // Detect project type and provide intelligent suggestions
-    const projectType = this.detectProjectType(rawText, lineItems);
+    const projectType = detectProjectTypeFromSequencer(rawText, lineItems);
     const missingSuggestions = this.getMissingItemSuggestions(projectType, lineItems);
     
     // Add missing item suggestions
     suggestions.push(...missingSuggestions);
     
-    // Sort line items by construction sequence
-    const sortedLineItems = this.sortByConstructionSequence(lineItems);
+    // Sort line items by construction sequence using the new sequencer
+    const sortedLineItems = sortByProjectSequence(lineItems, projectType);
     
     return {
       lineItems: sortedLineItems,
@@ -442,71 +444,6 @@ export class EstimateParser {
     };
   }
   
-  /**
-   * Sort line items by proper construction sequence
-   */
-  private static sortByConstructionSequence(lineItems: ParsedLineItem[]): ParsedLineItem[] {
-    // Define construction phases in order
-    const constructionPhases = {
-      'permits': 0,
-      'site work': 1,
-      'excavation': 2,
-      'foundation': 3,
-      'concrete': 4,
-      'framing': 5,
-      'roofing': 6,
-      'exterior': 7,
-      'rough-in': 8,
-      'insulation': 9,
-      'drywall': 10,
-      'flooring': 11,
-      'painting': 12,
-      'finish': 13,
-      'fixtures': 14,
-      'cleanup': 15,
-      'landscaping': 16
-    };
-    
-    // Helper function to determine phase for a line item
-    const getPhase = (description: string): number => {
-      const lower = description.toLowerCase();
-      
-      // Check for specific keywords
-      if (lower.includes('permit') || lower.includes('inspection')) return constructionPhases['permits'];
-      if (lower.includes('excavat') || lower.includes('site') || lower.includes('grade') || lower.includes('grading')) return constructionPhases['site work'];
-      if (lower.includes('footing') || lower.includes('foundation')) return constructionPhases['foundation'];
-      if (lower.includes('concrete') || lower.includes('slab') || lower.includes('pour')) return constructionPhases['concrete'];
-      if (lower.includes('fram') || lower.includes('stud') || lower.includes('truss')) return constructionPhases['framing'];
-      if (lower.includes('roof') || lower.includes('shingle')) return constructionPhases['roofing'];
-      if (lower.includes('siding') || lower.includes('exterior') || lower.includes('window') || lower.includes('door')) return constructionPhases['exterior'];
-      if (lower.includes('electrical') || lower.includes('plumb') || lower.includes('rough-in') || lower.includes('hvac')) return constructionPhases['rough-in'];
-      if (lower.includes('insulation')) return constructionPhases['insulation'];
-      if (lower.includes('drywall') || lower.includes('tape')) return constructionPhases['drywall'];
-      if (lower.includes('floor') || lower.includes('tile') || lower.includes('carpet')) return constructionPhases['flooring'];
-      if (lower.includes('paint')) return constructionPhases['painting'];
-      if (lower.includes('cabinet') || lower.includes('countertop') || lower.includes('finish')) return constructionPhases['finish'];
-      if (lower.includes('fixture') || lower.includes('appliance') || lower.includes('garage door opener')) return constructionPhases['fixtures'];
-      if (lower.includes('clean') || lower.includes('final')) return constructionPhases['cleanup'];
-      if (lower.includes('landscap') || lower.includes('seed') || lower.includes('sod')) return constructionPhases['landscaping'];
-      
-      // Default phase for unmatched items
-      return 100;
-    };
-    
-    // Sort items by phase
-    return [...lineItems].sort((a, b) => {
-      const phaseA = getPhase(a.description);
-      const phaseB = getPhase(b.description);
-      
-      if (phaseA !== phaseB) {
-        return phaseA - phaseB;
-      }
-      
-      // If same phase, keep original order
-      return 0;
-    });
-  }
-
   /**
    * Check if line is a major work item/category
    */
@@ -752,36 +689,8 @@ export class EstimateParser {
    * Detect the type of construction project based on content
    */
   static detectProjectType(text: string, lineItems: ParsedLineItem[]): string {
-    const lowerText = text.toLowerCase();
-    const allDescriptions = lineItems.map(item => item.description.toLowerCase()).join(' ');
-    const combined = lowerText + ' ' + allDescriptions;
-    
-    if (combined.includes('garage') && (combined.includes('detached') || combined.includes('2 car') || combined.includes('2-car'))) {
-      return 'detached-garage';
-    }
-    if (combined.includes('bathroom') && (combined.includes('remodel') || combined.includes('renovation'))) {
-      return 'bathroom-remodel';
-    }
-    if (combined.includes('kitchen') && (combined.includes('remodel') || combined.includes('renovation'))) {
-      return 'kitchen-remodel';
-    }
-    if (combined.includes('deck') || combined.includes('patio')) {
-      return 'deck-patio';
-    }
-    if (combined.includes('roof') && (combined.includes('replace') || combined.includes('new'))) {
-      return 'roofing';
-    }
-    if (combined.includes('addition') || combined.includes('extension')) {
-      return 'home-addition';
-    }
-    if (combined.includes('basement') && (combined.includes('finish') || combined.includes('remodel'))) {
-      return 'basement-finishing';
-    }
-    if (combined.includes('new construction') || combined.includes('new home')) {
-      return 'new-construction';
-    }
-    
-    return 'general-construction';
+    // Use the new sequencer's detection logic
+    return detectProjectTypeFromSequencer(text, lineItems);
   }
 
   /**
