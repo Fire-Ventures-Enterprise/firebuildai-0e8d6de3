@@ -333,8 +333,15 @@ export class EstimateParser {
         }
       }
       
-      // If line starts with @ or we found a price, and it's not a payment item, add as line item
-      if ((startsWithAt || (foundPrice && price > 0)) && !isPaymentItem) {
+      // Check if this is a tax, subtotal, or total line (should not be included as line items)
+      const isSummaryLine = lowerLine.includes('tax') || 
+                           lowerLine.includes('subtotal') || 
+                           lowerLine.includes('total:') ||
+                           lowerLine.startsWith('total ') ||
+                           lowerLine === 'total';
+      
+      // If line starts with @ or we found a price, and it's not a payment or summary item, add as line item
+      if ((startsWithAt || (foundPrice && price > 0)) && !isPaymentItem && !isSummaryLine) {
         // Clean up description
         description = description
           .replace(/^\*\s*/, '')
@@ -424,14 +431,82 @@ export class EstimateParser {
       suggestions.push('Consider adding: Building permits if required');
     }
     
+    // Sort line items by construction sequence
+    const sortedLineItems = this.sortByConstructionSequence(lineItems);
+    
     return {
-      lineItems,
+      lineItems: sortedLineItems,
       scopeOfWork: scopeLines.join('\n'),
       notes: noteLines.join('\n'),
       paymentSchedule: paymentSchedule.length > 0 ? paymentSchedule : undefined,
       termsAndConditions: termsAndConditions.length > 0 ? termsAndConditions.join('\n') : undefined,
       suggestions: suggestions.length > 0 ? suggestions : undefined
     };
+  }
+  
+  /**
+   * Sort line items by proper construction sequence
+   */
+  private static sortByConstructionSequence(lineItems: ParsedLineItem[]): ParsedLineItem[] {
+    // Define construction phases in order
+    const constructionPhases = {
+      'permits': 0,
+      'site work': 1,
+      'excavation': 2,
+      'foundation': 3,
+      'concrete': 4,
+      'framing': 5,
+      'roofing': 6,
+      'exterior': 7,
+      'rough-in': 8,
+      'insulation': 9,
+      'drywall': 10,
+      'flooring': 11,
+      'painting': 12,
+      'finish': 13,
+      'fixtures': 14,
+      'cleanup': 15,
+      'landscaping': 16
+    };
+    
+    // Helper function to determine phase for a line item
+    const getPhase = (description: string): number => {
+      const lower = description.toLowerCase();
+      
+      // Check for specific keywords
+      if (lower.includes('permit') || lower.includes('inspection')) return constructionPhases['permits'];
+      if (lower.includes('excavat') || lower.includes('site') || lower.includes('grade') || lower.includes('grading')) return constructionPhases['site work'];
+      if (lower.includes('footing') || lower.includes('foundation')) return constructionPhases['foundation'];
+      if (lower.includes('concrete') || lower.includes('slab') || lower.includes('pour')) return constructionPhases['concrete'];
+      if (lower.includes('fram') || lower.includes('stud') || lower.includes('truss')) return constructionPhases['framing'];
+      if (lower.includes('roof') || lower.includes('shingle')) return constructionPhases['roofing'];
+      if (lower.includes('siding') || lower.includes('exterior') || lower.includes('window') || lower.includes('door')) return constructionPhases['exterior'];
+      if (lower.includes('electrical') || lower.includes('plumb') || lower.includes('rough-in') || lower.includes('hvac')) return constructionPhases['rough-in'];
+      if (lower.includes('insulation')) return constructionPhases['insulation'];
+      if (lower.includes('drywall') || lower.includes('tape')) return constructionPhases['drywall'];
+      if (lower.includes('floor') || lower.includes('tile') || lower.includes('carpet')) return constructionPhases['flooring'];
+      if (lower.includes('paint')) return constructionPhases['painting'];
+      if (lower.includes('cabinet') || lower.includes('countertop') || lower.includes('finish')) return constructionPhases['finish'];
+      if (lower.includes('fixture') || lower.includes('appliance') || lower.includes('garage door opener')) return constructionPhases['fixtures'];
+      if (lower.includes('clean') || lower.includes('final')) return constructionPhases['cleanup'];
+      if (lower.includes('landscap') || lower.includes('seed') || lower.includes('sod')) return constructionPhases['landscaping'];
+      
+      // Default phase for unmatched items
+      return 100;
+    };
+    
+    // Sort items by phase
+    return [...lineItems].sort((a, b) => {
+      const phaseA = getPhase(a.description);
+      const phaseB = getPhase(b.description);
+      
+      if (phaseA !== phaseB) {
+        return phaseA - phaseB;
+      }
+      
+      // If same phase, keep original order
+      return 0;
+    });
   }
 
   /**
