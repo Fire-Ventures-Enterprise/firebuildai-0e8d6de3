@@ -2224,6 +2224,7 @@ export type Database = {
           accepted_by_name: string | null
           accepted_ip: string | null
           contract_attached: boolean | null
+          contract_text: string | null
           converted_invoice_id: string | null
           converted_to_invoice: boolean | null
           created_at: string
@@ -2277,6 +2278,7 @@ export type Database = {
           accepted_by_name?: string | null
           accepted_ip?: string | null
           contract_attached?: boolean | null
+          contract_text?: string | null
           converted_invoice_id?: string | null
           converted_to_invoice?: boolean | null
           created_at?: string
@@ -2330,6 +2332,7 @@ export type Database = {
           accepted_by_name?: string | null
           accepted_ip?: string | null
           contract_attached?: boolean | null
+          contract_text?: string | null
           converted_invoice_id?: string | null
           converted_to_invoice?: boolean | null
           created_at?: string
