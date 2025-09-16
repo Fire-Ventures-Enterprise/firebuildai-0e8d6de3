@@ -1,4 +1,4 @@
-import { AlertTriangle, Plus, ArrowRight } from "lucide-react";
+import { AlertTriangle, Plus, ArrowRight, DollarSign } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 interface MissingItem {
@@ -37,6 +38,13 @@ export function MissingItemsWarningModal({
   onProceedWithout,
 }: MissingItemsWarningModalProps) {
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
+  const [itemPrices, setItemPrices] = useState<Record<number, number>>(() => {
+    const prices: Record<number, number> = {};
+    missingItems.forEach((item, index) => {
+      prices[index] = item.suggestedPrice || 0;
+    });
+    return prices;
+  });
   const criticalItems = missingItems.filter(item => item.critical);
   const optionalItems = missingItems.filter(item => !item.critical);
 
@@ -58,8 +66,21 @@ export function MissingItemsWarningModal({
     setSelectedItems(newSelected);
   };
 
+  const handlePriceChange = (index: number, value: string) => {
+    const price = parseFloat(value) || 0;
+    setItemPrices(prev => ({ ...prev, [index]: price }));
+  };
+
   const handleAddSelected = () => {
-    const itemsToAdd = missingItems.filter((_, index) => selectedItems.has(index));
+    const itemsToAdd = missingItems
+      .filter((_, index) => selectedItems.has(index))
+      .map((item, idx) => {
+        const globalIndex = missingItems.indexOf(item);
+        return {
+          ...item,
+          suggestedPrice: itemPrices[globalIndex]
+        };
+      });
     onAddItems(itemsToAdd);
     setSelectedItems(new Set());
   };
@@ -125,7 +146,7 @@ export function MissingItemsWarningModal({
                   return (
                     <div
                       key={`critical-${idx}`}
-                      className="flex items-start gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors"
+                      className="flex items-start gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors border border-transparent hover:border-border"
                     >
                       <Checkbox
                         id={`item-${globalIndex}`}
@@ -133,19 +154,31 @@ export function MissingItemsWarningModal({
                         onCheckedChange={() => handleToggleItem(globalIndex)}
                         className="mt-0.5"
                       />
-                      <label
-                        htmlFor={`item-${globalIndex}`}
-                        className="flex-1 cursor-pointer"
-                      >
-                        <div className="font-medium text-sm">
-                          {item.description.replace('⚠️ ', '')}
-                        </div>
-                        {item.suggestedPrice && (
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            Estimated: ${item.suggestedPrice.toLocaleString()}
+                      <div className="flex-1 space-y-2">
+                        <label
+                          htmlFor={`item-${globalIndex}`}
+                          className="cursor-pointer"
+                        >
+                          <div className="font-medium text-sm">
+                            {item.description.replace('⚠️ ', '')}
                           </div>
-                        )}
-                      </label>
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            placeholder="Enter price"
+                            value={itemPrices[globalIndex] || ''}
+                            onChange={(e) => handlePriceChange(globalIndex, e.target.value)}
+                            className="h-8 w-32"
+                            step="0.01"
+                            min="0"
+                          />
+                          <span className="text-xs text-muted-foreground">
+                            {item.suggestedPrice ? `(Suggested: $${item.suggestedPrice.toLocaleString()})` : ''}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
@@ -162,7 +195,7 @@ export function MissingItemsWarningModal({
                   return (
                     <div
                       key={`optional-${idx}`}
-                      className="flex items-start gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors"
+                      className="flex items-start gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors border border-transparent hover:border-border"
                     >
                       <Checkbox
                         id={`item-${globalIndex}`}
@@ -170,19 +203,31 @@ export function MissingItemsWarningModal({
                         onCheckedChange={() => handleToggleItem(globalIndex)}
                         className="mt-0.5"
                       />
-                      <label
-                        htmlFor={`item-${globalIndex}`}
-                        className="flex-1 cursor-pointer"
-                      >
-                        <div className="text-sm">
-                          {item.description}
-                        </div>
-                        {item.suggestedPrice && (
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            Estimated: ${item.suggestedPrice.toLocaleString()}
+                      <div className="flex-1 space-y-2">
+                        <label
+                          htmlFor={`item-${globalIndex}`}
+                          className="cursor-pointer"
+                        >
+                          <div className="text-sm">
+                            {item.description}
                           </div>
-                        )}
-                      </label>
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            placeholder="Enter price"
+                            value={itemPrices[globalIndex] || ''}
+                            onChange={(e) => handlePriceChange(globalIndex, e.target.value)}
+                            className="h-8 w-32"
+                            step="0.01"
+                            min="0"
+                          />
+                          <span className="text-xs text-muted-foreground">
+                            {item.suggestedPrice ? `(Suggested: $${item.suggestedPrice.toLocaleString()})` : ''}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}

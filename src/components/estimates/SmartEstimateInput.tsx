@@ -137,11 +137,12 @@ export function SmartEstimateInput({
     // Add selected missing items to the parsed items
     const newItems = items.map(item => {
       const cleanDescription = item.description.replace('⚠️ ', '');
+      const price = item.suggestedPrice || 0;
       return {
         description: cleanDescription,
         quantity: 1,
-        rate: item.suggestedPrice || 0,
-        amount: item.suggestedPrice || 0,
+        rate: price,
+        amount: price,
         category: 'general'
       };
     });
