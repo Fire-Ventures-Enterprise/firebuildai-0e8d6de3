@@ -176,24 +176,34 @@ export class EstimateParser {
       
       const lowerLine = trimmedLine.toLowerCase();
       
-      // Check for section headers
-      if (lowerLine.includes('payment schedule') || lowerLine === 'payment' || lowerLine === 'payments') {
+      // Check for section headers - be more flexible with detection
+      if (lowerLine.includes('payment schedule') || 
+          lowerLine.includes('payment') || 
+          lowerLine === 'payments' ||
+          lowerLine.includes('deposit')) {
         currentSection = 'payment';
         return;
       }
       
-      if ((lowerLine.includes('terms') && lowerLine.includes('condition')) || 
-          lowerLine === 'terms' || lowerLine === 'conditions') {
+      if ((lowerLine.includes('terms') && (lowerLine.includes('condition') || lowerLine.includes('&'))) || 
+          lowerLine === 'terms' || 
+          lowerLine === 'conditions' ||
+          lowerLine === 'terms & conditions' ||
+          lowerLine === 'terms and conditions') {
         currentSection = 'terms';
         return;
       }
       
-      if (lowerLine.includes('scope of work') || lowerLine === 'scope') {
+      if (lowerLine.includes('scope of work') || 
+          lowerLine === 'scope' ||
+          lowerLine.includes('scope:')) {
         currentSection = 'scope';
         return;
       }
       
-      if (lowerLine.includes('line items') || lowerLine === 'items') {
+      if (lowerLine.includes('line items') || 
+          lowerLine === 'items' ||
+          lowerLine.includes('items:')) {
         currentSection = 'items';
         return;
       }
@@ -217,29 +227,35 @@ export class EstimateParser {
           percentage = parseFloat(percentMatch[1]);
         }
         
-        // Check for dollar amount
-        for (const pattern of pricePatterns) {
-          const match = trimmedLine.match(pattern);
-          if (match) {
-            amount = parseFloat(match[1].replace(/[,$]/g, ''));
-            description = trimmedLine.replace(match[0], '').trim();
-            break;
-          }
+        // Check for dollar amount - look for various formats
+        const dollarMatch = trimmedLine.match(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
+        if (dollarMatch) {
+          amount = parseFloat(dollarMatch[1].replace(/,/g, ''));
+          // Clean up description by removing the dollar amount
+          description = trimmedLine.replace(dollarMatch[0], '').trim();
         }
+        
+        // Clean up description - remove dashes and extra characters
+        description = description.replace(/^[-–]+\s*/, '').replace(/\s*[-–]+\s*$/, '').trim();
         
         // Determine timing from description
         let timing = '';
-        if (lowerLine.includes('upon signing') || lowerLine.includes('deposit')) {
+        if (lowerLine.includes('upon signing') || lowerLine.includes('upon contract') || lowerLine.includes('deposit')) {
           timing = 'Upon signing';
+        } else if (lowerLine.includes('delivery')) {
+          timing = 'Upon delivery';
+        } else if (lowerLine.includes('installation')) {
+          timing = 'Upon installation';
         } else if (lowerLine.includes('completion') || lowerLine.includes('final')) {
           timing = 'Upon completion';
         } else if (lowerLine.includes('progress') || lowerLine.includes('milestone')) {
           timing = 'Progress payment';
         }
         
-        if (percentage > 0 || amount > 0 || isPaymentItem) {
+        // Only add if we have meaningful data
+        if ((percentage > 0 || amount > 0) && currentSection === 'payment') {
           paymentSchedule.push({
-            description: description.replace(/[@$,]/g, '').trim(),
+            description: description,
             percentage: percentage || undefined,
             amount: amount || undefined,
             timing: timing || description
@@ -250,8 +266,13 @@ export class EstimateParser {
       
       // Check if this is a terms & conditions item
       const isTermsItem = termsKeywords.some(keyword => lowerLine.includes(keyword));
-      if (isTermsItem || currentSection === 'terms') {
-        termsAndConditions.push(trimmedLine);
+      if ((isTermsItem || currentSection === 'terms') && trimmedLine) {
+        // Skip the section header itself
+        if (!lowerLine.includes('terms & conditions') && 
+            !lowerLine.includes('terms and conditions') &&
+            lowerLine !== 'terms:') {
+          termsAndConditions.push(trimmedLine);
+        }
         return;
       }
       
