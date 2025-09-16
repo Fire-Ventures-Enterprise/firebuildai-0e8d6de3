@@ -116,163 +116,188 @@ export class EstimateParser {
     const lineItems: ParsedLineItem[] = [];
     const scopeLines: string[] = [];
     const noteLines: string[] = [];
+    const paymentSchedule: string[] = [];
+    const termsAndConditions: string[] = [];
     const suggestions: string[] = [];
     
-    // Enhanced price pattern to catch various formats
-    const pricePatterns = [
-      /\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g,  // $1,234.56 or $1234.56
-      /(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*(?:dollars?|USD)/gi,  // 1234.56 dollars
-      /(\d{1,3}(?:,\d{3})*\.\d{2})(?:\s|$)/g,  // 1234.00 (decimal amounts)
+    // Keywords that indicate payment schedule items (NOT line items!)
+    const paymentKeywords = [
+      'deposit', 'payment', 'upon signing', 'upon completion', 'milestone',
+      'progress payment', 'final payment', 'retainage', 'holdback',
+      'payment schedule', 'payment terms', 'due upon', 'due at',
+      'upon delivery', 'net 30', 'net 15', 'installment'
     ];
     
-    // Track what we've processed
-    const processedLines = new Set<number>();
-    let currentSection = '';
-    let totalAmount = 0;
+    // Keywords that indicate terms/conditions (NOT line items!)
+    const termsKeywords = [
+      'warranty', 'guarantee', 'terms', 'conditions', 'cancellation',
+      'change order', 'additional work', 'hourly rate', 'exclusion',
+      'not included', 'owner responsibilit', 'work hours', 'timeline',
+      'valid until', 'expires', 'acceptance', 'agreement'
+    ];
     
-    // First pass: extract all line items with prices
+    // Keywords that indicate totals/summaries (should be ignored)
+    const totalKeywords = [
+      'total project', 'grand total', 'subtotal', 'total amount',
+      'total due', 'total cost', 'project total', 'sum total'
+    ];
+    
+    // Enhanced price pattern
+    const pricePattern = /@\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/;
+    
+    let currentSection = '';
+    let inPaymentSection = false;
+    let inTermsSection = false;
+    let inExclusionsSection = false;
+    
     lines.forEach((line, index) => {
       const trimmedLine = line.trim();
       if (!trimmedLine) return;
       
-      // Check for section headers
-      const sectionHeaders = ['demolition', 'cabinetry', 'cabinet', 'countertop', 'backsplash', 
-                             'hardware', 'appliance', 'electrical', 'plumbing', 'management fee'];
       const lowerLine = trimmedLine.toLowerCase();
       
-      for (const header of sectionHeaders) {
-        if (lowerLine.startsWith(header) || lowerLine === header) {
-          currentSection = header;
-          break;
-        }
-      }
-      
-      // Extract price from the line
-      let price = 0;
-      let description = trimmedLine;
-      
-      // Try each price pattern
-      for (const pattern of pricePatterns) {
-        const matches = [...trimmedLine.matchAll(pattern)];
-        if (matches.length > 0) {
-          const lastMatch = matches[matches.length - 1];
-          const priceStr = lastMatch[1] || lastMatch[0];
-          price = parseFloat(priceStr.replace(/[,$]/g, ''));
-          
-          // Remove the price from description
-          description = trimmedLine.replace(lastMatch[0], '').trim();
-          break;
-        }
-      }
-      
-      // Handle percentage-based fees
-      const percentMatch = trimmedLine.match(/(\d+(?:\.\d+)?)\s*%/);
-      if (percentMatch && currentSection.includes('management')) {
-        const percent = parseFloat(percentMatch[1]);
-        // We'll calculate this after we have the subtotal
-        lineItems.push({
-          description: 'Management Fee (' + percent + '%)',
-          quantity: percent,
-          rate: 0, // Will be calculated later
-          unit: 'percent',
-          category: 'other'
-        });
-        processedLines.add(index);
+      // Check for section headers
+      if (lowerLine.includes('payment schedule') || lowerLine.includes('payment terms')) {
+        inPaymentSection = true;
+        inTermsSection = false;
+        currentSection = 'payment';
         return;
       }
       
-      // If we found a price, create a line item
-      if (price > 0) {
-        // Clean up the description
-        description = description
+      if (lowerLine.includes('terms') && lowerLine.includes('condition')) {
+        inTermsSection = true;
+        inPaymentSection = false;
+        currentSection = 'terms';
+        return;
+      }
+      
+      if (lowerLine.includes('exclusion') || lowerLine.includes('not included')) {
+        inExclusionsSection = true;
+        currentSection = 'exclusions';
+        return;
+      }
+      
+      if (lowerLine.includes('scope of work') || lowerLine.includes('work includes')) {
+        currentSection = 'scope';
+        inPaymentSection = false;
+        inTermsSection = false;
+        return;
+      }
+      
+      if (lowerLine.includes('line items') || lowerLine.includes('work items')) {
+        currentSection = 'items';
+        inPaymentSection = false;
+        inTermsSection = false;
+        return;
+      }
+      
+      // Skip total/summary lines entirely
+      const isTotal = totalKeywords.some(keyword => lowerLine.includes(keyword));
+      if (isTotal) {
+        return; // Don't add totals as line items!
+      }
+      
+      // Check if this line belongs in payment schedule
+      const isPaymentItem = paymentKeywords.some(keyword => lowerLine.includes(keyword));
+      if (isPaymentItem || inPaymentSection) {
+        paymentSchedule.push(trimmedLine);
+        return;
+      }
+      
+      // Check if this line belongs in terms
+      const isTermsItem = termsKeywords.some(keyword => lowerLine.includes(keyword));
+      if (isTermsItem || inTermsSection) {
+        termsAndConditions.push(trimmedLine);
+        return;
+      }
+      
+      // Check if line contains @ price pattern (actual line item)
+      const priceMatch = trimmedLine.match(pricePattern);
+      if (priceMatch && !isPaymentItem && !isTermsItem && !isTotal) {
+        const price = parseFloat(priceMatch[1].replace(/,/g, ''));
+        const description = trimmedLine.substring(0, trimmedLine.indexOf('@')).trim()
           .replace(/^\*\s*/, '')
           .replace(/^-\s*/, '')
-          .replace(/^•\s*/, '')
-          .replace(/\.$/, '')
-          .trim();
+          .replace(/^•\s*/, '');
         
-        // Skip if it's just a price without description
-        if (!description || description.length < 3) {
-          // Try to use previous line as description
-          if (index > 0 && !processedLines.has(index - 1)) {
-            const prevLine = lines[index - 1].trim()
-              .replace(/^\*\s*/, '')
-              .replace(/^-\s*/, '')
-              .replace(/^•\s*/, '');
-            if (prevLine && !prevLine.toLowerCase().includes('optional')) {
-              description = prevLine;
-              processedLines.add(index - 1);
-            }
-          }
-        }
-        
-        // Determine category based on section or keywords
+        // Determine category based on keywords
         let category: 'material' | 'labor' | 'equipment' | 'other' = 'other';
-        if (currentSection) {
-          if (['demolition', 'electrical', 'plumbing'].includes(currentSection)) {
-            category = 'labor';
-          } else if (['cabinetry', 'cabinet', 'countertop', 'backsplash', 'hardware'].includes(currentSection)) {
-            category = 'material';
-          }
+        
+        const laborKeywords = ['demo', 'install', 'remove', 'paint', 'plumb', 'rough-in', 'apply'];
+        const materialKeywords = ['supply', 'toilet', 'vanity', 'tile', 'door', 'fan', 'light', 'faucet'];
+        
+        if (laborKeywords.some(kw => description.toLowerCase().includes(kw))) {
+          category = 'labor';
+        } else if (materialKeywords.some(kw => description.toLowerCase().includes(kw))) {
+          category = 'material';
         }
         
-        // Add the line item if we have a good description
-        if (description && description.length > 3 && !description.toLowerCase().includes('optional')) {
-          lineItems.push({
-            description: description.charAt(0).toUpperCase() + description.slice(1),
-            quantity: 1,
-            rate: price,
-            unit: 'project',
-            category: category
-          });
-          totalAmount += price;
-          processedLines.add(index);
-        }
-      } else if (!processedLines.has(index)) {
-        // No price found, add to scope or notes
-        if (trimmedLine.toLowerCase().includes('exclusion') || 
-            trimmedLine.toLowerCase().includes('terms') ||
-            trimmedLine.toLowerCase().includes('optional') ||
-            trimmedLine.toLowerCase().includes('client decided not')) {
-          noteLines.push(trimmedLine);
-        } else if (trimmedLine.startsWith('*') || trimmedLine.startsWith('-') || 
-                   trimmedLine.startsWith('•') || currentSection) {
-          // Add to scope if it's a bullet point or part of a section
-          if (!trimmedLine.toLowerCase().includes('http')) {
-            scopeLines.push(trimmedLine);
-          }
-        } else {
+        lineItems.push({
+          description: description,
+          quantity: 1,
+          rate: price,
+          unit: 'project',
+          category: category
+        });
+      } else if (currentSection === 'scope' || 
+                 (trimmedLine.startsWith('*') || trimmedLine.startsWith('-') || trimmedLine.startsWith('•'))) {
+        // Add to scope if it's a bullet point or in scope section
+        if (!lowerLine.includes('http') && !inExclusionsSection) {
           scopeLines.push(trimmedLine);
         }
+      } else if (inExclusionsSection) {
+        noteLines.push(trimmedLine);
       }
     });
     
-    // Calculate management fee if we have one
-    const mgmtFeeItem = lineItems.find(item => item.unit === 'percent');
-    if (mgmtFeeItem && totalAmount > 0) {
-      mgmtFeeItem.rate = (totalAmount * mgmtFeeItem.quantity) / 100;
-      mgmtFeeItem.quantity = 1;
-      mgmtFeeItem.unit = 'project';
-    }
+    // Handle percentage-based fees (like management fee)
+    const mgmtFeeItem = lineItems.find(item => 
+      item.description.toLowerCase().includes('management') || 
+      item.description.toLowerCase().includes('admin')
+    );
     
-    // If no items found, create at least one default item
-    if (lineItems.length === 0) {
-      lineItems.push({
-        description: 'Project work as described',
-        quantity: 1,
-        rate: 5000,
-        unit: 'project',
-        category: 'other'
-      });
+    if (mgmtFeeItem) {
+      const percentMatch = mgmtFeeItem.description.match(/(\d+(?:\.\d+)?)\s*%/);
+      if (percentMatch) {
+        const subtotal = lineItems
+          .filter(item => item !== mgmtFeeItem)
+          .reduce((sum, item) => sum + (item.quantity * item.rate), 0);
+        
+        const percent = parseFloat(percentMatch[1]);
+        mgmtFeeItem.rate = (subtotal * percent) / 100;
+        mgmtFeeItem.description = `Project Management Fee (${percent}%)`;
+      }
     }
     
     // Generate suggestions
-    suggestions.push(...this.generateSuggestions(lineItems));
+    const hasPermits = lineItems.some(item => 
+      item.description.toLowerCase().includes('permit')
+    );
+    const hasWarranty = termsAndConditions.some(term => 
+      term.toLowerCase().includes('warranty')
+    );
+    
+    if (!hasPermits) {
+      suggestions.push('Consider adding: Building permits if required');
+    }
+    if (!hasWarranty) {
+      suggestions.push('Consider adding: Warranty terms and duration');
+    }
+    if (paymentSchedule.length === 0) {
+      suggestions.push('Consider adding: Payment schedule and deposit requirements');
+    }
+    
+    // Combine notes with payment and terms for now
+    const allNotes = [
+      ...noteLines,
+      ...(paymentSchedule.length > 0 ? ['PAYMENT SCHEDULE:', ...paymentSchedule, ''] : []),
+      ...(termsAndConditions.length > 0 ? ['TERMS & CONDITIONS:', ...termsAndConditions] : [])
+    ].join('\n');
     
     return {
       lineItems,
       scopeOfWork: scopeLines.join('\n'),
-      notes: noteLines.join('\n'),
+      notes: allNotes,
       suggestions: suggestions.length > 0 ? suggestions : undefined
     };
   }
