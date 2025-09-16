@@ -111,9 +111,6 @@ const PRICING_DATABASE = {
 };
 
 export class EstimateParser {
-  /**
-   * Main parsing function that takes raw text and extracts structured data
-   */
   static parse(rawText: string): ParseResult {
     const lines = rawText.split('\n');
     const lineItems: ParsedLineItem[] = [];
@@ -121,132 +118,157 @@ export class EstimateParser {
     const noteLines: string[] = [];
     const suggestions: string[] = [];
     
-    // Check if there's a total amount at the beginning (like "Kitchen Remodel $27,797.00")
-    let projectTotal = 0;
-    const totalMatch = rawText.match(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
-    if (totalMatch) {
-      projectTotal = parseFloat(totalMatch[1].replace(/,/g, ''));
-    }
-
-    // Track categories to avoid duplicates
-    const seenCategories = new Set<string>();
-    let isInExclusions = false;
-    let isInTerms = false;
-
-    // If the entire text is a single paragraph about renovation/work, parse it as scope
-    const normalizedText = rawText.toLowerCase().replace(/\s+/g, ' ').trim();
-    const hasMultipleWorkItems = normalizedText.includes('demolition') && normalizedText.includes('removal') && 
-                                  (normalizedText.includes('cabinet') || normalizedText.includes('countertop') || 
-                                   normalizedText.includes('tile') || normalizedText.includes('floor'));
+    // Enhanced price pattern to catch various formats
+    const pricePatterns = [
+      /\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g,  // $1,234.56 or $1234.56
+      /(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*(?:dollars?|USD)/gi,  // 1234.56 dollars
+      /(\d{1,3}(?:,\d{3})*\.\d{2})(?:\s|$)/g,  // 1234.00 (decimal amounts)
+    ];
     
-    if (hasMultipleWorkItems && lines.length <= 3) {
-      // It's a comprehensive description in paragraph form
-      scopeLines.push(rawText.trim());
+    // Track what we've processed
+    const processedLines = new Set<number>();
+    let currentSection = '';
+    let totalAmount = 0;
+    
+    // First pass: extract all line items with prices
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) return;
       
-      // Extract individual work items from the description
-      const workKeywords = [
-        { keyword: 'demolition', description: 'Demolition and removal of existing fixtures', category: 'labor' as const, rate: 2500 },
-        { keyword: 'cabinet', description: 'Cabinet installation', category: 'material' as const, rate: 5000 },
-        { keyword: 'granite counter', description: 'Granite countertops', category: 'material' as const, rate: 3500 },
-        { keyword: 'backsplash', description: 'Backsplash tile installation', category: 'material' as const, rate: 1500 },
-        { keyword: 'floor tile', description: 'Floor tile installation', category: 'material' as const, rate: 2500 },
-        { keyword: 'subfloor', description: 'Subfloor repair/installation', category: 'material' as const, rate: 1000 }
-      ];
+      // Check for section headers
+      const sectionHeaders = ['demolition', 'cabinetry', 'cabinet', 'countertop', 'backsplash', 
+                             'hardware', 'appliance', 'electrical', 'plumbing', 'management fee'];
+      const lowerLine = trimmedLine.toLowerCase();
       
-      workKeywords.forEach(work => {
-        if (normalizedText.includes(work.keyword)) {
-          lineItems.push({
-            description: work.description,
-            quantity: 1,
-            rate: work.rate,
-            unit: 'project',
-            category: work.category
-          });
+      for (const header of sectionHeaders) {
+        if (lowerLine.startsWith(header) || lowerLine === header) {
+          currentSection = header;
+          break;
         }
-      });
+      }
       
-      // Add general kitchen renovation if no specific items found
-      if (lineItems.length === 0 && normalizedText.includes('kitchen')) {
+      // Extract price from the line
+      let price = 0;
+      let description = trimmedLine;
+      
+      // Try each price pattern
+      for (const pattern of pricePatterns) {
+        const matches = [...trimmedLine.matchAll(pattern)];
+        if (matches.length > 0) {
+          const lastMatch = matches[matches.length - 1];
+          const priceStr = lastMatch[1] || lastMatch[0];
+          price = parseFloat(priceStr.replace(/[,$]/g, ''));
+          
+          // Remove the price from description
+          description = trimmedLine.replace(lastMatch[0], '').trim();
+          break;
+        }
+      }
+      
+      // Handle percentage-based fees
+      const percentMatch = trimmedLine.match(/(\d+(?:\.\d+)?)\s*%/);
+      if (percentMatch && currentSection.includes('management')) {
+        const percent = parseFloat(percentMatch[1]);
+        // We'll calculate this after we have the subtotal
         lineItems.push({
-          description: 'Complete Kitchen Renovation',
-          quantity: 1,
-          rate: 15000,
-          unit: 'project',
+          description: 'Management Fee (' + percent + '%)',
+          quantity: percent,
+          rate: 0, // Will be calculated later
+          unit: 'percent',
           category: 'other'
         });
+        processedLines.add(index);
+        return;
       }
-    } else {
-      // Process each line individually
-      lines.forEach((line) => {
-        const trimmedLine = line.trim();
+      
+      // If we found a price, create a line item
+      if (price > 0) {
+        // Clean up the description
+        description = description
+          .replace(/^\*\s*/, '')
+          .replace(/^-\s*/, '')
+          .replace(/^•\s*/, '')
+          .replace(/\.$/, '')
+          .trim();
         
-        // Skip empty lines and URLs
-        if (!trimmedLine || trimmedLine.startsWith('http')) return;
-        
-        // Check for section headers
-        if (trimmedLine.toLowerCase().includes('exclusion')) {
-          isInExclusions = true;
-          return;
+        // Skip if it's just a price without description
+        if (!description || description.length < 3) {
+          // Try to use previous line as description
+          if (index > 0 && !processedLines.has(index - 1)) {
+            const prevLine = lines[index - 1].trim()
+              .replace(/^\*\s*/, '')
+              .replace(/^-\s*/, '')
+              .replace(/^•\s*/, '');
+            if (prevLine && !prevLine.toLowerCase().includes('optional')) {
+              description = prevLine;
+              processedLines.add(index - 1);
+            }
+          }
         }
-        if (trimmedLine.toLowerCase().includes('terms') || trimmedLine.toLowerCase().includes('condition')) {
-          isInTerms = true;
-          return;
+        
+        // Determine category based on section or keywords
+        let category: 'material' | 'labor' | 'equipment' | 'other' = 'other';
+        if (currentSection) {
+          if (['demolition', 'electrical', 'plumbing'].includes(currentSection)) {
+            category = 'labor';
+          } else if (['cabinetry', 'cabinet', 'countertop', 'backsplash', 'hardware'].includes(currentSection)) {
+            category = 'material';
+          }
         }
         
-        // Skip excluded items and terms
-        if (isInExclusions || isInTerms) {
+        // Add the line item if we have a good description
+        if (description && description.length > 3 && !description.toLowerCase().includes('optional')) {
+          lineItems.push({
+            description: description.charAt(0).toUpperCase() + description.slice(1),
+            quantity: 1,
+            rate: price,
+            unit: 'project',
+            category: category
+          });
+          totalAmount += price;
+          processedLines.add(index);
+        }
+      } else if (!processedLines.has(index)) {
+        // No price found, add to scope or notes
+        if (trimmedLine.toLowerCase().includes('exclusion') || 
+            trimmedLine.toLowerCase().includes('terms') ||
+            trimmedLine.toLowerCase().includes('optional') ||
+            trimmedLine.toLowerCase().includes('client decided not')) {
           noteLines.push(trimmedLine);
-          return;
-        }
-        
-        // Check if this is a major category or work item
-        if (this.isMajorWorkItem(trimmedLine) && !seenCategories.has(trimmedLine.toLowerCase())) {
-          const item = this.parseWorkItem(trimmedLine, projectTotal);
-          if (item && item.rate > 0) {
-            seenCategories.add(trimmedLine.toLowerCase());
-            lineItems.push(item);
-          } else {
+        } else if (trimmedLine.startsWith('*') || trimmedLine.startsWith('-') || 
+                   trimmedLine.startsWith('•') || currentSection) {
+          // Add to scope if it's a bullet point or part of a section
+          if (!trimmedLine.toLowerCase().includes('http')) {
             scopeLines.push(trimmedLine);
           }
-        } else if (this.isDetailedWorkDescription(trimmedLine)) {
-          // These are detailed descriptions that should go in scope
-          scopeLines.push(trimmedLine);
-        } else if (trimmedLine.startsWith('*') || trimmedLine.startsWith('-') || trimmedLine.startsWith('•')) {
-          // Bullet points are usually scope details
-          scopeLines.push(trimmedLine);
-        } else if (this.isScopeDescription(trimmedLine)) {
-          scopeLines.push(trimmedLine);
         } else {
-          scopeLines.push(trimmedLine); // Default to scope rather than notes
+          scopeLines.push(trimmedLine);
         }
-      });
+      }
+    });
+    
+    // Calculate management fee if we have one
+    const mgmtFeeItem = lineItems.find(item => item.unit === 'percent');
+    if (mgmtFeeItem && totalAmount > 0) {
+      mgmtFeeItem.rate = (totalAmount * mgmtFeeItem.quantity) / 100;
+      mgmtFeeItem.quantity = 1;
+      mgmtFeeItem.unit = 'project';
     }
-
-    // If we didn't find many line items but have a total, create a summary item
-    if (lineItems.length === 0 && projectTotal > 0) {
+    
+    // If no items found, create at least one default item
+    if (lineItems.length === 0) {
       lineItems.push({
-        description: 'Complete Project - As per scope of work',
+        description: 'Project work as described',
         quantity: 1,
-        rate: projectTotal,
+        rate: 5000,
         unit: 'project',
         category: 'other'
       });
     }
-
-    // If we still have no items but have content, create a basic estimate
-    if (lineItems.length === 0 && scopeLines.length > 0) {
-      lineItems.push({
-        description: 'Work as described in scope',
-        quantity: 1,
-        rate: 5000, // Default estimate
-        unit: 'project',
-        category: 'other'
-      });
-    }
-
-    // Generate suggestions for common missing items
+    
+    // Generate suggestions
     suggestions.push(...this.generateSuggestions(lineItems));
-
+    
     return {
       lineItems,
       scopeOfWork: scopeLines.join('\n'),
