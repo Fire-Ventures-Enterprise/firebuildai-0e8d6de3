@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,9 +14,10 @@ import { notify } from '@/lib/notify';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentStagesForm from './PaymentStagesForm';
 import SignaturePad from './SignaturePad';
-import { FileText, DollarSign, PenTool, Send, CreditCard, CheckCircle2 } from 'lucide-react';
+import { FileText, DollarSign, PenTool, Send, CreditCard, CheckCircle2, Copy } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { generateContractText, STANDARD_EXCLUSIONS, PAYMENT_SCHEDULE_TEMPLATES } from '@/templates/construction-contract';
 
 // Initialize Stripe
 const stripePromise = loadStripe('pk_test_51234567890'); // TODO: Use actual publishable key
@@ -85,6 +87,8 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
   const [clientSecret, setClientSecret] = useState<string>();
   const [isConverting, setIsConverting] = useState(false);
   const [conversionStep, setConversionStep] = useState<'review' | 'signature' | 'payment' | 'complete'>('review');
+  const [useStandardContract, setUseStandardContract] = useState(true);
+  const [selectedPaymentTemplate, setSelectedPaymentTemplate] = useState<keyof typeof PAYMENT_SCHEDULE_TEMPLATES>('standard');
 
   // Calculate deposit amount based on percentage
   useEffect(() => {
@@ -352,10 +356,86 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
                 <Card>
                   <CardHeader>
                     <CardTitle>Contract & Terms</CardTitle>
+                    <CardDescription>
+                      Configure the contract agreement for this proposal
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="useStandard">Use Standard Contract Template</Label>
+                      <Switch
+                        id="useStandard"
+                        checked={useStandardContract}
+                        onCheckedChange={(checked) => {
+                          setUseStandardContract(checked);
+                          if (checked) {
+                            // Generate contract from template
+                            const contractData = {
+                              companyName: 'Your Company Name', // TODO: Get from company settings
+                              clientName: estimate?.customer_name || '',
+                              projectAddress: estimate?.service_address || '',
+                              contractPrice: estimate?.total || 0,
+                              depositAmount: proposalData.depositAmount,
+                              scopeOfWork: estimate?.scope_of_work || '',
+                              startDate: new Date().toLocaleDateString(),
+                              completionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()
+                            };
+                            const contractText = generateContractText(contractData);
+                            setProposalData(prev => ({ ...prev, contractText }));
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {useStandardContract && (
+                      <div className="space-y-2">
+                        <Label>Payment Schedule Template</Label>
+                        <Select
+                          value={selectedPaymentTemplate}
+                          onValueChange={(value: keyof typeof PAYMENT_SCHEDULE_TEMPLATES) => {
+                            setSelectedPaymentTemplate(value);
+                            const template = PAYMENT_SCHEDULE_TEMPLATES[value];
+                            const stages = template.stages.map(stage => ({
+                              description: stage.description,
+                              percentage: stage.percentage,
+                              amount: (estimate?.total || 0) * (stage.percentage / 100),
+                              milestone: stage.description
+                            }));
+                            setProposalData(prev => ({ ...prev, paymentStages: stages }));
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(PAYMENT_SCHEDULE_TEMPLATES).map(([key, template]) => (
+                              <SelectItem key={key} value={key}>
+                                {template.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
-                      <Label htmlFor="contractText">Contract Text</Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="contractText">Contract Text</Label>
+                        {useStandardContract && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(proposalData.contractText);
+                              notify.success('Contract copied to clipboard');
+                            }}
+                          >
+                            <Copy className="h-4 w-4 mr-1" />
+                            Copy
+                          </Button>
+                        )}
+                      </div>
                       <Textarea
                         id="contractText"
                         value={proposalData.contractText}
@@ -363,12 +443,27 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
                           setProposalData(prev => ({ ...prev, contractText: e.target.value }))
                         }
                         placeholder="Enter contract details..."
-                        rows={8}
+                        rows={12}
+                        className="font-mono text-xs"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="terms">Terms & Conditions</Label>
+                      <Label>Standard Exclusions</Label>
+                      <div className="bg-muted p-3 rounded-lg">
+                        <ul className="text-sm space-y-1">
+                          {STANDARD_EXCLUSIONS.slice(0, 5).map((exclusion, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-muted-foreground mr-2">•</span>
+                              <span>{exclusion}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="terms">Additional Terms & Conditions</Label>
                       <Textarea
                         id="terms"
                         value={proposalData.termsConditions}
