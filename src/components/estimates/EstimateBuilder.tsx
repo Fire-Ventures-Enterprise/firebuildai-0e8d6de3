@@ -137,14 +137,15 @@ export const EstimateBuilder = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden">
+        <DialogHeader className="px-6 py-4 border-b">
           <DialogTitle>
             {mode === 'create' ? 'Create New Estimate' : `Edit Estimate #${formData.estimateNumber}`}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="overflow-y-auto flex-1 px-6 pb-6">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-6">
           {/* Header Section */}
           <div className="grid grid-cols-2 gap-8">
             {/* Company Info */}
@@ -416,6 +417,7 @@ export const EstimateBuilder = ({
             </Button>
           </div>
         </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -134,6 +134,60 @@ All colors MUST be HSL.
   }
 }
 
+/* Mobile scrolling fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific fixes */
+  .fixed {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Prevent dialog scroll issues on mobile */
+[role="dialog"] {
+  overscroll-behavior: contain;
+}
+
+/* Ensure smooth scrolling on mobile */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Mobile specific fixes for better scrolling */
+@media (max-width: 768px) {
+  /* Allow body scrolling on mobile */
+  body {
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  #root {
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+  }
+  
+  /* Main content scrolling */
+  main {
+    min-height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Sheet and dialog content scrolling fixes */
+  [data-radix-scroll-area-viewport], 
+  [role="dialog"] .overflow-y-auto {
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

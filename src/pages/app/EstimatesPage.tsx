@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,6 +14,7 @@ import EstimateForm from '@/components/estimates/EstimateForm';
 import EstimatePreview from '@/components/estimates/EstimatePreview';
 import { ServiceLibraryDrawer } from '@/components/service-library/ServiceLibraryDrawer';
 import { formatCurrency } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Estimate {
   id: string;
@@ -46,6 +48,7 @@ export const EstimatesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (user) {
@@ -378,50 +381,111 @@ export const EstimatesPage = () => {
         </CardContent>
       </Card>
 
-      {/* Estimate Form Dialog */}
-      <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedEstimate ? 'Edit Estimate' : 'New Estimate'}
-            </DialogTitle>
-          </DialogHeader>
-          <EstimateForm
-            estimate={selectedEstimate}
-            onSave={(data) => {
-              fetchEstimates();
-              setShowForm(false);
-              setSelectedEstimate(null);
-              toast({
-                title: "Success",
-                description: selectedEstimate ? "Estimate updated" : "Estimate created",
-              });
-            }}
-            onCancel={() => {
-              setShowForm(false);
-              setSelectedEstimate(null);
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+      {/* Estimate Form - Mobile Sheet or Desktop Dialog */}
+      {isMobile ? (
+        <Sheet open={showForm} onOpenChange={setShowForm}>
+          <SheetContent 
+            side="bottom" 
+            className="h-[92vh] p-0 overflow-hidden rounded-t-lg"
+          >
+            <SheetHeader className="px-4 py-3 border-b">
+              <SheetTitle>
+                {selectedEstimate ? 'Edit Estimate' : 'New Estimate'}
+              </SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto flex-1 px-4 pb-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <EstimateForm
+                estimate={selectedEstimate}
+                onSave={(data) => {
+                  fetchEstimates();
+                  setShowForm(false);
+                  setSelectedEstimate(null);
+                  toast({
+                    title: "Success",
+                    description: selectedEstimate ? "Estimate updated" : "Estimate created",
+                  });
+                }}
+                onCancel={() => {
+                  setShowForm(false);
+                  setSelectedEstimate(null);
+                }}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Dialog open={showForm} onOpenChange={setShowForm}>
+          <DialogContent className="max-w-4xl h-[90vh] p-0 overflow-hidden">
+            <DialogHeader className="px-6 py-4 border-b">
+              <DialogTitle>
+                {selectedEstimate ? 'Edit Estimate' : 'New Estimate'}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="overflow-y-auto flex-1 px-6 pb-6">
+              <EstimateForm
+                estimate={selectedEstimate}
+                onSave={(data) => {
+                  fetchEstimates();
+                  setShowForm(false);
+                  setSelectedEstimate(null);
+                  toast({
+                    title: "Success",
+                    description: selectedEstimate ? "Estimate updated" : "Estimate created",
+                  });
+                }}
+                onCancel={() => {
+                  setShowForm(false);
+                  setSelectedEstimate(null);
+                }}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
-      {/* Estimate Preview Dialog */}
-      <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Estimate Preview</DialogTitle>
-          </DialogHeader>
-          {selectedEstimate && (
-            <EstimatePreview
-              estimate={selectedEstimate}
-              onClose={() => {
-                setShowPreview(false);
-                setSelectedEstimate(null);
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Estimate Preview - Mobile Sheet or Desktop Dialog */}
+      {isMobile ? (
+        <Sheet open={showPreview} onOpenChange={setShowPreview}>
+          <SheetContent 
+            side="bottom" 
+            className="h-[92vh] p-0 overflow-hidden rounded-t-lg"
+          >
+            <SheetHeader className="px-4 py-3 border-b">
+              <SheetTitle>Estimate Preview</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto flex-1 px-4 pb-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+              {selectedEstimate && (
+                <EstimatePreview
+                  estimate={selectedEstimate}
+                  onClose={() => {
+                    setShowPreview(false);
+                    setSelectedEstimate(null);
+                  }}
+                />
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Dialog open={showPreview} onOpenChange={setShowPreview}>
+          <DialogContent className="max-w-4xl h-[90vh] p-0 overflow-hidden">
+            <DialogHeader className="px-6 py-4 border-b">
+              <DialogTitle>Estimate Preview</DialogTitle>
+            </DialogHeader>
+            <div className="overflow-y-auto flex-1 px-6 pb-6">
+              {selectedEstimate && (
+                <EstimatePreview
+                  estimate={selectedEstimate}
+                  onClose={() => {
+                    setShowPreview(false);
+                    setSelectedEstimate(null);
+                  }}
+                />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Service Library Drawer */}
       {currentEstimateId && (
