@@ -73,18 +73,32 @@ export function SmartEstimateInput({
       const result = EstimateParser.parse(inputText);
       
       setParsedItems(result.lineItems);
-      setSuggestions(result.suggestions || []);
+      
+      // Filter out suggestions for items that are already in the parsed items
+      const existingDescriptions = result.lineItems.map((item: any) => 
+        item.description.toLowerCase().replace(/[^a-z\s]/g, '')
+      );
+      
+      const filteredSuggestions = (result.suggestions || []).filter(suggestion => {
+        const cleanSuggestion = suggestion.replace('⚠️ ', '').toLowerCase().replace(/[^a-z\s]/g, '');
+        return !existingDescriptions.some((desc: string) => 
+          desc.includes(cleanSuggestion.split(' ').slice(0, 3).join(' ')) ||
+          cleanSuggestion.split(' ').slice(0, 3).join(' ').includes(desc)
+        );
+      });
+      
+      setSuggestions(filteredSuggestions);
       
       // Check for critical missing items
-      const criticalMissing = (result.suggestions || []).filter(s => s.startsWith('⚠️'));
+      const criticalMissing = filteredSuggestions.filter(s => s.startsWith('⚠️'));
       
       if (criticalMissing.length > 0) {
         // Prepare missing items for modal
-        const items = result.suggestions?.map(suggestion => ({
+        const items = filteredSuggestions.map(suggestion => ({
           description: suggestion,
           critical: suggestion.startsWith('⚠️'),
-          suggestedPrice: undefined // Could calculate based on item type
-        })) || [];
+          suggestedPrice: undefined
+        }));
         
         setMissingItems(items);
         
@@ -178,12 +192,16 @@ export function SmartEstimateInput({
       'permit', 'demolition', 'excavation', 'grading', 'footings', 'foundation', 'concrete',
       // Structural
       'framing', 'frame', 'studs', 'trusses', 'sheathing', 'roofing', 'roof',
+      // Roof and Exterior Details (added soffit, fascia, eaves here)
+      'soffit', 'fascia', 'eaves', 'ventilation', 'gutters', 'downspouts',
       // Exterior
       'siding', 'exterior', 'windows', 'doors', 'garage door',
       // MEP (Mechanical, Electrical, Plumbing) - Rough-in
       'plumbing rough', 'electrical rough', 'hvac rough', 'rough-in',
       // Insulation and drywall
-      'insulation', 'drywall', 'tape', 'texture',
+      'insulation', 'drywall', 'tape', 'texture', 'wall', 'ceiling',
+      // Interior and exterior lighting
+      'lighting', 'light fixtures', 'electrical fixtures',
       // MEP - Finish
       'plumbing finish', 'electrical finish', 'hvac finish', 'fixtures',
       // Interior finishes
