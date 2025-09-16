@@ -276,24 +276,43 @@ export class EstimateParser {
         return;
       }
       
+      // Check if line starts with @ symbol - this is a line item
+      const startsWithAt = trimmedLine.startsWith('@');
+      
       // Check for actual line items with prices
       let foundPrice = false;
       let price = 0;
       let description = trimmedLine;
       
-      // Try to extract price
-      for (const pattern of pricePatterns) {
-        const match = trimmedLine.match(pattern);
-        if (match) {
-          price = parseFloat(match[1].replace(/[,$]/g, ''));
-          // Get description (everything before the @)
-          if (trimmedLine.includes('@')) {
-            description = trimmedLine.substring(0, trimmedLine.indexOf('@')).trim();
-          } else {
-            description = trimmedLine.replace(match[0], '').trim();
-          }
+      if (startsWithAt) {
+        // Remove @ symbol and process the line
+        const lineWithoutAt = trimmedLine.substring(1).trim();
+        
+        // Try to find price at the end
+        const priceMatch = lineWithoutAt.match(/\$?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*$/);
+        if (priceMatch) {
+          price = parseFloat(priceMatch[1].replace(/,/g, ''));
+          description = lineWithoutAt.replace(priceMatch[0], '').trim();
           foundPrice = true;
-          break;
+        } else {
+          // If no price found, treat the whole line as description
+          description = lineWithoutAt;
+        }
+      } else {
+        // Try to extract price using original patterns
+        for (const pattern of pricePatterns) {
+          const match = trimmedLine.match(pattern);
+          if (match) {
+            price = parseFloat(match[1].replace(/[,$]/g, ''));
+            // Get description (everything before the @)
+            if (trimmedLine.includes('@')) {
+              description = trimmedLine.substring(0, trimmedLine.indexOf('@')).trim();
+            } else {
+              description = trimmedLine.replace(match[0], '').trim();
+            }
+            foundPrice = true;
+            break;
+          }
         }
       }
       
@@ -314,8 +333,8 @@ export class EstimateParser {
         }
       }
       
-      // If we found a price and it's not a payment item, add as line item
-      if (foundPrice && price > 0 && !isPaymentItem) {
+      // If line starts with @ or we found a price, and it's not a payment item, add as line item
+      if ((startsWithAt || (foundPrice && price > 0)) && !isPaymentItem) {
         // Clean up description
         description = description
           .replace(/^\*\s*/, '')
