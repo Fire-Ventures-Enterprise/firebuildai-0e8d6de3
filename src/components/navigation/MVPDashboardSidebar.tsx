@@ -80,9 +80,9 @@ export function MVPDashboardSidebar() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b">
-        <div className="flex items-center gap-2 px-2 py-4">
+    <Sidebar collapsible="icon" className="border-r bg-card">
+      <SidebarHeader className="border-b bg-background px-4 py-3">
+        <div className="flex items-center gap-2">
           {isCollapsed ? (
             <Building2 className="h-8 w-8 text-primary shrink-0" />
           ) : (
@@ -93,28 +93,35 @@ export function MVPDashboardSidebar() {
           )}
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-background">
         <SidebarGroup>
-          <SidebarGroupLabel>{!isCollapsed && 'Main Menu'}</SidebarGroupLabel>
+          {!isCollapsed && (
+            <SidebarGroupLabel className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Main Menu
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.href}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:bg-accent ${
-                          isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                        }`
-                      }
-                    >
-                      <item.icon className="h-5 w-5 shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.href}
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all ${
+                          isActive 
+                            ? 'bg-primary/10 text-primary font-medium' 
+                            : 'text-foreground/70 hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-primary' : ''}`} />
+                        {!isCollapsed && <span className="text-sm">{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
