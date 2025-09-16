@@ -2230,14 +2230,20 @@ export type Database = {
           customer_id: string
           deposit_amount: number | null
           deposit_due: number | null
+          deposit_paid: boolean | null
+          deposit_paid_at: string | null
+          deposit_payment_id: string | null
           deposit_percentage: number | null
           estimate_number: string
           expiration_date: string | null
           id: string
           invoice_id: string | null
+          is_proposal: boolean | null
           issue_date: string
           last_sent_to: string | null
           notes: string | null
+          payment_stages: Json | null
+          proposal_sent_at: string | null
           public_token: string | null
           public_token_hash: string | null
           scope_of_work: string | null
@@ -2276,14 +2282,20 @@ export type Database = {
           customer_id: string
           deposit_amount?: number | null
           deposit_due?: number | null
+          deposit_paid?: boolean | null
+          deposit_paid_at?: string | null
+          deposit_payment_id?: string | null
           deposit_percentage?: number | null
           estimate_number: string
           expiration_date?: string | null
           id?: string
           invoice_id?: string | null
+          is_proposal?: boolean | null
           issue_date?: string
           last_sent_to?: string | null
           notes?: string | null
+          payment_stages?: Json | null
+          proposal_sent_at?: string | null
           public_token?: string | null
           public_token_hash?: string | null
           scope_of_work?: string | null
@@ -2322,14 +2334,20 @@ export type Database = {
           customer_id?: string
           deposit_amount?: number | null
           deposit_due?: number | null
+          deposit_paid?: boolean | null
+          deposit_paid_at?: string | null
+          deposit_payment_id?: string | null
           deposit_percentage?: number | null
           estimate_number?: string
           expiration_date?: string | null
           id?: string
           invoice_id?: string | null
+          is_proposal?: boolean | null
           issue_date?: string
           last_sent_to?: string | null
           notes?: string | null
+          payment_stages?: Json | null
+          proposal_sent_at?: string | null
           public_token?: string | null
           public_token_hash?: string | null
           scope_of_work?: string | null

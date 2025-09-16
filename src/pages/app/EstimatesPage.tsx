@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, FileText, DollarSign, Clock, Send, CheckCircle, Eye, Edit, Trash2, Package } from 'lucide-react';
+import { Plus, FileText, DollarSign, Clock, Send, CheckCircle, Eye, Edit, Trash2, Package, FileSignature } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import EstimateForm from '@/components/estimates/EstimateForm';
 import EstimatePreview from '@/components/estimates/EstimatePreview';
+import { ProposalConversionDialog } from '@/components/estimates/ProposalConversionDialog';
 import { ServiceLibraryDrawer } from '@/components/service-library/ServiceLibraryDrawer';
 import { formatCurrency } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -42,6 +43,7 @@ export const EstimatesPage = () => {
   const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showProposalConversion, setShowProposalConversion] = useState(false);
   const [showServiceLibrary, setShowServiceLibrary] = useState(false);
   const [currentEstimateId, setCurrentEstimateId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -327,6 +329,19 @@ export const EstimatesPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    {estimate.status === 'draft' && !estimate.converted_to_invoice && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedEstimate(estimate);
+                          setShowProposalConversion(true);
+                        }}
+                        title="Convert to Proposal"
+                      >
+                        <FileSignature className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -504,6 +519,23 @@ export const EstimatesPage = () => {
           }}
           targetId={currentEstimateId}
           targetType="estimate"
+        />
+      )}
+
+      {/* Proposal Conversion Dialog */}
+      {selectedEstimate && (
+        <ProposalConversionDialog
+          open={showProposalConversion}
+          onOpenChange={setShowProposalConversion}
+          estimate={selectedEstimate}
+          onSuccess={() => {
+            setShowProposalConversion(false);
+            fetchEstimates();
+            toast({
+              title: 'Success',
+              description: 'Estimate converted to proposal successfully',
+            });
+          }}
         />
       )}
     </div>

@@ -3,10 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Trash2, Percent, DollarSign } from 'lucide-react';
-import { format } from 'date-fns';
+import { Plus, Trash2, Percent, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
@@ -15,7 +12,7 @@ interface PaymentStage {
   percentage?: number;
   amount?: number;
   milestone?: string;
-  due_date?: Date;
+  
 }
 
 interface PaymentStagesFormProps {
@@ -47,8 +44,7 @@ export default function PaymentStagesForm({ stages, onChange, totalAmount }: Pay
       description: '',
       percentage: paymentMethod === 'percentage' ? 0 : undefined,
       amount: paymentMethod === 'fixed' ? 0 : undefined,
-      milestone: '',
-      due_date: undefined
+      milestone: ''
     };
     onChange([...stages, newStage]);
   };
@@ -206,33 +202,6 @@ export default function PaymentStagesForm({ stages, onChange, totalAmount }: Pay
                         onChange={(e) => updateStage(index, 'milestone', e.target.value)}
                       />
                     </div>
-                  </div>
-                  
-                  <div>
-                    <Label>Due Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !stage.due_date && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {stage.due_date ? format(stage.due_date, "PPP") : "Select date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={stage.due_date}
-                          onSelect={(date) => date && updateStage(index, 'due_date', date)}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
                   </div>
                 </div>
               </div>
