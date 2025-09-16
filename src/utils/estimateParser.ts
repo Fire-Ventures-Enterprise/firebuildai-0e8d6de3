@@ -814,7 +814,10 @@ export class EstimateParser {
         { check: 'gutter', suggest: 'Gutters and downspouts' },
         { check: 'paint', suggest: 'Interior/exterior painting or staining' },
         { check: 'insulation', suggest: 'Wall and ceiling insulation' },
-        { check: 'drywall', suggest: 'Interior drywall and finishing' }
+        { check: 'drywall', suggest: 'Interior drywall and finishing' },
+        { check: 'cleanup|clean up|final clean|post construction', suggest: '⚠️ Cleanup and post-construction cleaning' },
+        { check: 'garbage bin|dumpster|waste container|disposal bin', suggest: '⚠️ Garbage bin/dumpster rental' },
+        { check: 'portable toilet|portable potty|porta potty|restroom facilities', suggest: '⚠️ Portable toilet/restroom facilities' }
       ],
       'bathroom-remodel': [
         { check: 'permit', suggest: '⚠️ Building permits (required for plumbing/electrical)' },
@@ -849,21 +852,59 @@ export class EstimateParser {
     // Get requirements for this project type
     const requirements = projectRequirements[projectType] || [];
     
-    // Check each requirement
+    // Check each requirement with more sophisticated matching
     requirements.forEach(req => {
-      if (!existingItems.includes(req.check)) {
-        suggestions.push(req.suggest);
+      // For complex checks with multiple options (separated by |)
+      const checkOptions = req.check.split('|');
+      const found = checkOptions.some(option => {
+        const opt = option.trim();
+        // Check both in the concatenated string and individual items
+        return existingItems.includes(opt) || 
+          lineItems.some(item => {
+            const itemDesc = item.description.toLowerCase();
+            return itemDesc.includes(opt);
+          });
+      });
+      
+      if (!found) {
+        // Double-check that this exact suggestion wasn't already added
+        const cleanSuggestion = req.suggest.replace('⚠️ ', '').toLowerCase();
+        const alreadyExists = lineItems.some(item => {
+          const itemDesc = item.description.toLowerCase();
+          // Check if the item description contains key parts of the suggestion
+          return cleanSuggestion.split(' ').filter(word => 
+            word.length > 3 && !['and', 'the', 'for'].includes(word)
+          ).every(word => itemDesc.includes(word));
+        });
+        
+        if (!alreadyExists) {
+          suggestions.push(req.suggest);
+        }
       }
     });
     
-    // Add general checks for all projects
-    if (!existingItems.includes('cleanup') && !existingItems.includes('final')) {
-      suggestions.push('Final cleanup and debris removal');
-    }
+    // Always check for common site requirements regardless of project type
+    const commonRequirements = [
+      { check: 'cleanup|clean up|final clean|post construction', suggest: '⚠️ Cleanup and post-construction cleaning' },
+      { check: 'garbage bin|dumpster|waste container|disposal bin|debris', suggest: '⚠️ Garbage bin/dumpster rental' },
+      { check: 'portable toilet|portable potty|porta potty|restroom|facilities', suggest: '⚠️ Portable toilet/restroom facilities' }
+    ];
     
-    if (!existingItems.includes('inspection') && projectType !== 'general-construction') {
-      suggestions.push('Final inspection and sign-off');
-    }
+    commonRequirements.forEach(req => {
+      const checkOptions = req.check.split('|');
+      const found = checkOptions.some(option => {
+        const opt = option.trim();
+        return existingItems.includes(opt) || 
+          lineItems.some(item => {
+            const itemDesc = item.description.toLowerCase();
+            return itemDesc.includes(opt);
+          });
+      });
+      
+      if (!found && !suggestions.includes(req.suggest)) {
+        suggestions.push(req.suggest);
+      }
+    });
     
     // Sort suggestions with critical items (⚠️) first
     return suggestions.sort((a, b) => {
