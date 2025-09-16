@@ -425,7 +425,7 @@ export class EstimateParser {
     // Note: Terms and conditions are not a priced item, so we don't suggest them as missing items
     
     // Detect project type and provide intelligent suggestions
-    const projectType = detectProjectTypeFromSequencer(rawText, lineItems);
+    const projectType = detectProjectTypeFromSequencer(lineItems);
     const missingSuggestions = this.getMissingItemSuggestions(projectType, lineItems);
     
     // Add missing item suggestions
@@ -690,7 +690,7 @@ export class EstimateParser {
    */
   static detectProjectType(text: string, lineItems: ParsedLineItem[]): string {
     // Use the new sequencer's detection logic
-    return detectProjectTypeFromSequencer(text, lineItems);
+    return detectProjectTypeFromSequencer(lineItems);
   }
 
   /**

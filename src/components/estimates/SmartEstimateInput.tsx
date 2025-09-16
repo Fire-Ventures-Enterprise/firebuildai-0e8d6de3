@@ -132,7 +132,7 @@ export function SmartEstimateInput({
         setMissingItems(items);
         
         // Detect project type for modal and sequencing
-        const detectedType = detectProjectType(inputText, result.lineItems);
+        const detectedType = detectProjectType(result.lineItems);
         setProjectType(detectedType);
         
         setShowWarningModal(true);
@@ -191,8 +191,8 @@ export function SmartEstimateInput({
     });
     
     // Insert items in the correct sequence based on construction workflow
-    const detectedProjectType = detectProjectType(inputText, parsedItems);
-    const updatedItems = insertItemsInSequence(parsedItems, newItems, detectedProjectType);
+    const detectedProjectType = detectProjectType(parsedItems);
+    const updatedItems = insertItemsInSequence(parsedItems, newItems);
     setParsedItems(updatedItems);
     
     // Re-process with added items
