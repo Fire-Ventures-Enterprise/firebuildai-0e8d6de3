@@ -16,7 +16,8 @@ import {
   Building2,
   CheckCircle,
   Clock,
-  AlertCircle
+  AlertCircle,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -75,9 +76,10 @@ interface ServiceLibraryDrawerProps {
   onClose: () => void;
   onTasksCreated?: (tasks: ProjectTask[]) => void;
   targetId?: string;
-  targetType?: 'invoice' | 'estimate';
+  targetType?: 'invoice' | 'estimate' | 'project';
   companyProfile?: any;
   onProfileUpdate?: (profile: any) => void;
+  projectMode?: boolean; // When true, allows browsing without targetId
 }
 
 export function ServiceLibraryDrawer({ 
@@ -87,7 +89,8 @@ export function ServiceLibraryDrawer({
   targetId,
   targetType = 'invoice',
   companyProfile = DefaultCompanyProfiles.general_contractor,
-  onProfileUpdate
+  onProfileUpdate,
+  projectMode = false
 }: ServiceLibraryDrawerProps) {
   const [templates, setTemplates] = useState<any[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
@@ -98,6 +101,7 @@ export function ServiceLibraryDrawer({
   const [generating, setGenerating] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
   const [showConfig, setShowConfig] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -162,15 +166,46 @@ export function ServiceLibraryDrawer({
   };
 
   const handleGenerate = async () => {
-    if (!selectedTemplate || !templateDetails || !targetId) return;
+    if (!selectedTemplate || !templateDetails) return;
+    
+    // In project mode, we don't require targetId
+    if (!projectMode && !targetId) {
+      toast({
+        title: 'Error',
+        description: 'Please select a target document first',
+        variant: 'destructive'
+      });
+      return;
+    }
     
     setGenerating(true);
     try {
-      // Create project tasks from template
+      // If in project mode, just return the template details
+      if (projectMode) {
+        const projectTasks = templateDetails.tasks?.map((task: any, index: number) => ({
+          id: task.id,
+          label: task.task_name,
+          trade: task.trade,
+          duration_days: task.duration_days,
+          order: index,
+          status: 'planned' as const
+        }));
+        
+        toast({
+          title: 'Template Selected',
+          description: `${selectedTemplate.name} template is ready to use`,
+        });
+        
+        onTasksCreated?.(projectTasks || []);
+        handleClose();
+        return;
+      }
+      
+      // Create project tasks from template (for non-project mode)
       const tasks = await createProjectTasksFromTemplate(
         selectedTemplate.id,
-        targetId,
-        targetType,
+        targetId!,
+        targetType as 'invoice' | 'estimate',
         options,
         metrics
       );
@@ -197,7 +232,7 @@ export function ServiceLibraryDrawer({
           .insert(lineItems);
         
         if (error) throw error;
-      } else {
+      } else if (targetType === 'estimate') {
         const lineItems = scheduledTasks.map((task, index) => ({
           estimate_id: targetId,
           description: `${task.label} - ${task.trade || 'General'} (${task.duration_days} days)`,
@@ -245,12 +280,22 @@ export function ServiceLibraryDrawer({
     setMetrics({});
     setOptions({});
     setSelectedIndustry('all');
+    setSearchQuery('');
     onClose();
   };
 
-  const filteredTemplates = selectedIndustry === 'all' 
-    ? templates 
-    : templates.filter(t => t.industry === selectedIndustry);
+  const filteredTemplates = templates.filter(template => {
+    // Filter by industry
+    const matchesIndustry = selectedIndustry === 'all' || template.industry === selectedIndustry;
+    
+    // Filter by search query
+    const matchesSearch = searchQuery === '' || 
+      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.industry?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesIndustry && matchesSearch;
+  });
 
   return (
     <Sheet open={open} onOpenChange={handleClose}>
@@ -273,7 +318,9 @@ export function ServiceLibraryDrawer({
             )}
           </div>
           <SheetDescription>
-            {companyProfile?.name} - Choose a service template to generate tasks and schedules
+            {projectMode 
+              ? 'Browse and search service templates for all projects'
+              : `${companyProfile?.name} - Choose a service template to generate tasks and schedules`}
           </SheetDescription>
         </SheetHeader>
 
@@ -283,7 +330,19 @@ export function ServiceLibraryDrawer({
           </div>
         ) : !selectedTemplate ? (
           <>
-            <Tabs value={selectedIndustry} onValueChange={setSelectedIndustry} className="mt-6">
+            {/* Search Bar */}
+            <div className="mt-4 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search templates by name, description, or industry..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <Tabs value={selectedIndustry} onValueChange={setSelectedIndustry} className="mt-4">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="all">All ({templates.length})</TabsTrigger>
                 <TabsTrigger value="general_contractor">General</TabsTrigger>
@@ -292,35 +351,45 @@ export function ServiceLibraryDrawer({
               </TabsList>
               
               <TabsContent value={selectedIndustry} className="mt-4">
-                <ScrollArea className="h-[500px]">
+                <ScrollArea className="h-[450px]">
                   <div className="space-y-3">
-                    {filteredTemplates.map((template) => {
-                      const Icon = iconMap[template.icon as keyof typeof iconMap] || Package;
-                      return (
-                        <Card 
-                          key={template.id}
-                          className="cursor-pointer hover:shadow-md transition-all"
-                          onClick={() => handleTemplateSelect(template)}
-                        >
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <Icon className="h-5 w-5 text-primary" />
-                                <div>
-                                  <CardTitle className="text-base">{template.name}</CardTitle>
-                                  <Badge variant="outline" className="mt-1">
-                                    {industryLabels[template.industry as keyof typeof industryLabels] || template.industry}
-                                  </Badge>
+                    {filteredTemplates.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">
+                          {searchQuery 
+                            ? `No templates found matching "${searchQuery}"`
+                            : 'No templates available in this category'}
+                        </p>
+                      </div>
+                    ) : (
+                      filteredTemplates.map((template) => {
+                        const Icon = iconMap[template.icon as keyof typeof iconMap] || Package;
+                        return (
+                          <Card 
+                            key={template.id}
+                            className="cursor-pointer hover:shadow-md transition-all"
+                            onClick={() => handleTemplateSelect(template)}
+                          >
+                            <CardHeader className="pb-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                  <Icon className="h-5 w-5 text-primary" />
+                                  <div>
+                                    <CardTitle className="text-base">{template.name}</CardTitle>
+                                    <Badge variant="outline" className="mt-1">
+                                      {industryLabels[template.industry as keyof typeof industryLabels] || template.industry}
+                                    </Badge>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <CardDescription>{template.description}</CardDescription>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+                            </CardHeader>
+                            <CardContent>
+                              <CardDescription>{template.description}</CardDescription>
+                            </CardContent>
+                          </Card>
+                        );
+                      })
+                    )}
                   </div>
                 </ScrollArea>
               </TabsContent>
@@ -433,7 +502,11 @@ export function ServiceLibraryDrawer({
               disabled={generating || !templateDetails}
               className="w-full"
             >
-              {generating ? 'Generating...' : 'Generate Tasks & Schedule'}
+              {generating 
+                ? 'Processing...' 
+                : projectMode 
+                  ? 'Select Template' 
+                  : 'Generate Tasks & Schedule'}
             </Button>
           )}
         </SheetFooter>
