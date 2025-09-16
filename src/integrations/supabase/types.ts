@@ -2250,6 +2250,7 @@ export type Database = {
           sent_at: string | null
           sent_by: string | null
           sent_count: number | null
+          sequence_data: Json | null
           service_address: string | null
           service_city: string | null
           service_postal_code: string | null
@@ -2302,6 +2303,7 @@ export type Database = {
           sent_at?: string | null
           sent_by?: string | null
           sent_count?: number | null
+          sequence_data?: Json | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null
@@ -2354,6 +2356,7 @@ export type Database = {
           sent_at?: string | null
           sent_by?: string | null
           sent_count?: number | null
+          sequence_data?: Json | null
           service_address?: string | null
           service_city?: string | null
           service_postal_code?: string | null

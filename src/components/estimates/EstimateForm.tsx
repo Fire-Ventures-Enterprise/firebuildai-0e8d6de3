@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, UserPlus, Sparkles } from 'lucide-react';
+import { sequenceLineItems, getPhaseGroups } from '@/utils/constructionSequencer';
 import { DraggableEstimateItems } from './DraggableEstimateItems';
 import { SmartEstimateInput } from './SmartEstimateInput';
 import { format } from 'date-fns';
@@ -124,6 +125,10 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
 
   const onSubmit = async (data: any) => {
     try {
+      // Sequence the line items before saving
+      const sequencedItems = sequenceLineItems(lineItems);
+      const phaseGroups = getPhaseGroups(sequencedItems);
+      
       const estimateData = {
         ...data,
         user_id: user?.id,
@@ -133,7 +138,8 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
         tax_amount: calculateTax(),
         total: calculateTotal(),
         deposit_amount: calculateDepositAmount(),
-        status: 'draft'
+        status: 'draft',
+        sequence_data: phaseGroups // Add the sequencing data
       };
 
       if (estimate) {
@@ -151,14 +157,14 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
           .delete()
           .eq('estimate_id', estimate.id);
         
-        // Insert updated line items
-        const items = lineItems.map((item, index) => ({
+        // Insert updated line items with sequencing
+        const items = sequencedItems.map((item) => ({
           estimate_id: estimate.id,
           description: item.description,
           quantity: item.quantity,
           rate: item.rate,
-          amount: item.quantity * item.rate,
-          sort_order: index
+          amount: item.total,
+          sort_order: item.sequenceOrder
         }));
         
         await supabase.from('estimate_items').insert(items);
@@ -194,14 +200,14 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
         
         if (error) throw error;
         
-        // Add line items
-        const items = lineItems.map((item, index) => ({
+        // Add line items with sequencing
+        const items = sequencedItems.map((item) => ({
           estimate_id: newEstimate.id,
           description: item.description,
           quantity: item.quantity,
           rate: item.rate,
-          amount: item.quantity * item.rate,
-          sort_order: index
+          amount: item.total,
+          sort_order: item.sequenceOrder
         }));
         
         await supabase.from('estimate_items').insert(items);
