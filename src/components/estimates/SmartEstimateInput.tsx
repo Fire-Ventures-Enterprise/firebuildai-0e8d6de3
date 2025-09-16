@@ -121,21 +121,42 @@ export function SmartEstimateInput({
     }
   };
 
-  const exampleText = `Kitchen Renovation Project
+  const exampleText = `2-Car Detached Garage Construction
+Property: 123 Oak Street
 
-Install new cabinets - 10 linear feet @ $250/ft
-Remove old countertops and install granite - 45 sq ft @ $75/sf
-Paint walls and ceiling - 350 sq ft @ $3.50/sf
-Install backsplash tile - 30 sq ft @ $25/sf
-Electrical work - 8 hours @ $85/hr
-Plumbing for new sink - 4 hours @ $75/hr
+Hey John, here's what we're looking at for your new garage:
 
-Dumpster rental - 1 week @ $400
-Permits and inspections - $500
+@ Install garage door openers (2 units) $1,850
+@ Roofing shingles and underlayment - 1100 sq ft $3,200
+@ Pour concrete floor - 24x24 ft $4,800
+@ Electrical rough-in and panel connection $2,400
+@ Frame walls with 2x6 studs 16" OC $3,600
+@ Site excavation and grading $2,200
+@ Install windows (3) and service door $1,450
+@ Exterior siding - vinyl or fiber cement $3,800
+@ Pour concrete footings and foundation walls $5,200
+@ Drywall and tape interior walls $2,100
+@ Install 2 garage doors - 9x7 insulated $2,800
+@ Roof framing - trusses and sheathing $4,200
+@ Electrical finish - outlets, lights, switches $1,100
+@ Final grade and seed disturbed areas $650
+@ Interior painting - walls and ceiling $1,200
+@ Permits and inspections $850
 
-Scope: Complete kitchen renovation including removal of existing fixtures, installation of new cabinets, countertops, backsplash, and painting. All work to be completed within 2 weeks.
+Subtotal: $41,400
+Tax (8.5%): $3,519
+Total: $44,919
 
-Notes: Customer to select final finishes. Access required Monday-Friday 8am-5pm.`;
+Payment Schedule:
+- Upon signing: 25% deposit = $11,230
+- After foundation: 25% = $11,230
+- After framing/roofing: 25% = $11,230
+- Upon completion: 25% = $11,229
+
+Timeline: 4-5 weeks from permit approval
+Warranty: 1 year on workmanship, manufacturer warranties on materials
+
+Notes: Price includes all materials and labor. Owner responsible for any HOA approvals. Access to power and water required during construction.`;
 
   return (
     <div className="space-y-4">
