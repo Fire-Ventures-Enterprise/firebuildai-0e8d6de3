@@ -51,6 +51,10 @@ export function SmartEstimateInput({
   }, [inputText]);
 
   const handleParse = () => {
+    if (!inputText.trim()) {
+      return;
+    }
+    
     setIsProcessing(true);
     
     // Simulate processing delay for UX
@@ -61,8 +65,15 @@ export function SmartEstimateInput({
       setSuggestions(result.suggestions || []);
       setShowPreview(true);
       
-      // Pass data to parent
-      onItemsExtracted(result.lineItems);
+      // Pass data to parent with proper formatting
+      const formattedItems = result.lineItems.map(item => ({
+        description: item.description,
+        quantity: item.quantity || 1,
+        rate: item.rate || 0,
+        amount: (item.quantity || 1) * (item.rate || 0)
+      }));
+      
+      onItemsExtracted(formattedItems);
       onScopeExtracted(result.scopeOfWork);
       onNotesExtracted(result.notes);
       

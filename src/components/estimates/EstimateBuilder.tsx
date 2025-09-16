@@ -123,6 +123,17 @@ export const EstimateBuilder = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Ensure we have at least one line item
+    if (!formData.items || formData.items.length === 0) {
+      formData.items = [{
+        description: 'Service',
+        quantity: 1,
+        rate: 0,
+        amount: 0
+      }];
+    }
+    
     onSave(formData);
     onOpenChange(false);
   };
