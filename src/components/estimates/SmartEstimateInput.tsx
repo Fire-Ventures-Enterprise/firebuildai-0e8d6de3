@@ -80,11 +80,39 @@ export function SmartEstimateInput({
       );
       
       const filteredSuggestions = (result.suggestions || []).filter(suggestion => {
-        const cleanSuggestion = suggestion.replace('⚠️ ', '').toLowerCase().replace(/[^a-z\s]/g, '');
-        return !existingDescriptions.some((desc: string) => 
-          desc.includes(cleanSuggestion.split(' ').slice(0, 3).join(' ')) ||
-          cleanSuggestion.split(' ').slice(0, 3).join(' ').includes(desc)
-        );
+        const cleanSuggestion = suggestion.replace('⚠️ ', '').toLowerCase();
+        
+        // Check if this item type is already in the estimate
+        const isAlreadyPresent = result.lineItems.some((item: any) => {
+          const itemDesc = item.description.toLowerCase();
+          
+          // Check for soffit/fascia
+          if (cleanSuggestion.includes('soffit') && itemDesc.includes('soffit')) return true;
+          if (cleanSuggestion.includes('fascia') && itemDesc.includes('fascia')) return true;
+          
+          // Check for eaves/ventilation
+          if (cleanSuggestion.includes('eaves') && itemDesc.includes('eaves')) return true;
+          if (cleanSuggestion.includes('ventilation') && itemDesc.includes('ventilation')) return true;
+          
+          // Check for cleanup
+          if (cleanSuggestion.includes('cleanup') && (itemDesc.includes('cleanup') || itemDesc.includes('clean'))) return true;
+          
+          // Check for garbage/dumpster
+          if (cleanSuggestion.includes('garbage') && (itemDesc.includes('garbage') || itemDesc.includes('dumpster') || itemDesc.includes('bin'))) return true;
+          
+          // Check for portable toilet
+          if (cleanSuggestion.includes('portable toilet') && (itemDesc.includes('portable') || itemDesc.includes('toilet') || itemDesc.includes('potty'))) return true;
+          
+          // Check for lighting
+          if (cleanSuggestion.includes('lighting') && (itemDesc.includes('light') || itemDesc.includes('lighting'))) return true;
+          
+          // Generic check - if 3+ key words match, consider it present
+          const suggestionWords = cleanSuggestion.split(' ').filter(w => w.length > 3);
+          const matches = suggestionWords.filter(word => itemDesc.includes(word));
+          return matches.length >= Math.min(3, Math.max(1, suggestionWords.length - 1));
+        });
+        
+        return !isAlreadyPresent;
       });
       
       setSuggestions(filteredSuggestions);
