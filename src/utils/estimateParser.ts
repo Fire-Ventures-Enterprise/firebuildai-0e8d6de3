@@ -753,7 +753,7 @@ export class EstimateParser {
   /**
    * Detect the type of construction project based on content
    */
-  private static detectProjectType(text: string, lineItems: ParsedLineItem[]): string {
+  static detectProjectType(text: string, lineItems: ParsedLineItem[]): string {
     const lowerText = text.toLowerCase();
     const allDescriptions = lineItems.map(item => item.description.toLowerCase()).join(' ');
     const combined = lowerText + ' ' + allDescriptions;

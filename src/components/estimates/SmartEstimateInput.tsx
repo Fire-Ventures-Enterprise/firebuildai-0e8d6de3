@@ -12,10 +12,13 @@ import {
   FileText,
   Package,
   Wrench,
-  Truck
+  Truck,
+  AlertTriangle
 } from 'lucide-react';
 import { EstimateParser } from '@/utils/estimateParser';
 import { cn } from '@/lib/utils';
+import { MissingItemsWarningModal } from './MissingItemsWarningModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface SmartEstimateInputProps {
   onItemsExtracted: (items: any[]) => void;
@@ -38,7 +41,11 @@ export function SmartEstimateInput({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showPreview, setShowPreview] = useState(false);
   const [highlightedKeywords, setHighlightedKeywords] = useState<string[]>([]);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [projectType, setProjectType] = useState('');
+  const [missingItems, setMissingItems] = useState<any[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { toast } = useToast();
 
   // Real-time parsing as user types
   useEffect(() => {
@@ -67,32 +74,114 @@ export function SmartEstimateInput({
       
       setParsedItems(result.lineItems);
       setSuggestions(result.suggestions || []);
-      setShowPreview(true);
       
-      // Pass data to parent with proper formatting
-      const formattedItems = result.lineItems.map(item => ({
-        description: item.description,
-        quantity: item.quantity || 1,
-        rate: item.rate || 0,
-        amount: (item.quantity || 1) * (item.rate || 0)
-      }));
+      // Check for critical missing items
+      const criticalMissing = (result.suggestions || []).filter(s => s.startsWith('⚠️'));
       
-      onItemsExtracted(formattedItems);
-      onScopeExtracted(result.scopeOfWork);
-      onNotesExtracted(result.notes);
-      
-      // Extract payment schedule if available
-      if (result.paymentSchedule && onPaymentScheduleExtracted) {
-        onPaymentScheduleExtracted(result.paymentSchedule);
-      }
-      
-      // Extract terms if available
-      if (result.termsAndConditions && onTermsExtracted) {
-        onTermsExtracted(result.termsAndConditions);
+      if (criticalMissing.length > 0) {
+        // Prepare missing items for modal
+        const items = result.suggestions?.map(suggestion => ({
+          description: suggestion,
+          critical: suggestion.startsWith('⚠️'),
+          suggestedPrice: undefined // Could calculate based on item type
+        })) || [];
+        
+        setMissingItems(items);
+        
+        // Detect project type for modal
+        const detectedType = EstimateParser.detectProjectType(inputText, result.lineItems);
+        setProjectType(detectedType);
+        
+        setShowWarningModal(true);
+      } else {
+        // No critical items missing, proceed normally
+        proceedWithEstimate(result);
       }
       
       setIsProcessing(false);
     }, 500);
+  };
+
+  const proceedWithEstimate = (result: any) => {
+    setShowPreview(true);
+    
+    // Pass data to parent with proper formatting
+    const formattedItems = result.lineItems.map((item: any) => ({
+      description: item.description,
+      quantity: item.quantity || 1,
+      rate: item.rate || 0,
+      amount: (item.quantity || 1) * (item.rate || 0)
+    }));
+    
+    onItemsExtracted(formattedItems);
+    onScopeExtracted(result.scopeOfWork);
+    onNotesExtracted(result.notes);
+    
+    // Extract payment schedule if available
+    if (result.paymentSchedule && onPaymentScheduleExtracted) {
+      onPaymentScheduleExtracted(result.paymentSchedule);
+    }
+    
+    // Extract terms if available
+    if (result.termsAndConditions && onTermsExtracted) {
+      onTermsExtracted(result.termsAndConditions);
+    }
+    
+    toast({
+      title: "Estimate parsed successfully",
+      description: `${result.lineItems.length} line items extracted`,
+    });
+  };
+
+  const handleAddMissingItems = (items: any[]) => {
+    // Add selected missing items to the parsed items
+    const newItems = items.map(item => {
+      const cleanDescription = item.description.replace('⚠️ ', '');
+      return {
+        description: cleanDescription,
+        quantity: 1,
+        rate: item.suggestedPrice || 0,
+        amount: item.suggestedPrice || 0,
+        category: 'general'
+      };
+    });
+    
+    const updatedItems = [...parsedItems, ...newItems];
+    setParsedItems(updatedItems);
+    
+    // Re-process with added items
+    const result = {
+      lineItems: updatedItems,
+      scopeOfWork: '',
+      notes: '',
+      suggestions: suggestions.filter(s => !items.some(i => i.description === s))
+    };
+    
+    proceedWithEstimate(result);
+    setShowWarningModal(false);
+    
+    toast({
+      title: "Items added",
+      description: `${items.length} missing items have been added to your estimate`,
+    });
+  };
+
+  const handleProceedWithout = () => {
+    const result = {
+      lineItems: parsedItems,
+      scopeOfWork: '',
+      notes: '',
+      suggestions: suggestions
+    };
+    
+    proceedWithEstimate(result);
+    setShowWarningModal(false);
+    
+    toast({
+      title: "Proceeding without changes",
+      description: "Estimate created without the suggested items",
+      variant: "default"
+    });
   };
 
   const getCategoryIcon = (category?: string) => {
@@ -287,20 +376,40 @@ Example:
         </Card>
       )}
 
-      {/* Suggestions */}
+      {/* Suggestions with warning emphasis */}
       {suggestions.length > 0 && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
+        <Alert className={suggestions.some(s => s.startsWith('⚠️')) ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20' : ''}>
+          <AlertTriangle className="h-4 w-4 text-yellow-600" />
           <AlertDescription>
-            <p className="font-medium mb-2">Suggestions to improve your estimate:</p>
+            <p className="font-medium mb-2 text-yellow-800 dark:text-yellow-200">
+              Suggestions to improve your estimate:
+            </p>
             <ul className="list-disc list-inside space-y-1">
               {suggestions.map((suggestion, index) => (
-                <li key={index} className="text-sm">{suggestion}</li>
+                <li 
+                  key={index} 
+                  className={cn(
+                    "text-sm",
+                    suggestion.startsWith('⚠️') ? 'font-semibold text-yellow-700 dark:text-yellow-300' : ''
+                  )}
+                >
+                  {suggestion}
+                </li>
               ))}
             </ul>
           </AlertDescription>
         </Alert>
       )}
+
+      {/* Missing Items Warning Modal */}
+      <MissingItemsWarningModal
+        open={showWarningModal}
+        onOpenChange={setShowWarningModal}
+        missingItems={missingItems}
+        projectType={projectType}
+        onAddItems={handleAddMissingItems}
+        onProceedWithout={handleProceedWithout}
+      />
 
       {/* Help text */}
       <div className="text-sm text-muted-foreground space-y-1">
