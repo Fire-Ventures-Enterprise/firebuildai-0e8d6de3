@@ -118,8 +118,9 @@ export function EstimateSequencerDemo() {
             <Textarea
               value={estimateText}
               onChange={(e) => setEstimateText(e.target.value)}
-              placeholder="Paste your estimate text here..."
-              className="min-h-[200px] font-mono text-sm"
+              placeholder="Paste your estimate text here (one item per line)..."
+              className="min-h-[400px] font-mono text-xs leading-relaxed resize-vertical"
+              rows={20}
             />
           </div>
           
