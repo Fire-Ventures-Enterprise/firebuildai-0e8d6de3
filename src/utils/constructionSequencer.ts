@@ -14,65 +14,127 @@ export interface SequencedLineItem {
 }
 
 const CONSTRUCTION_PHASES = {
+  // Pre-construction phases
   planning: 10,
   permits: 15,
+  
+  // Site work
   site_prep: 20,
-  excavation: 25,
-  foundation: 30,
-  waterproofing: 35,
-  backfill: 40,
+  demolition: 25,
+  excavation: 30,
+  
+  // Foundation & Structure
+  foundation: 35,
+  waterproofing: 40,
+  backfill: 45,
+  
+  // Framing & Exterior
   framing: 50,
   sheathing: 55,
   roofing: 60,
-  windows_doors: 65,
-  plumbing_rough: 70,
-  electrical_rough: 75,
-  hvac_rough: 80,
-  insulation: 90,
-  drywall: 95,
-  subfloor: 100,
-  flooring: 105,
-  interior_trim: 110,
-  cabinets: 115,
-  countertops: 120,
-  plumbing_finish: 130,
-  electrical_finish: 135,
-  hvac_finish: 140,
-  painting: 150,
-  final_trim: 155,
-  cleanup: 160,
-  final_inspection: 170
+  siding: 65,
+  windows_doors: 70,
+  exterior_finishes: 75,
+  
+  // Rough-ins (MEP)
+  plumbing_rough: 80,
+  electrical_rough: 85,
+  hvac_rough: 90,
+  
+  // Insulation & Drywall
+  insulation: 95,
+  vapor_barrier: 100,
+  drywall: 105,
+  
+  // Flooring
+  subfloor: 110,
+  flooring_prep: 115,
+  flooring: 120,
+  
+  // Interior Finishes
+  interior_trim: 125,
+  interior_doors: 130,
+  cabinets: 135,
+  countertops: 140,
+  backsplash: 145,
+  
+  // Final MEP
+  plumbing_finish: 150,
+  electrical_finish: 155,
+  hvac_finish: 160,
+  appliances: 165,
+  
+  // Final Finishes
+  painting: 170,
+  final_trim: 175,
+  hardware: 180,
+  
+  // Completion
+  cleanup: 185,
+  final_inspection: 190,
+  walkthrough: 195
 } as const;
 
 const PHASE_KEYWORDS = {
-  planning: ['plan', 'design', 'permit', 'survey', 'engineering'],
-  permits: ['permit', 'approval', 'inspection fee'],
-  site_prep: ['clear', 'grade', 'excavat', 'demo', 'tear down', 'remove', 'demolition'],
-  excavation: ['excavat', 'dig', 'trench', 'grade'],
-  foundation: ['foundation', 'concrete', 'footing', 'slab', 'basement', 'crawl space'],
-  waterproofing: ['waterproof', 'membrane', 'sealant', 'vapor barrier'],
-  backfill: ['backfill', 'fill', 'compact'],
-  framing: ['fram', 'lumber', 'stud', 'joist', 'beam', 'header', 'rafter', 'wall frame'],
-  sheathing: ['sheath', 'plywood', 'osb', 'subfloor'],
-  roofing: ['roof', 'shingle', 'membrane', 'underlayment', 'ridge', 'hip'],
-  windows_doors: ['window', 'door', 'entry', 'sliding', 'french door'],
-  plumbing_rough: ['plumb rough', 'rough plumb', 'pipe', 'drain', 'water line', 'supply line'],
-  electrical_rough: ['electric rough', 'rough electric', 'wire', 'outlet', 'switch', 'panel'],
-  hvac_rough: ['hvac rough', 'duct', 'furnace', 'air condition', 'heating'],
-  insulation: ['insulation', 'insulate', 'batt', 'blown'],
-  drywall: ['drywall', 'sheetrock', 'gypsum', 'mud', 'tape', 'texture'],
-  subfloor: ['subfloor', 'underlayment', 'floor prep'],
-  flooring: ['floor', 'hardwood', 'tile', 'carpet', 'vinyl', 'laminate', 'ceramic'],
-  interior_trim: ['trim', 'baseboard', 'casing', 'crown molding'],
-  cabinets: ['cabinet', 'vanity', 'cupboard', 'kitchen cabinet'],
-  countertops: ['counter', 'granite', 'quartz', 'marble', 'laminate counter'],
-  plumbing_finish: ['plumb finish', 'finish plumb', 'faucet', 'toilet', 'sink'],
-  electrical_finish: ['electric finish', 'finish electric', 'light fixture', 'ceiling fan'],
-  hvac_finish: ['hvac finish', 'register', 'grille', 'thermostat'],
-  painting: ['paint', 'primer', 'stain', 'finish', 'color'],
-  final_trim: ['final trim', 'touch up', 'caulk'],
-  cleanup: ['clean', 'final clean', 'debris removal', 'sweep'],
-  final_inspection: ['final inspection', 'certificate', 'occupancy']
+  // Pre-construction
+  planning: ['plan', 'design', 'survey', 'engineering', 'architect', 'drawing', 'blueprint'],
+  permits: ['permit', 'approval', 'inspection fee', 'license', 'zoning'],
+  
+  // Site work  
+  site_prep: ['site prep', 'clear', 'grade', 'level', 'access', 'protection', 'temporary'],
+  demolition: ['demo', 'tear down', 'remove', 'demolition', 'disposal', 'strip', 'gut', 'remove existing'],
+  excavation: ['excavat', 'dig', 'trench', 'grade', 'cut', 'earth'],
+  
+  // Foundation & Structure
+  foundation: ['foundation', 'concrete', 'footing', 'slab', 'basement', 'crawl space', 'pier', 'pour'],
+  waterproofing: ['waterproof', 'membrane', 'sealant', 'moisture', 'damp proof'],
+  backfill: ['backfill', 'fill', 'compact', 'grade'],
+  
+  // Framing & Exterior
+  framing: ['fram', 'lumber', 'stud', 'joist', 'beam', 'header', 'rafter', 'wall frame', 'truss', 'structural'],
+  sheathing: ['sheath', 'plywood', 'osb', 'wrap', 'house wrap', 'tyvek'],
+  roofing: ['roof', 'shingle', 'membrane', 'underlayment', 'ridge', 'hip', 'gutter', 'fascia', 'soffit'],
+  siding: ['siding', 'exterior', 'cladding', 'brick', 'stone', 'stucco', 'vinyl siding'],
+  windows_doors: ['window', 'door', 'entry', 'sliding', 'french door', 'exterior door', 'skylight'],
+  exterior_finishes: ['exterior trim', 'shutters', 'exterior paint', 'deck', 'porch', 'railing'],
+  
+  // Rough-ins (MEP)
+  plumbing_rough: ['plumb rough', 'rough plumb', 'pipe', 'drain', 'water line', 'supply line', 'waste', 'vent', 'stack'],
+  electrical_rough: ['electric rough', 'rough electric', 'wire', 'outlet box', 'switch box', 'panel', 'circuit', 'conduit'],
+  hvac_rough: ['hvac rough', 'duct', 'furnace', 'air condition', 'heating', 'ventilation', 'air handler'],
+  
+  // Insulation & Drywall
+  insulation: ['insulation', 'insulate', 'batt', 'blown', 'spray foam', 'r-value', 'thermal'],
+  vapor_barrier: ['vapor barrier', 'moisture barrier', 'plastic', 'seal'],
+  drywall: ['drywall', 'sheetrock', 'gypsum', 'mud', 'tape', 'texture', 'plaster', 'board', 'hang', 'finish'],
+  
+  // Flooring
+  subfloor: ['subfloor', 'underlayment', 'floor prep', 'leveling'],
+  flooring_prep: ['floor prep', 'sand', 'level', 'moisture test'],
+  flooring: ['floor', 'hardwood', 'tile', 'carpet', 'vinyl', 'laminate', 'ceramic', 'lvp', 'lvt'],
+  
+  // Interior Finishes
+  interior_trim: ['trim', 'baseboard', 'casing', 'crown', 'molding', 'millwork', 'wainscot'],
+  interior_doors: ['interior door', 'closet door', 'pocket door', 'barn door', 'bi-fold'],
+  cabinets: ['cabinet', 'vanity', 'cupboard', 'kitchen cabinet', 'cabinetry', 'storage', 'pantry', 'install cabinet'],
+  countertops: ['counter', 'granite', 'quartz', 'marble', 'laminate counter', 'solid surface', 'butcher block'],
+  backsplash: ['backsplash', 'tile backsplash', 'subway tile', 'mosaic', 'splash'],
+  
+  // Final MEP
+  plumbing_finish: ['plumb finish', 'finish plumb', 'faucet', 'toilet', 'sink', 'shower', 'tub', 'fixture'],
+  electrical_finish: ['electric finish', 'finish electric', 'light fixture', 'ceiling fan', 'switch', 'outlet', 'dimmer', 'chandelier'],
+  hvac_finish: ['hvac finish', 'register', 'grille', 'thermostat', 'vent cover'],
+  appliances: ['appliance', 'dishwasher', 'range', 'oven', 'microwave', 'refrigerator', 'hood', 'disposal'],
+  
+  // Final Finishes
+  painting: ['paint', 'primer', 'stain', 'finish', 'color', 'coat', 'interior paint'],
+  final_trim: ['final trim', 'touch up', 'caulk', 'adjustment', 'detail'],
+  hardware: ['hardware', 'knob', 'pull', 'handle', 'towel bar', 'accessories'],
+  
+  // Completion
+  cleanup: ['clean', 'final clean', 'debris', 'sweep', 'disposal', 'haul away', 'dumpster'],
+  final_inspection: ['final inspection', 'certificate', 'occupancy', 'sign off', 'approval'],
+  walkthrough: ['walkthrough', 'punch list', 'review', 'client approval', 'handover']
 } as const;
 
 const detectProjectType = (lineItems: any[]): string => {
@@ -99,10 +161,31 @@ const detectProjectType = (lineItems: any[]): string => {
 const matchItemToPhase = (description: string): keyof typeof CONSTRUCTION_PHASES => {
   const lowerDesc = description.toLowerCase();
   
-  for (const [phase, keywords] of Object.entries(PHASE_KEYWORDS)) {
-    if (keywords.some(keyword => lowerDesc.includes(keyword))) {
-      return phase as keyof typeof CONSTRUCTION_PHASES;
+  // Priority matching for more specific phases first
+  const phaseOrder = Object.keys(CONSTRUCTION_PHASES) as (keyof typeof CONSTRUCTION_PHASES)[];
+  
+  // Check for exact phase matches first
+  for (const phase of phaseOrder) {
+    const keywords = PHASE_KEYWORDS[phase];
+    if (keywords.some(keyword => {
+      // For multi-word keywords, check exact phrase match
+      if (keyword.includes(' ')) {
+        return lowerDesc.includes(keyword.toLowerCase());
+      }
+      // For single words, check word boundaries to avoid partial matches
+      const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
+      return regex.test(lowerDesc);
+    })) {
+      return phase;
     }
+  }
+  
+  // Fallback to general construction phase based on common terms
+  if (lowerDesc.includes('supply') || lowerDesc.includes('deliver')) {
+    return 'site_prep'; // Materials delivery
+  }
+  if (lowerDesc.includes('install') && !lowerDesc.includes('cabinet')) {
+    return 'framing'; // General installation
   }
   
   return 'planning'; // Default phase
