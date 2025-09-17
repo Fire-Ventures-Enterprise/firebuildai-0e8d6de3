@@ -45,6 +45,7 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
 
   useEffect(() => {
     fetchCustomers();
+    fetchUserTrade();
     if (estimate) {
       // Load existing estimate data
       setValue('estimate_number', estimate.estimate_number);
@@ -77,6 +78,14 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
     if (!error && data) {
       setCustomers(data);
     }
+  };
+
+  const fetchUserTrade = async () => {
+    // For now, we'll use a default trade. 
+    // In a full implementation, this would be fetched from company settings
+    // You can manually change this to test different trades:
+    // 'plumbing', 'hvac', 'electrical', 'flooring', 'roofing', 'drywall', 'painting', 'tile', 'concrete'
+    setUserTrade('general');
   };
 
   const generateEstimateNumber = async () => {
@@ -378,15 +387,48 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="scope_of_work">Scope of Work</Label>
-            <Textarea 
-              id="scope_of_work"
-              {...register('scope_of_work')}
-              rows={4}
-              value={extractedScope || watch('scope_of_work')}
-              placeholder="Describe the work to be performed..."
+          <div className="space-y-4">
+            <ProjectTypeSelector 
+              userTrade={userTrade}
+              value={projectType}
+              onChange={setProjectType}
+              onProjectTypeSelect={(selectedProject) => {
+                // Auto-populate line items from the selected project type
+                const formattedItems = selectedProject.autoSequence.map(item => {
+                  const match = item.match(/^(.+?)\s*@\s*\$?([\d,]+(?:\.\d+)?)/);
+                  if (match) {
+                    const [, description, amount] = match;
+                    return {
+                      description: description.trim(),
+                      quantity: 1,
+                      rate: parseFloat(amount.replace(/,/g, ''))
+                    };
+                  }
+                  return { description: item, quantity: 1, rate: 0 };
+                });
+                setLineItems(formattedItems);
+                
+                // Set scope from project type
+                const scope = `${selectedProject.name} - ${selectedProject.description}`;
+                setValue('scope_of_work', scope);
+                setExtractedScope(scope);
+              }}
+              onScopeExtracted={(scope) => {
+                setValue('scope_of_work', scope);
+                setExtractedScope(scope);
+              }}
             />
+            
+            <div>
+              <Label htmlFor="scope_of_work">Project Description</Label>
+              <Textarea 
+                id="scope_of_work"
+                {...register('scope_of_work')}
+                rows={3}
+                value={extractedScope || watch('scope_of_work')}
+                placeholder="Additional project details will appear here..."
+              />
+            </div>
           </div>
         </TabsContent>
 

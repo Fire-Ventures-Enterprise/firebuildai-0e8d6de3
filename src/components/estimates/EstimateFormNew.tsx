@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { ProjectTypeSelector } from "./ProjectTypeSelector";
 
 const estimateFormSchema = z.object({
   customer_id: z.string().min(1, "Customer is required"),
@@ -45,6 +46,8 @@ interface EstimateFormNewProps {
 export function EstimateFormNew({ initialData, onSubmit, onCancel }: EstimateFormNewProps) {
   const [customers, setCustomers] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userTrade, setUserTrade] = useState('general');
+  const [projectType, setProjectType] = useState('');
 
   const form = useForm<EstimateFormData>({
     resolver: zodResolver(estimateFormSchema),
@@ -180,23 +183,56 @@ export function EstimateFormNew({ initialData, onSubmit, onCancel }: EstimateFor
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="scope_of_work"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Scope of Work</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Describe the work to be performed..." 
-                  className="min-h-[100px]"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-4">
+          <ProjectTypeSelector 
+            userTrade={userTrade}
+            value={projectType}
+            onChange={setProjectType}
+            onProjectTypeSelect={(selectedProject) => {
+              // Auto-populate line items from the selected project type
+              const formattedItems = selectedProject.autoSequence.map(item => {
+                const match = item.match(/^(.+?)\s*@\s*\$?([\d,]+(?:\.\d+)?)/);
+                if (match) {
+                  const [, description, amount] = match;
+                  return {
+                    description: description.trim(),
+                    qty: 1,
+                    unit_price: parseFloat(amount.replace(/,/g, ''))
+                  };
+                }
+                return { description: item, qty: 1, unit_price: 0 };
+              });
+              
+              // Replace existing items with new ones
+              itemsFieldArray.replace(formattedItems);
+              
+              // Set scope from project type
+              const scope = `${selectedProject.name} - ${selectedProject.description}`;
+              form.setValue('scope_of_work', scope);
+            }}
+            onScopeExtracted={(scope) => {
+              form.setValue('scope_of_work', scope);
+            }}
+          />
+          
+          <FormField
+            control={form.control}
+            name="scope_of_work"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Project Description</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Additional project details will appear here..." 
+                    className="min-h-[80px]"
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="space-y-2">
           <FormLabel>Line Items</FormLabel>
