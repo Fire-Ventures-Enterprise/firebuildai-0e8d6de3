@@ -21,6 +21,7 @@ import PaymentStagesForm from './PaymentStagesForm';
 import { AddCustomerDialog } from '@/components/shared/AddCustomerDialog';
 import { TemplateQuickApply } from '@/components/templates/TemplateQuickApply';
 import { ProjectTypeSelector } from './ProjectTypeSelector';
+import { ConstructionSequencerService, ProjectType } from '@/services/constructionSequencer';
 
 interface EstimateFormProps {
   estimate?: any;
@@ -40,7 +41,7 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [useSmartInput, setUseSmartInput] = useState(false);
   const [extractedScope, setExtractedScope] = useState('');
-  const [projectType, setProjectType] = useState('');
+  const [selectedProjectType, setSelectedProjectType] = useState<ProjectType | null>(null);
   const [userTrade, setUserTrade] = useState('general');
 
   useEffect(() => {
@@ -389,46 +390,35 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
 
           <div className="space-y-4">
             <ProjectTypeSelector 
-              userTrade={userTrade}
-              value={projectType}
-              onChange={setProjectType}
-              onProjectTypeSelect={(selectedProject) => {
+              tradeType={userTrade}
+              value={selectedProjectType}
+              onChange={setSelectedProjectType}
+              onGenerateLineItems={(selectedProject) => {
                 // Auto-populate line items from the selected project type
-                const formattedItems = selectedProject.autoSequence.map(item => {
-                  const match = item.match(/^(.+?)\s*@\s*\$?([\d,]+(?:\.\d+)?)/);
-                  if (match) {
-                    const [, description, amount] = match;
-                    return {
-                      description: description.trim(),
-                      quantity: 1,
-                      rate: parseFloat(amount.replace(/,/g, ''))
-                    };
-                  }
-                  return { description: item, quantity: 1, rate: 0 };
-                });
-                setLineItems(formattedItems);
+                const generatedItems = ConstructionSequencerService.generateLineItems(selectedProject);
+                setLineItems(generatedItems);
                 
                 // Set scope from project type
                 const scope = `${selectedProject.name} - ${selectedProject.description}`;
                 setValue('scope_of_work', scope);
                 setExtractedScope(scope);
               }}
-              onScopeExtracted={(scope) => {
-                setValue('scope_of_work', scope);
-                setExtractedScope(scope);
-              }}
             />
             
-            <div>
-              <Label htmlFor="scope_of_work">Project Description</Label>
-              <Textarea 
-                id="scope_of_work"
-                {...register('scope_of_work')}
-                rows={3}
-                value={extractedScope || watch('scope_of_work')}
-                placeholder="Additional project details will appear here..."
-              />
-            </div>
+            {/* Project description is now auto-generated from the selected project type */}
+            {selectedProjectType && (
+              <div className="p-3 bg-accent/50 rounded-lg">
+                <Label className="text-sm font-medium">Generated Project Description</Label>
+                <p className="text-sm mt-1 text-muted-foreground">
+                  {selectedProjectType.name} - {selectedProjectType.description}
+                </p>
+                <input 
+                  type="hidden"
+                  {...register('scope_of_work')}
+                  value={`${selectedProjectType.name} - ${selectedProjectType.description}`}
+                />
+              </div>
+            )}
           </div>
         </TabsContent>
 
