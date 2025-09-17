@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 import PaymentStagesForm from './PaymentStagesForm';
 import { AddCustomerDialog } from '@/components/shared/AddCustomerDialog';
 import { TemplateQuickApply } from '@/components/templates/TemplateQuickApply';
+import { ProjectTypeSelector } from './ProjectTypeSelector';
 
 interface EstimateFormProps {
   estimate?: any;
@@ -39,6 +40,8 @@ export default function EstimateForm({ estimate, onSave, onCancel }: EstimateFor
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [useSmartInput, setUseSmartInput] = useState(false);
   const [extractedScope, setExtractedScope] = useState('');
+  const [projectType, setProjectType] = useState('');
+  const [userTrade, setUserTrade] = useState('general');
 
   useEffect(() => {
     fetchCustomers();

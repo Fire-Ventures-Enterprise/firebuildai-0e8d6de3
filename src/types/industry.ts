@@ -8,7 +8,27 @@ export enum IndustryType {
   ROOFING = 'roofing',
   LANDSCAPING = 'landscaping',
   KITCHEN_BATH = 'kitchen_bath',
+  DRYWALL = 'drywall',
+  TILE = 'tile',
+  CONCRETE = 'concrete',
+  WINDOWS = 'windows',
+  RESTORATION = 'restoration',
   CUSTOM = 'custom'
+}
+
+// Trade project type definition
+export interface ProjectType {
+  id: string;
+  name: string;
+  description: string;
+  keywords: string[];
+  autoSequence: string[];
+  estimatedDuration?: string;
+}
+
+// Trade-specific project types
+export interface TradeProjectTypes {
+  [key: string]: ProjectType[];
 }
 
 export interface ServicePhase {
