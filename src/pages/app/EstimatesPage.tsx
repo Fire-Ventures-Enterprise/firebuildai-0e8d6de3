@@ -16,6 +16,7 @@ import { ProposalConversionDialog } from '@/components/estimates/ProposalConvers
 import { ServiceLibraryDrawer } from '@/components/service-library/ServiceLibraryDrawer';
 import { formatCurrency } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { EstimateSequencerDemo } from '@/components/estimates/EstimateSequencerDemo';
 
 interface Estimate {
   id: string;
@@ -256,9 +257,12 @@ export const EstimatesPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(stats.totalValue)}</div>
-          </CardContent>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
+
+      {/* Add Sequencer Demo */}
+      <EstimateSequencerDemo />
+    </div>
 
       {/* Search */}
       <div className="flex items-center space-x-4">
@@ -538,6 +542,9 @@ export const EstimatesPage = () => {
           }}
         />
       )}
+
+      {/* Add Sequencer Demo at bottom of page */}
+      <EstimateSequencerDemo />
     </div>
   );
 };

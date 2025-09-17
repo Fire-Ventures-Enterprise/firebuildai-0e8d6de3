@@ -81,8 +81,8 @@ const PHASE_KEYWORDS = {
   permits: ['permit', 'approval', 'inspection fee', 'license', 'zoning'],
   
   // Site work  
-  site_prep: ['site prep', 'clear', 'grade', 'level', 'access', 'protection', 'temporary'],
-  demolition: ['demo', 'tear down', 'remove', 'demolition', 'disposal', 'strip', 'gut', 'remove existing'],
+  site_prep: ['site prep', 'site preparation', 'protection', 'clear', 'grade', 'level', 'access', 'temporary', 'floor protection', 'dust barrier'],
+  demolition: ['demo', 'tear down', 'remove existing', 'remove old', 'demolition', 'disposal', 'strip', 'gut', 'existing backsplash', 'remove backsplash'],
   excavation: ['excavat', 'dig', 'trench', 'grade', 'cut', 'earth'],
   
   // Foundation & Structure
@@ -91,7 +91,7 @@ const PHASE_KEYWORDS = {
   backfill: ['backfill', 'fill', 'compact', 'grade'],
   
   // Framing & Exterior
-  framing: ['fram', 'lumber', 'stud', 'joist', 'beam', 'header', 'rafter', 'wall frame', 'truss', 'structural'],
+  framing: ['fram', 'lumber', 'stud', 'joist', 'beam', 'header', 'rafter', 'wall frame', 'truss', 'structural', 'prepare walls'],
   sheathing: ['sheath', 'plywood', 'osb', 'wrap', 'house wrap', 'tyvek'],
   roofing: ['roof', 'shingle', 'membrane', 'underlayment', 'ridge', 'hip', 'gutter', 'fascia', 'soffit'],
   siding: ['siding', 'exterior', 'cladding', 'brick', 'stone', 'stucco', 'vinyl siding'],
@@ -100,7 +100,7 @@ const PHASE_KEYWORDS = {
   
   // Rough-ins (MEP)
   plumbing_rough: ['plumb rough', 'rough plumb', 'pipe', 'drain', 'water line', 'supply line', 'waste', 'vent', 'stack'],
-  electrical_rough: ['electric rough', 'rough electric', 'wire', 'outlet box', 'switch box', 'panel', 'circuit', 'conduit'],
+  electrical_rough: ['electric rough', 'rough electric', 'electrical inspection', 'electrical report', 'wire', 'outlet box', 'switch box', 'panel', 'circuit', 'conduit'],
   hvac_rough: ['hvac rough', 'duct', 'furnace', 'air condition', 'heating', 'ventilation', 'air handler'],
   
   // Insulation & Drywall
@@ -116,9 +116,9 @@ const PHASE_KEYWORDS = {
   // Interior Finishes
   interior_trim: ['trim', 'baseboard', 'casing', 'crown', 'molding', 'millwork', 'wainscot'],
   interior_doors: ['interior door', 'closet door', 'pocket door', 'barn door', 'bi-fold'],
-  cabinets: ['cabinet', 'vanity', 'cupboard', 'kitchen cabinet', 'cabinetry', 'storage', 'pantry', 'install cabinet'],
-  countertops: ['counter', 'granite', 'quartz', 'marble', 'laminate counter', 'solid surface', 'butcher block'],
-  backsplash: ['backsplash', 'tile backsplash', 'subway tile', 'mosaic', 'splash'],
+  cabinets: ['cabinet delivery', 'palletizing', 'upper cabinet', 'base cabinet', 'cabinet', 'vanity', 'cupboard', 'kitchen cabinet', 'cabinetry', 'storage', 'pantry', 'white shaker', 'soft-close'],
+  countertops: ['counter', 'granite', 'quartz', 'marble', 'laminate counter', 'solid surface', 'butcher block', 'countertop'],
+  backsplash: ['install backsplash', 'tile backsplash', 'subway tile', 'mosaic', 'splash'],
   
   // Final MEP
   plumbing_finish: ['plumb finish', 'finish plumb', 'faucet', 'toilet', 'sink', 'shower', 'tub', 'fixture'],
@@ -132,7 +132,7 @@ const PHASE_KEYWORDS = {
   hardware: ['hardware', 'knob', 'pull', 'handle', 'towel bar', 'accessories'],
   
   // Completion
-  cleanup: ['clean', 'final clean', 'debris', 'sweep', 'disposal', 'haul away', 'dumpster'],
+  cleanup: ['final clean', 'deep clean', 'debris', 'sweep', 'disposal', 'haul away', 'dumpster', 'cleaning of kitchen'],
   final_inspection: ['final inspection', 'certificate', 'occupancy', 'sign off', 'approval'],
   walkthrough: ['walkthrough', 'punch list', 'review', 'client approval', 'handover']
 } as const;
@@ -161,28 +161,52 @@ const detectProjectType = (lineItems: any[]): string => {
 const matchItemToPhase = (description: string): keyof typeof CONSTRUCTION_PHASES => {
   const lowerDesc = description.toLowerCase();
   
+  // Special case handlers for specific descriptions
+  if (lowerDesc.includes('site preparation') || lowerDesc.includes('site protection') || lowerDesc.includes('floor protection')) {
+    return 'site_prep';
+  }
+  if (lowerDesc.includes('remove existing') || lowerDesc.includes('remove backsplash') || lowerDesc.includes('remove old')) {
+    return 'demolition';
+  }
+  if (lowerDesc.includes('electrical inspection') || lowerDesc.includes('electrical report')) {
+    return 'electrical_rough';
+  }
+  if (lowerDesc.includes('cabinet delivery') || lowerDesc.includes('palletizing')) {
+    return 'cabinets';
+  }
+  if (lowerDesc.includes('upper cabinet') || lowerDesc.includes('base cabinet') || lowerDesc.includes('white shaker')) {
+    return 'cabinets';
+  }
+  if (lowerDesc.includes('granite') || lowerDesc.includes('quartz') || lowerDesc.includes('countertop')) {
+    return 'countertops';
+  }
+  if (lowerDesc.includes('final clean') || lowerDesc.includes('deep clean') || lowerDesc.includes('cleaning of kitchen')) {
+    return 'cleanup';
+  }
+  
   // Priority matching for more specific phases first
   const phaseOrder = Object.keys(CONSTRUCTION_PHASES) as (keyof typeof CONSTRUCTION_PHASES)[];
   
-  // Check for exact phase matches first
+  // Check for exact phase matches
   for (const phase of phaseOrder) {
     const keywords = PHASE_KEYWORDS[phase];
     if (keywords.some(keyword => {
+      const keywordLower = keyword.toLowerCase();
       // For multi-word keywords, check exact phrase match
-      if (keyword.includes(' ')) {
-        return lowerDesc.includes(keyword.toLowerCase());
+      if (keywordLower.includes(' ')) {
+        return lowerDesc.includes(keywordLower);
       }
       // For single words, check word boundaries to avoid partial matches
-      const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
+      const regex = new RegExp(`\\b${keywordLower}\\b`);
       return regex.test(lowerDesc);
     })) {
       return phase;
     }
   }
   
-  // Fallback to general construction phase based on common terms
+  // Fallback based on common terms
   if (lowerDesc.includes('supply') || lowerDesc.includes('deliver')) {
-    return 'site_prep'; // Materials delivery
+    return 'site_prep'; // Materials delivery early in project
   }
   if (lowerDesc.includes('install') && !lowerDesc.includes('cabinet')) {
     return 'framing'; // General installation
