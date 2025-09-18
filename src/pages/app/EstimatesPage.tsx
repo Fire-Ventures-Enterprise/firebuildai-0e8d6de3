@@ -17,6 +17,7 @@ import { ServiceLibraryDrawer } from '@/components/service-library/ServiceLibrar
 import { formatCurrency } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { EstimateSequencerDemo } from '@/components/estimates/EstimateSequencerDemo';
+import { useNavigate } from 'react-router-dom';
 
 interface Estimate {
   id: string;

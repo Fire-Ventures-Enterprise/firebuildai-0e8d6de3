@@ -93,6 +93,7 @@ import LiDAREstimatingSoftwarePage from "./pages/seo/LiDAREstimatingSoftwarePage
 // App pages
 import { DashboardPage } from "./pages/app/DashboardPage";
 import { EstimatesPage } from "./pages/app/EstimatesPage";
+import { EstimateDetailPage } from "./pages/app/EstimateDetailPage";
 import { ContractorsPage } from "./pages/mvp/ContractorsPage";
 import { InvoicesPage } from "./pages/app/InvoicesPage";
 import InvoiceDetailPage from "./pages/app/InvoiceDetailPage";
@@ -410,6 +411,14 @@ const App = () => {
               <ProtectedRoute>
                 <MVPAppLayout>
                   <CreateProjectPage />
+                </MVPAppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/app/estimates/:id" element={
+              <ProtectedRoute>
+                <MVPAppLayout>
+                  <EstimateDetailPage />
                 </MVPAppLayout>
               </ProtectedRoute>
             } />
