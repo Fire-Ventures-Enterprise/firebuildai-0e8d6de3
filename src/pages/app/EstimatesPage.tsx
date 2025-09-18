@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +17,7 @@ import { ServiceLibraryDrawer } from '@/components/service-library/ServiceLibrar
 import { formatCurrency } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { EstimateSequencerDemo } from '@/components/estimates/EstimateSequencerDemo';
+import { Wrench } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Estimate {
@@ -261,8 +262,33 @@ export const EstimatesPage = () => {
         </CardContent>
       </Card>
 
-      {/* Add Sequencer Demo */}
-      <EstimateSequencerDemo />
+      {/* Construction Sequencer */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Construction Estimate Sequencer</CardTitle>
+              <Wrench className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-xs text-muted-foreground">
+                Paste your estimate text to automatically sequence it in proper construction order
+              </div>
+            </CardContent>
+          </Card>
+        </DialogTrigger>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Construction Estimate Sequencer</DialogTitle>
+            <DialogDescription>
+              Paste your estimate text to automatically sequence it in proper construction order
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto">
+            <EstimateSequencerDemo />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
 
       {/* Search */}
@@ -543,9 +569,6 @@ export const EstimatesPage = () => {
           }}
         />
       )}
-
-      {/* Add Sequencer Demo at bottom of page */}
-      <EstimateSequencerDemo />
     </div>
   );
 };
