@@ -159,3 +159,6 @@ verify_jwt = true
 
 [functions.google-delete-event]
 verify_jwt = true
+
+[functions.construction-sequencer]
+verify_jwt = false

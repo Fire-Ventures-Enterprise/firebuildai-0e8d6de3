@@ -125,6 +125,7 @@ import WorkflowCalendarPage from "./pages/app/WorkflowCalendarPage";
 import WorkflowSequencingPage from "./pages/app/WorkflowSequencingPage";
 import WorkflowTestPage from "./pages/app/WorkflowTestPage";
 import WorkflowDashboardPage from "./pages/app/WorkflowDashboardPage";
+import ConstructionAPIDemo from "./pages/api/ConstructionAPIDemo";
 import CommunicationPage from "./pages/app/CommunicationPage";
 import MobilePairLanding from "./pages/get/MobilePairLanding";
 import { UpgradePage } from "./pages/UpgradePage";
@@ -764,6 +765,9 @@ const App = () => {
                 <AdminErrorsPage />
               </ProtectedRoute>
             } />
+            
+            {/* API Demo Route */}
+            <Route path="/api/demo" element={<ConstructionAPIDemo />} />
             
             {/* Legacy admin routes - redirect to home to hide them */}
             <Route path="/admin/*" element={<Navigate to="/" replace />} />
