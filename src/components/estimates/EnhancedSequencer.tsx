@@ -25,10 +25,13 @@ import {
   Zap,
   Home,
   Building,
-  TreePine
+  TreePine,
+  Wifi,
+  WifiOff
 } from "lucide-react";
 import { sequenceLineItems, getPhaseGroups, detectProjectType } from "@/utils/constructionSequencer";
 import { cn } from "@/lib/utils";
+import { useFireAPI } from "@/hooks/useFireAPI";
 
 interface ParsedItem {
   description: string;
@@ -56,6 +59,8 @@ export function EnhancedSequencer() {
   const [projectType, setProjectType] = useState("");
   const [viewMode, setViewMode] = useState<'visual' | 'code'>('visual');
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
+  
+  const { sequenceTasks, isHealthy, isEnabled, isLoading } = useFireAPI();
 
   const parseEstimate = async () => {
     setIsProcessing(true);
@@ -78,23 +83,60 @@ export function EnhancedSequencer() {
 
     setParsedItems(items);
 
-    // Detect project type and sequence items
+    // Detect project type
     const detectedType = detectProjectType(items);
     setProjectType(detectedType);
 
-    const sequenced = await sequenceLineItems(items.map(i => i.description));
-    const phases = getPhaseGroups(sequenced);
-    
-    // Enhanced phase data with progress and status
-    const enhancedPhases = phases.map((phase, idx) => ({
-      ...phase,
-      duration: Math.ceil(phase.items.length / 2), // Estimate duration
-      dependencies: idx > 0 ? [phases[idx - 1].phase] : [],
-      progress: idx === 0 ? 35 : 0,
-      status: idx === 0 ? 'in-progress' as const : 'pending' as const
-    }));
+    try {
+      // Try to use FireAPI if available
+      if (isEnabled && isHealthy) {
+        const result = await sequenceTasks(items.map(i => i.description), detectedType);
+        
+        if (result) {
+          // Use FireAPI results
+          const enhancedPhases = result.phases.map((phase: any, idx: number) => ({
+            phase: phase.name,
+            items: phase.tasks,
+            duration: phase.duration,
+            dependencies: phase.dependencies || (idx > 0 ? [result.phases[idx - 1].name] : []),
+            progress: idx === 0 ? 35 : 0,
+            status: idx === 0 ? 'in-progress' as const : 'pending' as const
+          }));
+          
+          setSequencedPhases(enhancedPhases);
+        }
+      } else {
+        // Fallback to local sequencing
+        const sequenced = await sequenceLineItems(items.map(i => i.description));
+        const phases = getPhaseGroups(sequenced);
+        
+        const enhancedPhases = phases.map((phase, idx) => ({
+          ...phase,
+          duration: Math.ceil(phase.items.length / 2),
+          dependencies: idx > 0 ? [phases[idx - 1].phase] : [],
+          progress: idx === 0 ? 35 : 0,
+          status: idx === 0 ? 'in-progress' as const : 'pending' as const
+        }));
+        
+        setSequencedPhases(enhancedPhases);
+      }
+    } catch (error) {
+      console.error('Sequencing error:', error);
+      // Fallback to local sequencing on error
+      const sequenced = await sequenceLineItems(items.map(i => i.description));
+      const phases = getPhaseGroups(sequenced);
+      
+      const enhancedPhases = phases.map((phase, idx) => ({
+        ...phase,
+        duration: Math.ceil(phase.items.length / 2),
+        dependencies: idx > 0 ? [phases[idx - 1].phase] : [],
+        progress: idx === 0 ? 35 : 0,
+        status: idx === 0 ? 'in-progress' as const : 'pending' as const
+      }));
+      
+      setSequencedPhases(enhancedPhases);
+    }
 
-    setSequencedPhases(enhancedPhases);
     setIsParsed(true);
     setIsProcessing(false);
   };
@@ -157,8 +199,26 @@ export function EnhancedSequencer() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               Construction Sequencer
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-2 flex items-center gap-2">
               AI-powered construction workflow optimization
+              {isEnabled && (
+                <Badge 
+                  variant={isHealthy ? "default" : "secondary"} 
+                  className="text-xs flex items-center gap-1"
+                >
+                  {isHealthy ? (
+                    <>
+                      <Wifi className="w-3 h-3" />
+                      FireAPI Connected
+                    </>
+                  ) : (
+                    <>
+                      <WifiOff className="w-3 h-3" />
+                      Local Mode
+                    </>
+                  )}
+                </Badge>
+              )}
             </p>
           </div>
           <Badge variant="secondary" className="px-4 py-2">
