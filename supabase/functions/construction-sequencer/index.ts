@@ -5,7 +5,7 @@ const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
 };
 
 // Construction phases with proper ordering
@@ -33,9 +33,7 @@ const CONSTRUCTION_PHASES = {
 const BUILDING_CODE_RULES = {
   'electrical': {
     requires: ['framing', 'permit'],
-    mustCompleteBefor
-
-: ['insulation', 'drywall'],
+    mustCompleteBefore: ['insulation', 'drywall'],
     inspectionRequired: true,
     inspectionType: 'electrical_rough_in'
   },
@@ -119,6 +117,27 @@ interface APIResponse {
   };
   error?: string;
   requestId?: string;
+  timestamp?: string;
+}
+
+// Simple in-memory rate limiting (for demo - use Redis in production)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(identifier: string, limit = 100, windowMs = 60000): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier);
+  
+  if (!record || record.resetTime < now) {
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  
+  if (record.count >= limit) {
+    return false;
+  }
+  
+  record.count++;
+  return true;
 }
 
 serve(async (req) => {
@@ -128,7 +147,31 @@ serve(async (req) => {
   }
 
   const requestId = crypto.randomUUID();
-  console.log(`[${requestId}] Processing construction sequencer request`);
+  const timestamp = new Date().toISOString();
+  
+  // Get API key from header (for future authentication)
+  const apiKey = req.headers.get('x-api-key') || 'public-beta';
+  
+  console.log(`[${requestId}] Processing request from API key: ${apiKey.substring(0, 8)}...`);
+
+  // Rate limiting
+  if (!checkRateLimit(apiKey)) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Rate limit exceeded. Please try again later.',
+      requestId,
+      timestamp
+    }), {
+      status: 429,
+      headers: { 
+        ...corsHeaders, 
+        'Content-Type': 'application/json',
+        'X-RateLimit-Limit': '100',
+        'X-RateLimit-Remaining': '0',
+        'X-Request-ID': requestId 
+      },
+    });
+  }
 
   try {
     const request: ProjectRequest = await req.json();
@@ -136,6 +179,10 @@ serve(async (req) => {
     // Validate request
     if (!request.projectDescription) {
       throw new Error('Project description is required');
+    }
+
+    if (request.projectDescription.length > 5000) {
+      throw new Error('Project description must be less than 5000 characters');
     }
 
     // Use OpenAI to parse the project description
@@ -302,16 +349,18 @@ serve(async (req) => {
         inspections: request.includeInspections !== false ? inspections : [],
         permits
       },
-      requestId
+      requestId,
+      timestamp
     };
     
-    console.log(`[${requestId}] Successfully processed project with ${sequencedTasks.length} tasks`);
+    console.log(`[${requestId}] Successfully processed project with ${sequencedTasks.length} tasks in ${totalDuration} days`);
     
     return new Response(JSON.stringify(response), {
       headers: { 
         ...corsHeaders, 
         'Content-Type': 'application/json',
-        'X-Request-ID': requestId 
+        'X-Request-ID': requestId,
+        'X-Processing-Time': `${Date.now() - new Date(timestamp).getTime()}ms`
       },
     });
   } catch (error) {
@@ -320,7 +369,8 @@ serve(async (req) => {
     const errorResponse: APIResponse = {
       success: false,
       error: error.message || 'Internal server error',
-      requestId
+      requestId,
+      timestamp
     };
     
     return new Response(JSON.stringify(errorResponse), {
