@@ -14,7 +14,8 @@ import { notify } from '@/lib/notify';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentStagesForm from './PaymentStagesForm';
 import SignaturePad from './SignaturePad';
-import { FileText, DollarSign, PenTool, Send, CreditCard, CheckCircle2, Copy } from 'lucide-react';
+import { ProposalPreview } from '@/components/sales/ProposalPreview';
+import { FileText, DollarSign, PenTool, Send, CreditCard, CheckCircle2, Copy, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { generateContractText, STANDARD_EXCLUSIONS, PAYMENT_SCHEDULE_TEMPLATES } from '@/templates/construction-contract';
@@ -86,9 +87,34 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
   const [signature, setSignature] = useState('');
   const [clientSecret, setClientSecret] = useState<string>();
   const [isConverting, setIsConverting] = useState(false);
-  const [conversionStep, setConversionStep] = useState<'review' | 'signature' | 'payment' | 'complete'>('review');
+  const [conversionStep, setConversionStep] = useState<'setup' | 'preview' | 'signature' | 'payment' | 'complete'>('setup');
   const [useStandardContract, setUseStandardContract] = useState(true);
   const [selectedPaymentTemplate, setSelectedPaymentTemplate] = useState<keyof typeof PAYMENT_SCHEDULE_TEMPLATES>('standard');
+  const [estimateItems, setEstimateItems] = useState<any[]>([]);
+
+  // Fetch estimate items on mount
+  useEffect(() => {
+    if (estimate?.id) {
+      fetchEstimateItems();
+    }
+  }, [estimate?.id]);
+
+  const fetchEstimateItems = async () => {
+    if (!estimate?.id) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('estimate_items')
+        .select('*')
+        .eq('estimate_id', estimate.id)
+        .order('item_order', { ascending: true });
+
+      if (error) throw error;
+      setEstimateItems(data || []);
+    } catch (error) {
+      console.error('Failed to fetch estimate items:', error);
+    }
+  };
 
   // Calculate deposit amount based on percentage
   useEffect(() => {
@@ -239,7 +265,19 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
           <DialogTitle>Convert Estimate to Proposal</DialogTitle>
         </DialogHeader>
 
-        {conversionStep === 'review' && (
+        {conversionStep === 'preview' && (
+          <div className="flex-1 overflow-y-auto p-4">
+            <ProposalPreview
+              estimate={estimate}
+              items={estimateItems}
+              paymentStages={proposalData.paymentStages}
+              contractText={proposalData.contractText}
+              onEdit={() => setConversionStep('setup')}
+            />
+          </div>
+        )}
+
+        {conversionStep === 'setup' && (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-hidden flex flex-col">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="details">
@@ -537,21 +575,34 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
         )}
 
         <DialogFooter>
-          {conversionStep === 'review' && (
+          {conversionStep === 'setup' && (
             <>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
+              <Button onClick={() => setConversionStep('preview')}>
+                <Eye className="h-4 w-4 mr-2" />
+                Preview Proposal
+              </Button>
+            </>
+          )}
+
+          {conversionStep === 'preview' && (
+            <>
+              <Button variant="outline" onClick={() => setConversionStep('setup')}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Edit
+              </Button>
               <Button onClick={handleConvertToProposal} disabled={isConverting}>
-                <Send className="h-4 w-4 mr-2" />
-                {isConverting ? 'Converting...' : 'Convert to Proposal'}
+                <ArrowRight className="h-4 w-4 mr-2" />
+                {isConverting ? 'Processing...' : 'Send for Approval'}
               </Button>
             </>
           )}
 
           {conversionStep === 'signature' && (
             <>
-              <Button variant="outline" onClick={() => setConversionStep('review')}>
+              <Button variant="outline" onClick={() => setConversionStep('preview')}>
                 Back
               </Button>
               <Button onClick={handleSignature} disabled={!signature}>
