@@ -61,6 +61,11 @@ export function EnhancedProposalPreview({
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [customerDetails, setCustomerDetails] = useState<any>({});
 
+  // Debug logging
+  console.log('EnhancedProposalPreview - estimate:', estimate);
+  console.log('EnhancedProposalPreview - items:', items);
+  console.log('EnhancedProposalPreview - items length:', items?.length);
+
   // Fetch customer details from database
   useEffect(() => {
     if (estimate?.customer_id) {
@@ -84,41 +89,33 @@ export function EnhancedProposalPreview({
     }
   };
 
-  // Enhanced AI analysis of line items
+  // Enhanced AI analysis of line items - simplified for now
   useEffect(() => {
-    if (items.length > 0 && isHealthy) {
-      enhanceLineItems();
+    if (items.length > 0) {
+      console.log('Processing items for enhancement:', items);
+      // For now, just use items as-is until we confirm basic display works
+      const enhanced = items.map(item => generateBasicEnhancedItem(item));
+      setEnhancedItems(enhanced);
     }
-  }, [items, isHealthy]);
+  }, [items]);
 
-  const enhanceLineItems = async () => {
-    setIsEnhancing(true);
-    try {
-      // Use FireAPI if available, otherwise use local analysis
-      if (isHealthy) {
-        const projectDescription = items.map(item => item.description).join(', ');
-        const analysis = await analyzeProject(projectDescription);
-        
-        if (analysis?.tasks) {
-          // Map analyzed tasks to enhanced items
-          const enhanced = items.map((item, index) => {
-            const task = analysis.tasks[index] || {};
-            return generateEnhancedItem(item, task);
-          });
-          setEnhancedItems(enhanced);
-        } else {
-          // Fallback to local analysis
-          useLocalAnalysis();
-        }
-      } else {
-        useLocalAnalysis();
-      }
-    } catch (error) {
-      console.error('Enhancement error:', error);
-      useLocalAnalysis();
-    } finally {
-      setIsEnhancing(false);
-    }
+  const generateBasicEnhancedItem = (item: any): EnhancedLineItem => {
+    const description = (item.description || '').toLowerCase();
+    const tradeAnalysis = analyzeTradeWork(description);
+    
+    return {
+      id: item.id,
+      description: item.description,
+      detailedScope: tradeAnalysis.scope,
+      includedTasks: tradeAnalysis.tasks,
+      materials: tradeAnalysis.materials,
+      quantity: item.quantity || 1,
+      rate: item.rate || 0,
+      amount: item.amount || 0,
+      phase: tradeAnalysis.phase,
+      trade: tradeAnalysis.trade,
+      duration: tradeAnalysis.estimatedDuration
+    };
   };
 
   const useLocalAnalysis = () => {

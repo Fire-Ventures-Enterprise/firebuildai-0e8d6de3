@@ -37,6 +37,8 @@ export function ProposalPreview({
 }: ProposalPreviewProps) {
   const { settings: companySettings } = useCompanySettings();
 
+  console.log('ProposalPreview received:', { estimate, items, paymentStages });
+
   // Calculate totals
   const subtotal = items.reduce((sum, item) => sum + (item.amount || 0), 0);
   const taxAmount = subtotal * (estimate?.tax_rate || 0) / 100;
@@ -79,11 +81,6 @@ export function ProposalPreview({
                     <div className="flex items-center gap-2">
                       <Mail className="h-3 w-3" />
                       {companySettings.email}
-                    </div>
-                  )}
-                  {(companySettings as any)?.license_number && (
-                    <div className="text-xs">
-                      License #: {(companySettings as any).license_number}
                     </div>
                   )}
                 </div>
@@ -169,54 +166,62 @@ export function ProposalPreview({
 
             {/* Line Items */}
             <div className="space-y-3">
-              <div className="font-semibold text-sm text-muted-foreground">DETAILED BREAKDOWN</div>
-              <div className="border rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left p-3 text-sm font-medium">Description</th>
-                      <th className="text-right p-3 text-sm font-medium">Qty</th>
-                      <th className="text-right p-3 text-sm font-medium">Rate</th>
-                      <th className="text-right p-3 text-sm font-medium">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((item, index) => (
-                      <tr key={item.id || index} className="border-t">
-                        <td className="p-3 text-sm">
-                          <div>{item.description}</div>
-                          {item.notes && (
-                            <div className="text-xs text-muted-foreground mt-1">{item.notes}</div>
-                          )}
-                        </td>
-                        <td className="text-right p-3 text-sm">{item.quantity || 1}</td>
-                        <td className="text-right p-3 text-sm">${(item.rate || 0).toFixed(2)}</td>
-                        <td className="text-right p-3 text-sm font-medium">${(item.amount || 0).toFixed(2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="border-t">
-                      <td colSpan={3} className="text-right p-3 text-sm">Subtotal</td>
-                      <td className="text-right p-3 text-sm font-medium">${subtotal.toFixed(2)}</td>
-                    </tr>
-                    {taxAmount > 0 && (
-                      <tr>
-                        <td colSpan={3} className="text-right p-3 text-sm">
-                          Tax ({estimate?.tax_rate || 0}%)
-                        </td>
-                        <td className="text-right p-3 text-sm font-medium">${taxAmount.toFixed(2)}</td>
-                      </tr>
-                    )}
-                    <tr className="border-t bg-muted/50">
-                      <td colSpan={3} className="text-right p-3 font-semibold">Total</td>
-                      <td className="text-right p-3 text-lg font-bold text-primary">
-                        ${total.toFixed(2)}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
+              <div className="font-semibold text-sm text-muted-foreground">
+                DETAILED BREAKDOWN {items.length > 0 && `(${items.length} items)`}
               </div>
+              {items.length === 0 ? (
+                <div className="border rounded-lg p-8 text-center text-muted-foreground">
+                  No items found for this estimate
+                </div>
+              ) : (
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-muted/50">
+                      <tr>
+                        <th className="text-left p-3 text-sm font-medium">Description</th>
+                        <th className="text-right p-3 text-sm font-medium">Qty</th>
+                        <th className="text-right p-3 text-sm font-medium">Rate</th>
+                        <th className="text-right p-3 text-sm font-medium">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map((item, index) => (
+                        <tr key={item.id || index} className="border-t">
+                          <td className="p-3 text-sm">
+                            <div>{item.description}</div>
+                            {item.notes && (
+                              <div className="text-xs text-muted-foreground mt-1">{item.notes}</div>
+                            )}
+                          </td>
+                          <td className="text-right p-3 text-sm">{item.quantity || 1}</td>
+                          <td className="text-right p-3 text-sm">${(item.rate || 0).toFixed(2)}</td>
+                          <td className="text-right p-3 text-sm font-medium">${(item.amount || 0).toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t">
+                        <td colSpan={3} className="text-right p-3 text-sm">Subtotal</td>
+                        <td className="text-right p-3 text-sm font-medium">${subtotal.toFixed(2)}</td>
+                      </tr>
+                      {taxAmount > 0 && (
+                        <tr>
+                          <td colSpan={3} className="text-right p-3 text-sm">
+                            Tax ({estimate?.tax_rate || 0}%)
+                          </td>
+                          <td className="text-right p-3 text-sm font-medium">${taxAmount.toFixed(2)}</td>
+                        </tr>
+                      )}
+                      <tr className="border-t bg-muted/50">
+                        <td colSpan={3} className="text-right p-3 font-semibold">Total</td>
+                        <td className="text-right p-3 text-lg font-bold text-primary">
+                          ${total.toFixed(2)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Payment Schedule */}

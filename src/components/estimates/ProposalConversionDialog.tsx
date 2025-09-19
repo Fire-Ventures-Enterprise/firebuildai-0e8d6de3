@@ -14,7 +14,7 @@ import { notify } from '@/lib/notify';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentStagesForm from './PaymentStagesForm';
 import SignaturePad from './SignaturePad';
-import { EnhancedProposalPreview } from '@/components/sales/EnhancedProposalPreview';
+import { ProposalPreview } from '@/components/sales/ProposalPreview';
 import { FileText, DollarSign, PenTool, Send, CreditCard, CheckCircle2, Copy, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -107,12 +107,18 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
         .from('estimate_items')
         .select('*')
         .eq('estimate_id', estimate.id)
-        .order('item_order', { ascending: true });
+        .order('sort_order', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching estimate items:', error);
+        throw error;
+      }
+      
+      console.log('Fetched estimate items:', data);
       setEstimateItems(data || []);
     } catch (error) {
       console.error('Failed to fetch estimate items:', error);
+      notify.error('Failed to load estimate items');
     }
   };
 
@@ -267,7 +273,7 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
 
         {conversionStep === 'preview' && (
           <div className="flex-1 overflow-y-auto p-4">
-            <EnhancedProposalPreview
+            <ProposalPreview
               estimate={estimate}
               items={estimateItems}
               paymentStages={proposalData.paymentStages}
@@ -580,9 +586,16 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setConversionStep('preview')}>
+              <Button 
+                onClick={() => {
+                  console.log('Going to preview - estimate:', estimate);
+                  console.log('Going to preview - estimateItems:', estimateItems);
+                  setConversionStep('preview');
+                }}
+                disabled={!estimate}
+              >
                 <Eye className="h-4 w-4 mr-2" />
-                Preview Proposal
+                Preview Proposal ({estimateItems.length} items)
               </Button>
             </>
           )}
