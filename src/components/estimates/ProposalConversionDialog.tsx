@@ -14,7 +14,7 @@ import { notify } from '@/lib/notify';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentStagesForm from './PaymentStagesForm';
 import SignaturePad from './SignaturePad';
-import { ProposalPreview } from '@/components/sales/ProposalPreview';
+import { EnhancedProposalPreview } from '@/components/sales/EnhancedProposalPreview';
 import { FileText, DollarSign, PenTool, Send, CreditCard, CheckCircle2, Copy, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -267,7 +267,7 @@ export function ProposalConversionDialog({ open, onOpenChange, estimate, onSucce
 
         {conversionStep === 'preview' && (
           <div className="flex-1 overflow-y-auto p-4">
-            <ProposalPreview
+            <EnhancedProposalPreview
               estimate={estimate}
               items={estimateItems}
               paymentStages={proposalData.paymentStages}
