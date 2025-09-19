@@ -1,4 +1,4 @@
-import { EstimateSequencerDemo } from "@/components/estimates/EstimateSequencerDemo";
+import { EnhancedSequencer } from "@/components/estimates/EnhancedSequencer";
 import { SEOHead } from "@/components/seo/SEOHead";
 
 export default function EstimateSequencerPage() {
@@ -8,7 +8,7 @@ export default function EstimateSequencerPage() {
         title="Estimate Sequencer - FireBuild"
         description="Automatically sequence construction estimates into proper work order phases"
       />
-      <EstimateSequencerDemo />
+      <EnhancedSequencer />
     </>
   );
 }
