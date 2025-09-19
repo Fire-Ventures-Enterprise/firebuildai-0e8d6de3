@@ -2,8 +2,8 @@
 // Connects FireBuild.ai to the FireAPI construction intelligence platform
 
 const CONFIG = {
-  FIREAPI_BASE: import.meta.env.VITE_FIREAPI_URL || 'https://fireapi.dev/v1',
-  API_KEY: import.meta.env.VITE_FIREAPI_KEY || 'demo-key',
+  FIREAPI_BASE: 'https://fireapi.dev/api/v1', // Live API endpoint
+  API_KEY: 'demo-key', // Request your API key at fireapi.dev
   ENABLE_FIREAPI: true,
   FALLBACK_TO_DEMO: true,
   DEFAULT_REGION: 'toronto'
