@@ -131,8 +131,8 @@ export function EstimateSequencerDemo() {
       </div>
 
       {/* Main Input Card */}
-      <Card className="shadow-lg border-2">
-        <CardHeader className="pb-4">
+      <Card className="shadow-xl border bg-card/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+        <CardHeader className="pb-4 bg-gradient-to-br from-background to-muted/20 rounded-t-xl">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
               <Sparkles className="h-6 w-6 text-primary" />
@@ -154,7 +154,7 @@ export function EstimateSequencerDemo() {
               value={estimateText}
               onChange={(e) => setEstimateText(e.target.value)}
               placeholder="Paste your estimate text here (one item per line)..."
-              className="min-h-[250px] font-mono text-sm leading-relaxed resize-vertical border-2 focus:border-primary/50"
+              className="min-h-[250px] font-mono text-sm leading-relaxed resize-vertical border bg-background/50 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
               rows={15}
             />
           </div>
@@ -173,8 +173,8 @@ export function EstimateSequencerDemo() {
       {isParsed && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Project Estimate Card */}
-          <Card className="shadow-lg border-2 h-fit">
-            <CardHeader className="pb-4">
+          <Card className="shadow-xl border bg-card/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 h-fit">
+            <CardHeader className="pb-4 bg-gradient-to-br from-background to-muted/20 rounded-t-xl">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/10 rounded-lg">
                   <FileText className="h-6 w-6 text-green-600" />
@@ -190,7 +190,7 @@ export function EstimateSequencerDemo() {
             <CardContent>
               <div className="space-y-3">
                 {/* Summary Stats */}
-                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 p-4 bg-gradient-to-br from-muted/30 to-muted/50 rounded-lg border">
                   <div>
                     <p className="text-sm text-muted-foreground">Total Items</p>
                     <p className="text-2xl font-bold">{parsedItems.length}</p>
@@ -225,8 +225,8 @@ export function EstimateSequencerDemo() {
           </Card>
 
           {/* AI-Optimized Timeline Card */}
-          <Card className="shadow-lg border-2 h-fit">
-            <CardHeader className="pb-4">
+          <Card className="shadow-xl border bg-card/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 h-fit">
+            <CardHeader className="pb-4 bg-gradient-to-br from-background to-muted/20 rounded-t-xl">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-500/10 rounded-lg">
                   <Layers className="h-6 w-6 text-blue-600" />
@@ -242,7 +242,7 @@ export function EstimateSequencerDemo() {
             <CardContent>
               <div className="space-y-3 max-h-[500px] overflow-y-auto">
                 {sequencedPhases.map((phase, phaseIdx) => (
-                  <div key={phase.phase} className="p-4 border-2 rounded-lg hover:shadow-md transition-all">
+                  <div key={phase.phase} className="p-4 border rounded-lg bg-card/50 hover:shadow-lg hover:bg-card/80 transition-all duration-200">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-start gap-3">
                         <span className="text-2xl mt-1">{getPhaseIcon(phase.phase)}</span>
@@ -295,7 +295,7 @@ export function EstimateSequencerDemo() {
 
       {/* Success Message */}
       {isParsed && (
-        <Card className="shadow-lg border-2 border-green-500/20 bg-green-500/5">
+        <Card className="shadow-xl border border-green-500/20 bg-gradient-to-br from-green-500/5 to-green-500/10 hover:shadow-2xl transition-all duration-300">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-green-500/10 rounded-full">
