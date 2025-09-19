@@ -4,7 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { sequenceLineItems, getPhaseGroups } from '@/utils/constructionSequencer';
-import { ChevronRight, Clock, Hammer, CheckCircle2 } from 'lucide-react';
+import { 
+  ChevronRight, 
+  Clock, 
+  Hammer, 
+  CheckCircle2,
+  Sparkles,
+  FileText,
+  DollarSign,
+  Layers,
+  ArrowRight,
+  Zap,
+  Activity
+} from 'lucide-react';
 import { EXAMPLE_KITCHEN_ESTIMATE } from '@/data/exampleKitchenEstimate';
 
 interface ParsedItem {
@@ -77,22 +89,22 @@ export function EstimateSequencerDemo() {
 
   const getPhaseColor = (phase: string) => {
     const colors: Record<string, string> = {
-      demolition: 'bg-red-100 text-red-800',
-      site_prep: 'bg-orange-100 text-orange-800',
-      framing: 'bg-amber-100 text-amber-800',
-      electrical_rough: 'bg-yellow-100 text-yellow-800',
-      plumbing_rough: 'bg-blue-100 text-blue-800',
-      drywall: 'bg-gray-100 text-gray-800',
-      cabinets: 'bg-purple-100 text-purple-800',
-      countertops: 'bg-indigo-100 text-indigo-800',
-      backsplash: 'bg-cyan-100 text-cyan-800',
-      electrical_finish: 'bg-yellow-100 text-yellow-800',
-      plumbing_finish: 'bg-blue-100 text-blue-800',
-      painting: 'bg-pink-100 text-pink-800',
-      cleanup: 'bg-green-100 text-green-800',
-      final_inspection: 'bg-emerald-100 text-emerald-800'
+      demolition: 'bg-destructive/10 text-destructive border-destructive/20',
+      site_prep: 'bg-orange-500/10 text-orange-700 border-orange-500/20',
+      framing: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
+      electrical_rough: 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20',
+      plumbing_rough: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
+      drywall: 'bg-muted text-muted-foreground border-muted-foreground/20',
+      cabinets: 'bg-purple-500/10 text-purple-700 border-purple-500/20',
+      countertops: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20',
+      backsplash: 'bg-cyan-500/10 text-cyan-700 border-cyan-500/20',
+      electrical_finish: 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20',
+      plumbing_finish: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
+      painting: 'bg-pink-500/10 text-pink-700 border-pink-500/20',
+      cleanup: 'bg-green-500/10 text-green-700 border-green-500/20',
+      final_inspection: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
     };
-    return colors[phase] || 'bg-gray-100 text-gray-800';
+    return colors[phase] || 'bg-muted text-muted-foreground border-muted-foreground/20';
   };
 
   const formatPhaseName = (phase: string) => {
@@ -101,138 +113,209 @@ export function EstimateSequencerDemo() {
     ).join(' ');
   };
 
+  const getTotalAmount = () => {
+    return parsedItems.reduce((sum, item) => sum + item.total, 0);
+  };
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Construction Estimate Sequencer</CardTitle>
-          <CardDescription>
-            Paste your estimate text to automatically sequence it in proper construction order
-          </CardDescription>
+    <div className="container max-w-7xl mx-auto p-6 space-y-8">
+      {/* Header Section */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold tracking-tight">
+          AI-Powered Estimates in 5 Minutes
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          From product descriptions to detailed estimates with automated workflow sequencing. 
+          <span className="font-medium"> FireBuild.ai </span> constructs client proposals and manages your workflow.
+        </p>
+      </div>
+
+      {/* Main Input Card */}
+      <Card className="shadow-lg border-2">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Sparkles className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl">Generate Smart Estimate</CardTitle>
+              <CardDescription className="text-base mt-1">
+                Paste your estimate text to automatically sequence it in proper construction order
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Estimate Text (paste or edit below)
+            <label className="block text-sm font-semibold mb-3">
+              Estimate Details
             </label>
             <Textarea
               value={estimateText}
               onChange={(e) => setEstimateText(e.target.value)}
               placeholder="Paste your estimate text here (one item per line)..."
-              className="min-h-[200px] font-mono text-xs leading-relaxed resize-vertical"
-              rows={20}
+              className="min-h-[250px] font-mono text-sm leading-relaxed resize-vertical border-2 focus:border-primary/50"
+              rows={15}
             />
           </div>
           
           <Button 
             onClick={parseEstimate}
-            className="w-full"
+            className="w-full h-12 text-base font-semibold"
             size="lg"
           >
-            <Hammer className="mr-2 h-4 w-4" />
-            Parse & Sequence Estimate
+            <Zap className="mr-2 h-5 w-5" />
+            Generate AI Estimates & Sequence
           </Button>
         </CardContent>
       </Card>
 
       {isParsed && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle>Original Parsed Items</CardTitle>
-              <CardDescription>
-                {parsedItems.length} line items extracted from estimate
-              </CardDescription>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Project Estimate Card */}
+          <Card className="shadow-lg border-2 h-fit">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/10 rounded-lg">
+                  <FileText className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Project Estimate</CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    {parsedItems.length} line items extracted
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                {parsedItems.slice(0, 5).map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground w-8">{idx + 1}.</span>
-                    <span className="flex-1">{item.description}</span>
-                    <Badge variant="outline">{item.quantity} {item.unit}</Badge>
-                    {item.total > 0 && (
-                      <span className="font-medium">${item.total.toFixed(2)}</span>
-                    )}
+              <div className="space-y-3">
+                {/* Summary Stats */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Items</p>
+                    <p className="text-2xl font-bold">{parsedItems.length}</p>
                   </div>
-                ))}
-                {parsedItems.length > 5 && (
-                  <div className="text-sm text-muted-foreground pt-2">
-                    ... and {parsedItems.length - 5} more items
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Cost</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      ${getTotalAmount().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
                   </div>
-                )}
+                </div>
+
+                {/* Line Items Preview */}
+                <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                  {parsedItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                      <span className="text-muted-foreground font-medium min-w-[24px]">{idx + 1}.</span>
+                      <span className="flex-1 text-sm">{item.description}</span>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="font-mono text-xs">
+                          {item.quantity} {item.unit}
+                        </Badge>
+                        {item.total > 0 && (
+                          <span className="font-semibold text-sm">${item.total.toFixed(2)}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Sequenced Construction Phases</CardTitle>
-              <CardDescription>
-                Items automatically organized into {sequencedPhases.length} construction phases
-              </CardDescription>
+          {/* AI-Optimized Timeline Card */}
+          <Card className="shadow-lg border-2 h-fit">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <Layers className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">AI-Optimized Timeline</CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    {sequencedPhases.length} construction phases
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3 max-h-[500px] overflow-y-auto">
                 {sequencedPhases.map((phase, phaseIdx) => (
-                  <div key={phase.phase} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{getPhaseIcon(phase.phase)}</span>
-                        <div>
-                          <h3 className="font-semibold text-lg">
+                  <div key={phase.phase} className="p-4 border-2 rounded-lg hover:shadow-md transition-all">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl mt-1">{getPhaseIcon(phase.phase)}</span>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-base">
                             Phase {phaseIdx + 1}: {formatPhaseName(phase.phase)}
                           </h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge className={getPhaseColor(phase.phase)}>
-                              {phase.items.length} items
+                          <div className="flex items-center gap-2">
+                            <Badge className={`${getPhaseColor(phase.phase)} border`}>
+                              {phase.items.length} tasks
                             </Badge>
                             {phase.total > 0 && (
-                              <span className="text-sm text-muted-foreground">
+                              <Badge variant="outline" className="font-mono">
                                 ${phase.total.toFixed(2)}
-                              </span>
+                              </Badge>
                             )}
+                            <Badge variant="outline" className="gap-1">
+                              <Clock className="h-3 w-3" />
+                              Day {phase.phaseOrder}
+                            </Badge>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        <span className="text-sm">Order: {phase.phaseOrder}</span>
                       </div>
                     </div>
                     
-                    <div className="space-y-2">
-                      {phase.items.map((item: any, itemIdx: number) => (
-                        <div key={itemIdx} className="flex items-start gap-2 pl-4 text-sm">
-                          <ChevronRight className="h-4 w-4 text-muted-foreground mt-0.5" />
-                          <span className="flex-1">{item.description}</span>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">
+                    {/* Collapsible items */}
+                    <details className="group">
+                      <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        View tasks
+                      </summary>
+                      <div className="mt-3 space-y-2 pl-4 border-l-2 border-muted ml-4">
+                        {phase.items.map((item: any, itemIdx: number) => (
+                          <div key={itemIdx} className="flex items-start gap-2 text-sm">
+                            <ChevronRight className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <span className="flex-1">{item.description}</span>
+                            <span className="font-medium text-muted-foreground">
                               {item.quantity} {item.unit}
-                            </Badge>
-                            {item.total > 0 && (
-                              <span className="font-medium">${item.total.toFixed(2)}</span>
-                            )}
+                            </span>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    </details>
                   </div>
                 ))}
               </div>
-              
-              <div className="mt-6 p-4 bg-muted rounded-lg">
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span className="font-medium">Ready for Work Order Generation</span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  This sequenced estimate can now be converted into properly ordered work orders for each trade.
-                </p>
-              </div>
             </CardContent>
           </Card>
-        </>
+        </div>
+      )}
+
+      {/* Success Message */}
+      {isParsed && (
+        <Card className="shadow-lg border-2 border-green-500/20 bg-green-500/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-500/10 rounded-full">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg mb-1">
+                  See AI Workflow Sequencing in Action
+                </h3>
+                <p className="text-muted-foreground">
+                  FireBuild.ai intelligently arranges your estimates into properly sequenced construction phases, ensuring optimal workflow and timeline management.
+                </p>
+              </div>
+              <Button size="lg" className="gap-2">
+                Create Work Orders
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
