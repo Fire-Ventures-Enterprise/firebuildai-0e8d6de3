@@ -1,7 +1,7 @@
 // App Layout Component - Main layout for the SaaS application
 import { ReactNode } from 'react';
 import { DashboardHeader } from '@/components/DashboardHeader';
-import { MVPSidebar } from '@/components/navigation/MVPSidebar';
+import { MVPAppSidebar } from '@/components/navigation/MVPAppSidebar';
 import { AppBreadcrumbs } from '@/components/AppBreadcrumbs';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
@@ -15,7 +15,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       <div className="min-h-screen flex w-full bg-gradient-hero">
         {/* Desktop Sidebar */}
         <div className="hidden md:block">
-          <MVPSidebar />
+          <MVPAppSidebar />
         </div>
         
         {/* Main Content */}
