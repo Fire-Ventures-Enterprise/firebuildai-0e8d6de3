@@ -162,3 +162,6 @@ verify_jwt = true
 
 [functions.construction-sequencer]
 verify_jwt = false
+
+[functions.fireapi-proxy]
+verify_jwt = true

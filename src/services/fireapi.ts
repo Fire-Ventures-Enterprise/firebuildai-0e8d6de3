@@ -1,26 +1,29 @@
 // FireAPI.dev Integration Service
 // Connects FireBuild.ai to the FireAPI construction intelligence platform
 
+import { supabase } from "@/integrations/supabase/client";
+
 const CONFIG = {
-  FIREAPI_BASE: 'https://fireapi.dev/api/v1', // Live API endpoint
-  API_KEY: 'demo-key', // Request your API key at fireapi.dev
   ENABLE_FIREAPI: true,
   FALLBACK_TO_DEMO: true,
   DEFAULT_REGION: 'toronto'
 };
 
-const headers = {
-  'Authorization': `Bearer ${CONFIG.API_KEY}`,
-  'Content-Type': 'application/json',
-  'User-Agent': 'FireBuild.AI/1.0'
-};
+// Helper function to call FireAPI through our edge function
+async function callFireAPI(endpoint: string, body?: any, method: string = 'POST') {
+  const { data, error } = await supabase.functions.invoke('fireapi-proxy', {
+    body: { endpoint, body, method }
+  });
+  
+  if (error) throw error;
+  return data;
+}
 
 // Health check for FireAPI availability
 export async function checkFireAPIHealth(): Promise<boolean> {
   try {
-    const response = await fetch(`${CONFIG.FIREAPI_BASE}/health`, { headers });
-    const result = await response.json();
-    return result.success && result.data.status === 'healthy';
+    const result = await callFireAPI('/health', undefined, 'GET');
+    return result.success && result.data?.status === 'healthy';
   } catch (error) {
     console.warn('FireAPI health check failed:', error);
     return false;
@@ -32,21 +35,15 @@ export async function analyzeProjectWithFireAPI(
   description: string, 
   region: string = CONFIG.DEFAULT_REGION
 ) {
-  const response = await fetch(`${CONFIG.FIREAPI_BASE}/construction/complete-analysis`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      description,
-      region,
-      options: {
-        includeOptimizations: true,
-        includeCompliance: true,
-        includeRisks: true
-      }
-    })
+  const result = await callFireAPI('/construction/complete-analysis', {
+    description,
+    region,
+    options: {
+      includeOptimizations: true,
+      includeCompliance: true,
+      includeRisks: true
+    }
   });
-  
-  const result = await response.json();
   
   if (result.success) {
     return {
@@ -69,22 +66,16 @@ export async function generateWorkflowWithFireAPI(
   projectDetails: any, 
   region: string
 ) {
-  const response = await fetch(`${CONFIG.FIREAPI_BASE}/workflows/generate`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      projectType,
-      projectDetails,
-      region,
-      options: {
-        includeCriticalPath: true,
-        includeInspections: true,
-        optimizeParallelTasks: true
-      }
-    })
+  const result = await callFireAPI('/workflows/generate', {
+    projectType,
+    projectDetails,
+    region,
+    options: {
+      includeCriticalPath: true,
+      includeInspections: true,
+      optimizeParallelTasks: true
+    }
   });
-  
-  const result = await response.json();
   
   if (result.success) {
     return {
@@ -112,23 +103,17 @@ export async function estimateCostsWithFireAPI(
   region: string, 
   materials: any[] = []
 ) {
-  const response = await fetch(`${CONFIG.FIREAPI_BASE}/costs/estimate`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      projectType,
-      tasks,
-      region,
-      materials,
-      options: {
-        includeContingency: true,
-        includeProfitMargin: true,
-        marketConditions: 'normal'
-      }
-    })
+  const result = await callFireAPI('/costs/estimate', {
+    projectType,
+    tasks,
+    region,
+    materials,
+    options: {
+      includeContingency: true,
+      includeProfitMargin: true,
+      marketConditions: 'normal'
+    }
   });
-  
-  const result = await response.json();
   
   if (result.success) {
     return {
@@ -154,21 +139,15 @@ export async function sequenceConstructionTasks(
   projectType?: string
 ) {
   try {
-    const response = await fetch(`${CONFIG.FIREAPI_BASE}/construction/sequence`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        items,
-        projectType,
-        options: {
-          optimizeSchedule: true,
-          detectDependencies: true,
-          includeInspections: true
-        }
-      })
+    const result = await callFireAPI('/construction/sequence', {
+      items,
+      projectType,
+      options: {
+        optimizeSchedule: true,
+        detectDependencies: true,
+        includeInspections: true
+      }
     });
-    
-    const result = await response.json();
     
     if (result.success) {
       return {
